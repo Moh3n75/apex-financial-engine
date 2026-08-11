@@ -41,7 +41,7 @@ public class TransactionService {
 
         //Third use the Query native
         accountRepository.decreaseBalance(transactionModel.sourceAccount(),transactionModel.amount());
-        accountRepository.increaseBalance(transactionModel.sourceAccount(),transactionModel.amount());
+        accountRepository.increaseBalance(transactionModel.destinationAccount(),transactionModel.amount());
 
         return transactionModel;
     }
