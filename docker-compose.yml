@@ -2,7 +2,7 @@ services:
 
   transaction-service:
     build:
-      context: ./transaction-service
+      context: ./accounting
     container_name: transaction-service
 
     ports:
