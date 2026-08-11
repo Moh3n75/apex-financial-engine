@@ -1,4 +1,4 @@
-package com.sadeghi.accounting.transaction;
+package com.sadeghi.accounting.transaction.orm;
 
 import jakarta.persistence.*;
 import lombok.Getter;
