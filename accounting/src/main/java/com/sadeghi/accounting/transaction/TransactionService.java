@@ -36,6 +36,7 @@ public class TransactionService {
         this.transactionTimer = Timer.builder("transaction_processing")
                 .description("Transaction processing latency")
                 .publishPercentiles(0.50, 0.95, 0.99)
+                .publishPercentileHistogram()
                 .register(meterRegistry);
     }
 
