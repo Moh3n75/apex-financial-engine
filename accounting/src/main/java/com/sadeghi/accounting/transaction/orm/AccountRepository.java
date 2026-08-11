@@ -19,7 +19,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     @Modifying
     @Query(value = """
-            UPDATE accounts
+            UPDATE credit
             SET available_amount = available_amount - :amount,
                 total_amount = total_amount - :amount
             WHERE id = :accountId
@@ -32,7 +32,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     @Modifying
     @Query(value = """
-            UPDATE accounts
+            UPDATE credit
             SET available_amount = available_amount + :amount,
                 total_amount = total_amount + :amount
             WHERE id = :accountId

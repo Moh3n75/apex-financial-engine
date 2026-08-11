@@ -16,13 +16,26 @@ export const optionsForStagingRequest = {
     },
 };
 
-export const options = {
+export const optionsForSingleTime = {
     scenarios: {
         exact_20_concurrent: {
             executor: 'per-vu-iterations',
-            vus: 10,         // 20 concurrent users
+            vus: 20,         // 20 concurrent users
             iterations: 1,   // Each user performs exactly 1 iteration
             maxDuration: '10s',
+        },
+    },
+};
+
+export const options = {
+    scenarios: {
+        transactions: {
+            executor: 'constant-arrival-rate',
+            rate: 1000,
+            timeUnit: '1s',
+            duration: '30s',
+            preAllocatedVUs: 100,
+            maxVUs: 1000,
         },
     },
 };
@@ -35,7 +48,7 @@ export default function () {
     const payload = JSON.stringify({
         sourceAccount: 81193,
         destinationAccount: 27790456,
-        amount: 100,
+        amount: 10,
     });
 
     const params = {
