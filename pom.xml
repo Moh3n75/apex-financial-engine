@@ -1,0 +1,30 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.apex</groupId>
+    <artifactId>apex-financial-engine</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+
+    <modules>
+
+        <module>apex-domain</module>
+        <module>apex-application</module>
+        <module>apex-infrastructure</module>
+        <module>apex-api</module>
+
+    </modules>
+
+
+    <properties>
+
+        <java.version>21</java.version>
+        <spring.boot.version>3.3.5</spring.boot.version>
+
+    </properties>
+
+
+</project>
