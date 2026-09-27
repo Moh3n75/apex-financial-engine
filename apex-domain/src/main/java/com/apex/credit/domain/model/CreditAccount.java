@@ -83,6 +83,25 @@ public class CreditAccount {
 
     }
 
+    public void addCredit(
+            Money amount
+    ){
+
+        CreditAddedEvent event =
+                new CreditAddedEvent(
+                        UUID.randomUUID(),
+                        id,
+                        amount,
+                        version + 1
+                );
+
+
+        apply(event);
+
+        changes.add(event);
+
+    }
+
 
 
     private void apply(
@@ -107,6 +126,20 @@ public class CreditAccount {
     }
 
 
+    private void apply(
+            CreditAddedEvent event
+    ){
+
+        available =
+                available.add(
+                        event.amount()
+                );
+
+
+        version =
+                event.version();
+
+    }
 
     public List<DomainEvent> getChanges(){
 
