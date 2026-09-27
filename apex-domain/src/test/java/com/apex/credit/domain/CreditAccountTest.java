@@ -9,20 +9,24 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class CreditAccountTest {
 
 
     @Test
-    void should_block_credit_successfully(){
+    void should_add_and_block_credit(){
 
 
         CreditAccount account =
-                new CreditAccount(
-                        new CreditAccountId(UUID.randomUUID()),
-                        new MemberId(UUID.randomUUID())
+                CreditAccount.create(
+                        new CreditAccountId(
+                                UUID.randomUUID()
+                        ),
+                        new MemberId(
+                                UUID.randomUUID()
+                        )
                 );
 
 
@@ -41,10 +45,10 @@ class CreditAccountTest {
         );
 
 
-        assertEquals(
-                2,
-                account.getChanges().size()
-        );
+        assertThat(
+                account.getChanges()
+        )
+                .hasSize(3);
 
     }
 

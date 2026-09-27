@@ -52,6 +52,36 @@ public class CreditAccount {
 
     }
 
+    public static CreditAccount create(
+            CreditAccountId id,
+            MemberId memberId
+    ){
+
+        CreditAccount account =
+                new CreditAccount(
+                        id,
+                        memberId
+                );
+
+
+        CreditCreatedEvent event =
+                new CreditCreatedEvent(
+                        UUID.randomUUID(),
+                        id,
+                        memberId,
+                        1
+                );
+
+
+        account.apply(event);
+
+        account.changes.add(event);
+
+
+        return account;
+
+    }
+
 
     public void block(
             Money amount,
@@ -102,6 +132,14 @@ public class CreditAccount {
 
     }
 
+    private void apply(
+            CreditCreatedEvent event
+    ){
+
+        this.version =
+                event.version();
+
+    }
 
 
     private void apply(
