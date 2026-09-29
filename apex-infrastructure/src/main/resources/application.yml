@@ -1,0 +1,9 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/apex
+    username: apex
+    password: apex123
+
+  flyway:
+    enabled: true
