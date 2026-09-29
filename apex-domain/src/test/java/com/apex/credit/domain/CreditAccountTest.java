@@ -46,7 +46,7 @@ class CreditAccountTest {
 
 
         assertThat(
-                account.getChanges()
+                account.uncommittedEvents()
         )
                 .hasSize(3);
 

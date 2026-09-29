@@ -1,5 +1,0 @@
-# Created at 2026-09-27T16:40:52.073
-Boot Manifest-JAR contains absolute paths in classpath 'E:\drive e\projectOnGit\apex-financial-engine\apex-domain\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

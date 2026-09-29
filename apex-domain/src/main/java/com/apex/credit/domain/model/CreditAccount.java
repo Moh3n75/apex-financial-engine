@@ -1,189 +1,251 @@
 package com.apex.credit.domain.model;
 
 import com.apex.credit.domain.event.*;
-import com.apex.credit.domain.exception.*;
+import com.apex.credit.domain.exception.InsufficientCreditException;
 import com.apex.credit.domain.valueobject.*;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+public final class CreditAccount {
 
-public class CreditAccount {
+    private CreditAccountId id;
 
+    private MemberId memberId;
 
-    private final CreditAccountId id;
+    private CreditTypeId creditTypeId;
 
+    private CreditAmount available =
+            CreditAmount.ZERO;
 
-    private final MemberId memberId;
-
-
-    private Money available;
-
-
-    private Money blocked;
-
+    private CreditAmount blocked =
+            CreditAmount.ZERO;
 
     private long version;
 
-
-    private final List<DomainEvent> changes =
+    @Getter(AccessLevel.NONE)
+    private final List<CreditAccountEvent>
+            uncommittedEvents =
             new ArrayList<>();
 
 
-
-    public CreditAccount(
-            CreditAccountId id,
-            MemberId memberId
-    ){
-
-        this.id = id;
-        this.memberId = memberId;
-
-        this.available =
-                new Money(java.math.BigDecimal.ZERO);
-
-        this.blocked =
-                new Money(java.math.BigDecimal.ZERO);
-
-
-        this.version = 0;
-
-
+    private CreditAccount() {
     }
+
 
     public static CreditAccount create(
             CreditAccountId id,
-            MemberId memberId
-    ){
+            MemberId memberId,
+            CreditTypeId creditTypeId
+    ) {
 
         CreditAccount account =
-                new CreditAccount(
-                        id,
-                        memberId
-                );
+                new CreditAccount();
 
-
-        CreditCreatedEvent event =
-                new CreditCreatedEvent(
+        account.raise(
+                new CreditAccountCreatedEvent(
                         UUID.randomUUID(),
                         id,
                         memberId,
+                        creditTypeId,
                         1
-                );
-
-
-        account.apply(event);
-
-        account.changes.add(event);
-
+                )
+        );
 
         return account;
+    }
 
+
+    public static CreditAccount restore(
+            CreditAccountId id,
+            MemberId memberId,
+            CreditTypeId creditTypeId,
+            CreditAmount available,
+            CreditAmount blocked,
+            long version
+    ) {
+
+        CreditAccount account =
+                new CreditAccount();
+
+        account.id = id;
+        account.memberId = memberId;
+        account.creditTypeId = creditTypeId;
+        account.available = available;
+        account.blocked = blocked;
+        account.version = version;
+
+        return account;
+    }
+
+
+    public void addCredit(
+            CreditAmount amount,
+            String referenceId
+    ) {
+
+        requirePositive(amount);
+
+        raise(
+                new CreditAddedEvent(
+                        UUID.randomUUID(),
+                        id,
+                        amount,
+                        referenceId,
+                        version + 1
+                )
+        );
     }
 
 
     public void block(
-            Money amount,
+            CreditAmount amount,
             String referenceId
-    ){
+    ) {
 
-        if(!available.greaterOrEqual(amount)){
+        requirePositive(amount);
+
+        if (!available.greaterOrEqual(amount)) {
 
             throw new InsufficientCreditException(
-                    "Not enough credit"
+                    "Not enough available credit"
             );
-
         }
 
-
-        CreditBlockedEvent event =
+        raise(
                 new CreditBlockedEvent(
                         UUID.randomUUID(),
                         id,
                         amount,
                         referenceId,
                         version + 1
-                );
+                )
+        );
+    }
 
+
+    private void requirePositive(
+            CreditAmount amount
+    ) {
+
+        if (amount == null ||
+                !amount.isPositive()) {
+
+            throw new IllegalArgumentException(
+                    "Amount must be greater than zero"
+            );
+        }
+    }
+
+
+    private void raise(
+            CreditAccountEvent event
+    ) {
 
         apply(event);
 
-        changes.add(event);
-
+        uncommittedEvents.add(event);
     }
 
-    public void addCredit(
-            Money amount
-    ){
-
-        CreditAddedEvent event =
-                new CreditAddedEvent(
-                        UUID.randomUUID(),
-                        id,
-                        amount,
-                        version + 1
-                );
-
-
-        apply(event);
-
-        changes.add(event);
-
-    }
 
     private void apply(
-            CreditCreatedEvent event
-    ){
+            CreditAccountEvent event
+    ) {
+
+        switch (event) {
+
+            case CreditAccountCreatedEvent e ->
+                    on(e);
+
+            case CreditAddedEvent e ->
+                    on(e);
+
+            case CreditBlockedEvent e ->
+                    on(e);
+        }
+    }
+
+
+    private void on(
+            CreditAccountCreatedEvent event
+    ) {
+
+        this.id =
+                event.aggregateId();
+
+        this.memberId =
+                event.memberId();
+
+        this.creditTypeId =
+                event.creditTypeId();
+
+        this.available =
+                CreditAmount.ZERO;
+
+        this.blocked =
+                CreditAmount.ZERO;
 
         this.version =
                 event.version();
-
     }
 
 
-    private void apply(
-            CreditBlockedEvent event
-    ){
-
-        available =
-                available.subtract(
-                        event.amount()
-                );
-
-
-        blocked =
-                blocked.add(
-                        event.amount()
-                );
-
-
-        version =
-                event.version();
-
-    }
-
-
-    private void apply(
+    private void on(
             CreditAddedEvent event
-    ){
+    ) {
 
-        available =
+        this.available =
                 available.add(
                         event.amount()
                 );
 
-
-        version =
+        this.version =
                 event.version();
-
-    }
-
-    public List<DomainEvent> getChanges(){
-
-        return List.copyOf(changes);
-
     }
 
 
+    private void on(
+            CreditBlockedEvent event
+    ) {
+
+        this.available =
+                available.subtract(
+                        event.amount()
+                );
+
+        this.blocked =
+                blocked.add(
+                        event.amount()
+                );
+
+        this.version =
+                event.version();
+    }
+
+
+    public List<CreditAccountEvent>
+    uncommittedEvents() {
+
+        return List.copyOf(
+                uncommittedEvents
+        );
+    }
+
+
+    public long persistedVersion() {
+
+        return version -
+                uncommittedEvents.size();
+    }
+
+
+    public void markChangesAsCommitted() {
+
+        uncommittedEvents.clear();
+    }
 }

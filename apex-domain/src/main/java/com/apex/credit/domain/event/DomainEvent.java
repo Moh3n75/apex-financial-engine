@@ -8,9 +8,5 @@ public interface DomainEvent {
 
     UUID eventId();
 
-
-    CreditAccountId aggregateId();
-
-
     long version();
 }
