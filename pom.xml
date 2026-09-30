@@ -23,6 +23,7 @@
         <module>apex-domain</module>
         <module>apex-application</module>
         <module>apex-infrastructure</module>
+        <module>apex-bootstrap</module>
     </modules>
 
     <properties>
