@@ -3,13 +3,23 @@ package com.apex.infrastructure.config;
 import com.apex.credit.application.port.out.*;
 import com.apex.credit.application.purchase.PurchaseApplicationService;
 
+import com.apex.platform.events.EventEnvelopeFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Clock;
 
 
 @Configuration
 public class ApplicationConfiguration {
 
+
+    @Bean
+    public EventEnvelopeFactory eventEnvelopeFactory() {
+        return new EventEnvelopeFactory(
+                Clock.systemUTC()
+        );
+    }
 
     @Bean
     public PurchaseApplicationService
@@ -23,7 +33,9 @@ public class ApplicationConfiguration {
 
             OutboxRepository outboxRepository,
 
-            UnitOfWork unitOfWork
+            UnitOfWork unitOfWork,
+
+            EventEnvelopeFactory eventEnvelopeFactory
 
     ) {
 
@@ -37,7 +49,9 @@ public class ApplicationConfiguration {
 
                 outboxRepository,
 
-                unitOfWork
+                unitOfWork,
+
+                eventEnvelopeFactory
 
         );
     }
