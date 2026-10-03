@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static com.apex.infrastructure.jooq.generated.Tables.FINANCIAL_TRANSACTION;
@@ -37,13 +38,14 @@ public class JooqOutboxRepository
             EventEnvelope<? extends IntegrationEvent> event
     ) {
 
+        var metadata = event.metadata();
+
         UUID aggregatePublicId;
 
         try {
             aggregatePublicId =
                     UUID.fromString(
-                            event.metadata()
-                                    .aggregateId()
+                            metadata.aggregateId()
                     );
         }
         catch (IllegalArgumentException exception) {
@@ -57,17 +59,14 @@ public class JooqOutboxRepository
                 dsl.select(
                                 FINANCIAL_TRANSACTION.ID
                         )
-
                         .from(
                                 FINANCIAL_TRANSACTION
                         )
-
                         .where(
                                 FINANCIAL_TRANSACTION.PUBLIC_ID.eq(
                                         aggregatePublicId
                                 )
                         )
-
                         .fetchOne(
                                 FINANCIAL_TRANSACTION.ID
                         );
@@ -98,14 +97,54 @@ public class JooqOutboxRepository
                 )
 
                 .set(
+                        OUTBOX_EVENT.EVENT_ID,
+                        metadata.eventId()
+                )
+
+                .set(
                         OUTBOX_EVENT.EVENT_TYPE,
-                        event.metadata()
-                                .eventType()
+                        metadata.eventType()
+                )
+
+                .set(
+                        OUTBOX_EVENT.EVENT_VERSION,
+                        metadata.eventVersion()
+                )
+
+                .set(
+                        OUTBOX_EVENT.CORRELATION_ID,
+                        metadata.correlationId()
+                )
+
+                .set(
+                        OUTBOX_EVENT.CAUSATION_ID,
+                        metadata.causationId()
                 )
 
                 .set(
                         OUTBOX_EVENT.AGGREGATE_ID,
                         aggregateDbId
+                )
+
+                .set(
+                        OUTBOX_EVENT.AGGREGATE_TYPE,
+                        metadata.aggregateType()
+                )
+
+                .set(
+                        OUTBOX_EVENT.SOURCE_SERVICE,
+                        metadata.sourceService()
+                )
+
+                .set(
+                        OUTBOX_EVENT.CELL_ID,
+                        metadata.cellId()
+                )
+
+                .set(
+                        OUTBOX_EVENT.OCCURRED_AT,
+                        metadata.occurredAt()
+                                .atOffset(ZoneOffset.UTC)
                 )
 
                 .set(
