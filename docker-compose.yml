@@ -1,35 +1,18 @@
 services:
 
-  transaction-service:
-    build:
-      context: ./accounting
-    container_name: transaction-service
-
-    ports:
-      - "8080:8080"
-
+  postgres:
+    image: postgres:17
+    container_name: apex-postgres
     environment:
-      SPRING_PROFILES_ACTIVE: benchmark
-
-    depends_on:
-      - prometheus
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-
+      POSTGRES_DB: apex
+      POSTGRES_USER: apex
+      POSTGRES_PASSWORD: apex123
     ports:
-      - "9090:9090"
-
+      - "5432:5432"
     volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - apex_pg_data:/var/lib/postgresql/data
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
 
-    ports:
-      - "3000:3000"
+volumes:
 
-    depends_on:
-      - prometheus
+  apex_pg_data:
