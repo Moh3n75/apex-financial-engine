@@ -13,6 +13,7 @@ import com.apex.credit.domain.valueobject.CreditAmount;
 
 import org.jooq.DSLContext;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -148,14 +149,13 @@ public class JooqFinancialTransactionRepository implements FinancialTransactionR
 
                     .execute();
 
-        } catch (org.jooq.exception.IntegrityConstraintViolationException ex) {
+        } catch (DuplicateKeyException exception) {
 
             throw new DuplicateRequestException(
                     transaction.getReferenceId()
             );
         }
     }
-
     private void update(
             FinancialTransaction transaction
     ) {
