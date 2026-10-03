@@ -1,5 +1,6 @@
 package com.apex.infrastructure.persistence.jooq;
 
+import com.apex.credit.application.exception.DuplicateRequestException;
 import com.apex.credit.application.port.out.FinancialTransactionRepository;
 
 import com.apex.credit.domain.transaction.model.FinancialTransaction;
@@ -102,57 +103,58 @@ public class JooqFinancialTransactionRepository implements FinancialTransactionR
             FinancialTransaction transaction
     ) {
 
-        dsl
-                .insertInto(
-                        FINANCIAL_TRANSACTION
-                )
+        try {
 
-                .set(
-                        FINANCIAL_TRANSACTION.PUBLIC_ID,
-                        transaction
-                                .getId()
-                                .value()
-                )
+            dsl.insertInto(
+                            FINANCIAL_TRANSACTION
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.TYPE,
-                        transaction
-                                .getType()
-                                .value()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.PUBLIC_ID,
+                            transaction.getId().value()
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.STATUS,
-                        transaction
-                                .getStatus()
-                                .name()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.TYPE,
+                            transaction.getType().value()
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.AMOUNT_UNITS,
-                        transaction
-                                .getRequestedAmount()
-                                .units()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.STATUS,
+                            transaction.getStatus().name()
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.REFERENCE_ID,
-                        transaction.getReferenceId()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.AMOUNT_UNITS,
+                            transaction
+                                    .getRequestedAmount()
+                                    .units()
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.FAILURE_REASON,
-                        transaction.getFailureReason()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.REFERENCE_ID,
+                            transaction.getReferenceId()
+                    )
 
-                .set(
-                        FINANCIAL_TRANSACTION.VERSION,
-                        transaction.getVersion()
-                )
+                    .set(
+                            FINANCIAL_TRANSACTION.FAILURE_REASON,
+                            transaction.getFailureReason()
+                    )
 
-                .execute();
+                    .set(
+                            FINANCIAL_TRANSACTION.VERSION,
+                            transaction.getVersion()
+                    )
+
+                    .execute();
+
+        } catch (org.jooq.exception.IntegrityConstraintViolationException ex) {
+
+            throw new DuplicateRequestException(
+                    transaction.getReferenceId()
+            );
+        }
     }
-
 
     private void update(
             FinancialTransaction transaction
