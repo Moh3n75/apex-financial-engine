@@ -24,6 +24,8 @@
         <module>apex-application</module>
         <module>apex-infrastructure</module>
         <module>apex-bootstrap</module>
+        <module>apex-platform-core</module>
+        <module>apex-platform-events</module>
     </modules>
 
     <properties>
