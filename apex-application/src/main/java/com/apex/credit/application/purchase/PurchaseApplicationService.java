@@ -1,10 +1,12 @@
 package com.apex.credit.application.purchase;
 
-import com.apex.credit.application.port.out.CreditAccountRepository;
-import com.apex.credit.application.port.out.FinancialTransactionRepository;
+import com.apex.credit.application.outbox.OutboxMessage;
+import com.apex.credit.application.port.out.*;
 
 
-import com.apex.credit.application.port.out.UnitOfWork;
+import com.apex.credit.domain.ledger.LedgerEntry;
+import com.apex.credit.domain.ledger.LedgerEntryType;
+import com.apex.credit.domain.ledger.LedgerTransaction;
 import com.apex.credit.domain.transaction.model.FinancialTransaction;
 import com.apex.credit.domain.transaction.valueobject.TransactionType;
 
@@ -22,10 +24,16 @@ public final class PurchaseApplicationService {
     private final UnitOfWork
             unitOfWork;
 
+    private final LedgerRepository ledgerRepository;
+
+    private final OutboxRepository outboxRepository;
+
 
     public PurchaseApplicationService(
             CreditAccountRepository creditAccountRepository,
             FinancialTransactionRepository transactionRepository,
+            LedgerRepository ledgerRepository,
+            OutboxRepository outboxRepository,
             UnitOfWork unitOfWork
     ) {
 
@@ -34,6 +42,12 @@ public final class PurchaseApplicationService {
 
         this.transactionRepository =
                 transactionRepository;
+
+        this.ledgerRepository =
+                ledgerRepository;
+
+        this.outboxRepository =
+                outboxRepository;
 
         this.unitOfWork =
                 unitOfWork;
@@ -149,6 +163,67 @@ public final class PurchaseApplicationService {
                 transaction
         );
 
+        var ledgerTransaction =
+                LedgerTransaction.create(
+
+                        transaction.getId(),
+
+                        java.util.List.of(
+
+                                new LedgerEntry(
+                                        command.sourceAccountId(),
+                                        LedgerEntryType.DEBIT,
+                                        command.amount()
+                                ),
+
+                                new LedgerEntry(
+                                        command.destinationAccountId(),
+                                        LedgerEntryType.CREDIT,
+                                        command.amount()
+                                )
+
+                        )
+                );
+
+
+        ledgerRepository.append(
+                ledgerTransaction
+        );
+
+
+        String payload =
+                """
+                {
+                  "transactionId":"%s",
+                  "status":"COMPLETED",
+                  "amountUnits":%d
+                }
+                """.formatted(
+
+                        transaction
+                                .getId()
+                                .value(),
+
+                        command
+                                .amount()
+                                .units()
+
+                );
+
+
+        outboxRepository.append(
+
+                new OutboxMessage(
+
+                        "PURCHASE_COMPLETED",
+
+                        transaction.getId(),
+
+                        payload
+
+                )
+
+        );
 
         return new PurchaseResult(
                 transaction.getId(),

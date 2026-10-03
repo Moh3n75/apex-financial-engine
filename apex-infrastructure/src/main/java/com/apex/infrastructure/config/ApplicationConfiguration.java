@@ -1,8 +1,6 @@
 package com.apex.infrastructure.config;
 
-import com.apex.credit.application.port.out.CreditAccountRepository;
-import com.apex.credit.application.port.out.FinancialTransactionRepository;
-import com.apex.credit.application.port.out.UnitOfWork;
+import com.apex.credit.application.port.out.*;
 import com.apex.credit.application.purchase.PurchaseApplicationService;
 
 import org.springframework.context.annotation.Bean;
@@ -21,6 +19,10 @@ public class ApplicationConfiguration {
 
             FinancialTransactionRepository transactionRepository,
 
+            LedgerRepository ledgerRepository,
+
+            OutboxRepository outboxRepository,
+
             UnitOfWork unitOfWork
 
     ) {
@@ -30,6 +32,10 @@ public class ApplicationConfiguration {
                 creditAccountRepository,
 
                 transactionRepository,
+
+                ledgerRepository,
+
+                outboxRepository,
 
                 unitOfWork
 
