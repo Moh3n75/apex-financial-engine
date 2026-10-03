@@ -128,6 +128,30 @@ public final class CreditAccount {
         );
     }
 
+    public void debit(
+            CreditAmount amount,
+            String referenceId
+    ) {
+
+        requirePositive(amount);
+
+        if (!available.greaterOrEqual(amount)) {
+            throw new InsufficientCreditException(
+                    "Not enough available credit"
+            );
+        }
+
+        raise(
+                new CreditDebitedEvent(
+                        UUID.randomUUID(),
+                        id,
+                        amount,
+                        referenceId,
+                        version + 1
+                )
+        );
+    }
+
 
     private void requirePositive(
             CreditAmount amount
@@ -167,6 +191,7 @@ public final class CreditAccount {
 
             case CreditBlockedEvent e ->
                     on(e);
+            case CreditDebitedEvent e -> on(e);
         }
     }
 
@@ -227,6 +252,16 @@ public final class CreditAccount {
                 event.version();
     }
 
+    private void on(
+            CreditDebitedEvent event
+    ) {
+
+        available =
+                available.subtract(event.amount());
+
+        version =
+                event.version();
+    }
 
     public List<CreditAccountEvent>
     uncommittedEvents() {

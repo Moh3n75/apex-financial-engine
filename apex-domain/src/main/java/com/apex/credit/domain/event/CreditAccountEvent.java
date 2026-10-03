@@ -6,7 +6,8 @@ public sealed interface CreditAccountEvent
         extends DomainEvent
         permits CreditAccountCreatedEvent,
         CreditAddedEvent,
-        CreditBlockedEvent {
+        CreditBlockedEvent,
+        CreditDebitedEvent{
 
     CreditAccountId aggregateId();
 }
