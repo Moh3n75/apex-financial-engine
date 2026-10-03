@@ -4,7 +4,7 @@ import com.apex.credit.application.port.out.CreditAccountRepository;
 import com.apex.credit.application.port.out.FinancialTransactionRepository;
 
 
-import com.apex.credit.domain.model.CreditAccount;
+import com.apex.credit.application.port.out.UnitOfWork;
 import com.apex.credit.domain.transaction.model.FinancialTransaction;
 import com.apex.credit.domain.transaction.valueobject.TransactionType;
 
@@ -19,10 +19,14 @@ public final class PurchaseApplicationService {
     private final FinancialTransactionRepository
             transactionRepository;
 
+    private final UnitOfWork
+            unitOfWork;
+
 
     public PurchaseApplicationService(
             CreditAccountRepository creditAccountRepository,
-            FinancialTransactionRepository transactionRepository
+            FinancialTransactionRepository transactionRepository,
+            UnitOfWork unitOfWork
     ) {
 
         this.creditAccountRepository =
@@ -30,6 +34,9 @@ public final class PurchaseApplicationService {
 
         this.transactionRepository =
                 transactionRepository;
+
+        this.unitOfWork =
+                unitOfWork;
     }
 
 
@@ -37,13 +44,21 @@ public final class PurchaseApplicationService {
             PurchaseCommand command
     ) {
 
-        /*
-         * 1 — Idempotency guard
-         */
+        return unitOfWork.execute(
+                () -> executeInsideTransaction(command)
+        );
+    }
+
+
+    private PurchaseResult executeInsideTransaction(
+            PurchaseCommand command
+    ) {
+
         var existing =
-                transactionRepository.findByReferenceId(
-                        command.referenceId()
-                );
+                transactionRepository
+                        .findByReferenceId(
+                                command.referenceId()
+                        );
 
         if (existing.isPresent()) {
 
@@ -57,52 +72,47 @@ public final class PurchaseApplicationService {
         }
 
 
-        /*
-         * 2 — Load accounts
-         */
-        CreditAccount source =
+        var source =
                 creditAccountRepository
                         .findById(
                                 command.sourceAccountId()
                         )
                         .orElseThrow(
-                                () ->
-                                        new IllegalStateException(
-                                                "Source credit account not found"
-                                        )
+                                () -> new IllegalStateException(
+                                        "Source credit account not found"
+                                )
                         );
 
 
-        CreditAccount destination =
+        var destination =
                 creditAccountRepository
                         .findById(
                                 command.destinationAccountId()
                         )
                         .orElseThrow(
-                                () ->
-                                        new IllegalStateException(
-                                                "Destination credit account not found"
-                                        )
+                                () -> new IllegalStateException(
+                                        "Destination credit account not found"
+                                )
                         );
 
 
-        /*
-         * 3 — Create financial transaction
-         */
-        FinancialTransaction transaction =
+        var transaction =
                 FinancialTransaction.create(
-                        PURCHASE,
+
+                        new TransactionType(
+                                "PURCHASE"
+                        ),
+
                         command.amount(),
+
                         command.referenceId()
+
                 );
 
 
         transaction.start();
 
 
-        /*
-         * Internal correlation reference.
-         */
         String transactionReference =
                 transaction
                         .getId()
@@ -110,43 +120,30 @@ public final class PurchaseApplicationService {
                         .toString();
 
 
-        /*
-         * 4 — Debit source
-         */
         source.debit(
                 command.amount(),
                 transactionReference
         );
 
 
-        /*
-         * 5 — Credit destination
-         */
         destination.addCredit(
                 command.amount(),
                 transactionReference
         );
 
 
-        /*
-         * 6 — Complete workflow
-         */
         transaction.complete();
 
 
-        /*
-         * 7 — Persistence ports
-         *
-         * مرحله بعد همه اینها داخل یک DB transaction
-         * انجام خواهند شد.
-         */
         creditAccountRepository.save(
                 source
         );
 
+
         creditAccountRepository.save(
                 destination
         );
+
 
         transactionRepository.save(
                 transaction
