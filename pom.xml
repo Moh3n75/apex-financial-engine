@@ -26,6 +26,7 @@
         <module>apex-bootstrap</module>
         <module>apex-platform-core</module>
         <module>apex-platform-events</module>
+        <module>apex-platform-kafka</module>
     </modules>
 
     <properties>

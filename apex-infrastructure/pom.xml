@@ -29,6 +29,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apex-platform-kafka</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <!-- Spring JDBC -->
         <dependency>
