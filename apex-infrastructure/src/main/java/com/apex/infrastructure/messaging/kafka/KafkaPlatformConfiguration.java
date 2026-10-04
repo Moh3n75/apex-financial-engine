@@ -1,8 +1,8 @@
 package com.apex.infrastructure.messaging.kafka;
 
-import com.apex.platform.kafka.KafkaMessagePublisher;
-import com.apex.platform.kafka.SpringKafkaMessagePublisher;
 
+import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
+import com.apex.platform.messaging.kafka.SpringKafkaMessagePublisher;
 import org.apache.kafka.clients.admin.NewTopic;
 
 import org.springframework.context.annotation.Bean;

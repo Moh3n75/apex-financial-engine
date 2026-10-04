@@ -1,4 +1,4 @@
-package com.apex.platform.kafka;
+package com.apex.platform.messaging.kafka;
 
 import java.util.concurrent.CompletionStage;
 

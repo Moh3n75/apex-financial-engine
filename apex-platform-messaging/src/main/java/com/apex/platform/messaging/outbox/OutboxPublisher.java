@@ -1,4 +1,4 @@
-package com.apex.platform.outbox;
+package com.apex.platform.messaging.outbox;
 
 public interface OutboxPublisher {
 

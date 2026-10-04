@@ -31,13 +31,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>apex-platform-kafka</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>apex-platform-outbox</artifactId>
+            <artifactId>apex-platform-messaging</artifactId>
             <version>${project.version}</version>
         </dependency>
 
