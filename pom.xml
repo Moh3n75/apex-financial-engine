@@ -27,6 +27,7 @@
         <module>apex-platform-core</module>
         <module>apex-platform-events</module>
         <module>apex-platform-kafka</module>
+        <module>apex-platform-outbox</module>
     </modules>
 
     <properties>
