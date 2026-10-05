@@ -1,6 +1,9 @@
 package com.apex.platform.messaging.outbox;
 
+
+import java.time.Instant;
 import java.util.UUID;
+
 
 public record OutboxRecord(
 
@@ -14,10 +17,23 @@ public record OutboxRecord(
 
         UUID correlationId,
 
+        UUID causationId,
+
         String aggregateId,
+
+        String aggregateType,
+
+        String sourceService,
+
+        String cellId,
+
+        Instant occurredAt,
 
         String payload,
 
-        int retryCount
+        int retryCount,
 
-) {}
+        Instant nextRetryAt
+
+) {
+}

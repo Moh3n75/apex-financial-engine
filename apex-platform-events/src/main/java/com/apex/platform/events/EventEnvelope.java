@@ -1,6 +1,6 @@
 package com.apex.platform.events;
 
-public record EventEnvelope<T extends IntegrationEvent>(
+public record EventEnvelope<T>(
         EventMetadata metadata,
         T payload
 ) {

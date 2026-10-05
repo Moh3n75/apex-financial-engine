@@ -1,5 +1,6 @@
 package com.apex.platform.messaging.outbox;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface OutboxStore {
@@ -17,7 +18,8 @@ public interface OutboxStore {
 
     void markFailed(
             Long id,
-            String error
+            String error,
+            Instant nextRetryAt
     );
 
 }
