@@ -13,7 +13,7 @@ spring:
     locations: classpath:db/migration
 
   kafka:
-    bootstrap-servers: localhost:29392
+    bootstrap-servers: localhost:29092
 
     producer:
       key-serializer:
@@ -22,11 +22,19 @@ spring:
       value-serializer:
         org.apache.kafka.common.serialization.StringSerializer
 
+
       acks: all
 
       properties:
         enable.idempotence: true
         max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        compression.type: zstd
+        batch.size: 65536
+        linger.ms: 10
+        retries: 2147483647
+
 
 
 logging:

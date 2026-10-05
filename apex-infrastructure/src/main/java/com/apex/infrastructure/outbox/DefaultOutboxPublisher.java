@@ -1,6 +1,7 @@
 package com.apex.infrastructure.outbox;
 
 
+import com.apex.infrastructure.messaging.kafka.KafkaPlatformConfiguration;
 import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
 import com.apex.platform.messaging.outbox.OutboxEventMapper;
 import com.apex.platform.messaging.outbox.OutboxPublisher;
@@ -20,8 +21,7 @@ public class DefaultOutboxPublisher
         implements OutboxPublisher {
 
 
-    private static final String TOPIC =
-            "apex.financial.events.v1";
+    private final String TOPIC;
 
 
     private final OutboxStore outboxStore;
@@ -59,6 +59,8 @@ public class DefaultOutboxPublisher
 
         this.retryPolicy = retryPolicy;
 
+        TOPIC = KafkaPlatformConfiguration.FINANCIAL_EVENTS_TOPIC;
+
     }
 
 
@@ -90,8 +92,9 @@ public class DefaultOutboxPublisher
 
                                 TOPIC,
 
-                                event.eventId()
-                                        .toString(),
+                                event.aggregateType()
+                                        + ":"
+                                        + event.aggregateId(),
 
                                 message
 
