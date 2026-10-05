@@ -34,6 +34,8 @@ public class DefaultOutboxPublisher
 
     private final RetryPolicy retryPolicy;
 
+    private final OutboxMetrics outboxMetrics;
+
 
     public DefaultOutboxPublisher(
 
@@ -45,7 +47,9 @@ public class DefaultOutboxPublisher
 
             OutboxEventMapper outboxEventMapper,
 
-            RetryPolicy retryPolicy
+            RetryPolicy retryPolicy,
+
+            OutboxMetrics outboxMetrics
 
     ) {
 
@@ -58,6 +62,8 @@ public class DefaultOutboxPublisher
         this.outboxEventMapper = outboxEventMapper;
 
         this.retryPolicy = retryPolicy;
+
+        this.outboxMetrics = outboxMetrics;
 
         TOPIC = KafkaPlatformConfiguration.FINANCIAL_EVENTS_TOPIC;
 
@@ -108,6 +114,8 @@ public class DefaultOutboxPublisher
                 );
 
 
+                outboxMetrics.incrementPublished();
+
             } catch (Exception exception) {
 
 
@@ -125,12 +133,16 @@ public class DefaultOutboxPublisher
                             )
                     );
 
+                    outboxMetrics.incrementFailed();
+
                 } else {
 
                     outboxStore.moveToDeadLetter(
                             event.id(),
                             exception.getMessage()
                     );
+
+                    outboxMetrics.incrementDeadLetter();
 
                 }
 

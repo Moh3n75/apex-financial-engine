@@ -36,6 +36,15 @@ spring:
         retries: 2147483647
 
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - metrics
+          - prometheus
+
 
 logging:
   level:
