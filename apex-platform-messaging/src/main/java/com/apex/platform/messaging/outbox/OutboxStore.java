@@ -22,4 +22,9 @@ public interface OutboxStore {
             Instant nextRetryAt
     );
 
+    void moveToDeadLetter(
+            Long id,
+            String error
+    );
+
 }

@@ -48,6 +48,10 @@ public class JooqOutboxStore implements OutboxStore {
                 )
 
                 .and(
+                        OUTBOX_EVENT.DEAD_LETTER.eq(false)
+                )
+
+                .and(
                         OUTBOX_EVENT.NEXT_RETRY_AT.isNull()
                                 .or(
                                         OUTBOX_EVENT.NEXT_RETRY_AT.lessOrEqual(
@@ -173,6 +177,40 @@ public class JooqOutboxStore implements OutboxStore {
                         )
                                 : null
                 )
+                .where(
+                        OUTBOX_EVENT.ID.eq(id)
+                )
+
+                .execute();
+
+    }
+
+    @Override
+    public void moveToDeadLetter(
+            Long id,
+            String error
+    ) {
+
+
+        dsl.update(
+                        OUTBOX_EVENT
+                )
+
+                .set(
+                        OUTBOX_EVENT.DEAD_LETTER,
+                        true
+                )
+
+                .set(
+                        OUTBOX_EVENT.DEAD_LETTER_AT,
+                        OffsetDateTime.now(clock)
+                )
+
+                .set(
+                        OUTBOX_EVENT.LAST_ERROR,
+                        error
+                )
+
                 .where(
                         OUTBOX_EVENT.ID.eq(id)
                 )

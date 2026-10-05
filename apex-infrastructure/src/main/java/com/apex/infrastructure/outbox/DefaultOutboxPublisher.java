@@ -35,7 +35,6 @@ public class DefaultOutboxPublisher
     private final RetryPolicy retryPolicy;
 
 
-
     public DefaultOutboxPublisher(
 
             OutboxStore outboxStore,
@@ -63,14 +62,12 @@ public class DefaultOutboxPublisher
     }
 
 
-
     @Override
     public void publishBatch() {
 
 
         var events =
                 outboxStore.findBatch(100);
-
 
 
         for (OutboxRecord event : events) {
@@ -83,12 +80,10 @@ public class DefaultOutboxPublisher
                         outboxEventMapper.map(event);
 
 
-
                 String message =
                         jsonMapper.writeValueAsString(
                                 envelope
                         );
-
 
 
                 kafkaPublisher.publish(
@@ -105,36 +100,39 @@ public class DefaultOutboxPublisher
                         .join();
 
 
-
                 outboxStore.markPublished(
                         event.id()
                 );
 
 
-            }
-
-            catch (Exception exception) {
+            } catch (Exception exception) {
 
 
-
-                Instant nextRetryAt =
-                        retryPolicy.nextRetryTime(
+                if (
+                        retryPolicy.canRetry(
                                 event.retryCount()
-                        );
+                        )
+                ) {
 
+                    outboxStore.markFailed(
+                            event.id(),
+                            exception.getMessage(),
+                            retryPolicy.nextRetryTime(
+                                    event.retryCount()
+                            )
+                    );
 
+                } else {
 
-                outboxStore.markFailed(
+                    outboxStore.moveToDeadLetter(
+                            event.id(),
+                            exception.getMessage()
+                    );
 
-                        event.id(),
-
-                        exception.getMessage(),
-
-                        nextRetryAt
-
-                );
+                }
 
             }
+
 
         }
 
