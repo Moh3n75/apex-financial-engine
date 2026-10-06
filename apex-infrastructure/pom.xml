@@ -153,7 +153,8 @@
                                 outbox_event|
                                 credit_reservation|
                                 credit_hold|
-                                processed_event
+                                processed_event|
+                                consumer_event_failure
                             </includes>
 
 

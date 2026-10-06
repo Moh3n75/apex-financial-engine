@@ -1,5 +1,6 @@
 package com.apex.infrastructure.config;
 
+import com.apex.infrastructure.messaging.consumer.ConsumerFailureRetryListener;
 import com.apex.platform.messaging.consumer.NonRetryableEventException;
 
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,8 @@ public class KafkaConsumerErrorConfiguration {
 
     @Bean
     public CommonErrorHandler kafkaCommonErrorHandler(
-            KafkaTemplate<String, String> kafkaTemplate
+            KafkaTemplate<String, String> kafkaTemplate,
+            ConsumerFailureRetryListener failureRetryListener
     ) {
 
         DeadLetterPublishingRecoverer recoverer =
@@ -25,14 +27,6 @@ public class KafkaConsumerErrorConfiguration {
                         kafkaTemplate
                 );
 
-        /*
-         * 2 retries after the original delivery:
-         *
-         * attempt 1
-         * + retry 1
-         * + retry 2
-         * = 3 total attempts
-         */
         FixedBackOff backOff =
                 new FixedBackOff(
                         1_000L,
@@ -45,21 +39,16 @@ public class KafkaConsumerErrorConfiguration {
                         backOff
                 );
 
-        /*
-         * Malformed / poison messages are not helped
-         * by repeating the exact same operation.
-         */
         errorHandler.addNotRetryableExceptions(
                 NonRetryableEventException.class
         );
 
-        /*
-         * We use MANUAL_IMMEDIATE.
-         * After successful DLT recovery, commit the
-         * original record's offset.
-         */
         errorHandler.setCommitRecovered(
                 true
+        );
+
+        errorHandler.setRetryListeners(
+                failureRetryListener
         );
 
         return errorHandler;
