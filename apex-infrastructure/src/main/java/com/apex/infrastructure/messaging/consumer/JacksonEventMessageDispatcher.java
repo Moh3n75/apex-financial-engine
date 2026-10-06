@@ -38,10 +38,22 @@ public final class JacksonEventMessageDispatcher
 
         try {
 
-            JsonNode root =
-                    jsonMapper.readTree(
-                            serializedEnvelope
-                    );
+            JsonNode root;
+
+            try {
+
+                root =
+                        jsonMapper.readTree(
+                                serializedEnvelope
+                        );
+
+            } catch (Exception exception) {
+
+                throw new MalformedEventException(
+                        "Invalid integration event JSON",
+                        exception
+                );
+            }
 
             JsonNode metadataNode =
                     root.get("metadata");
@@ -51,23 +63,35 @@ public final class JacksonEventMessageDispatcher
 
             if (metadataNode == null) {
 
-                throw new IllegalArgumentException(
+                throw new MalformedEventException(
                         "Event metadata is missing"
                 );
             }
 
             if (payloadNode == null) {
 
-                throw new IllegalArgumentException(
+                throw new MalformedEventException(
                         "Event payload is missing"
                 );
             }
 
-            EventMetadata metadata =
-                    jsonMapper.treeToValue(
-                            metadataNode,
-                            EventMetadata.class
-                    );
+            EventMetadata metadata;
+
+            try {
+
+                metadata =
+                        jsonMapper.treeToValue(
+                                metadataNode,
+                                EventMetadata.class
+                        );
+
+            } catch (Exception exception) {
+
+                throw new MalformedEventException(
+                        "Invalid event metadata",
+                        exception
+                );
+            }
 
             EventHandler<?> handler =
                     handlerRegistry
@@ -109,11 +133,26 @@ public final class JacksonEventMessageDispatcher
         EventHandler<T> handler =
                 (EventHandler<T>) rawHandler;
 
-        T payload =
-                jsonMapper.treeToValue(
-                        payloadNode,
-                        handler.payloadType()
-                );
+        T payload;
+
+        try {
+
+            payload =
+                    jsonMapper.treeToValue(
+                            payloadNode,
+                            handler.payloadType()
+                    );
+
+        } catch (Exception exception) {
+
+            throw new MalformedEventException(
+                    "Invalid event payload for "
+                            + metadata.eventType()
+                            + " version "
+                            + metadata.eventVersion(),
+                    exception
+            );
+        }
 
         EventEnvelope<T> envelope =
                 new EventEnvelope<>(

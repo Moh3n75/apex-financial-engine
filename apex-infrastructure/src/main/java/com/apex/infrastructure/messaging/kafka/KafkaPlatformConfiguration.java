@@ -16,6 +16,9 @@ public class KafkaPlatformConfiguration {
     public static final String FINANCIAL_EVENTS_TOPIC =
             "apex.financial.events.v1";
 
+    public static final String FINANCIAL_EVENTS_DLT_TOPIC =
+            FINANCIAL_EVENTS_TOPIC + "-dlt";
+
     @Bean
     public KafkaMessagePublisher kafkaMessagePublisher(
             KafkaTemplate<String, String> kafkaTemplate
@@ -29,6 +32,18 @@ public class KafkaPlatformConfiguration {
     public NewTopic financialEventsTopic() {
         return TopicBuilder
                 .name(FINANCIAL_EVENTS_TOPIC)
+                .partitions(6)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic financialEventsDltTopic() {
+
+        return TopicBuilder
+                .name(
+                        FINANCIAL_EVENTS_DLT_TOPIC
+                )
                 .partitions(6)
                 .replicas(1)
                 .build();
