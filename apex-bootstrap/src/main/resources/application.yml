@@ -15,6 +15,20 @@ spring:
   kafka:
     bootstrap-servers: localhost:29092
 
+    listener:
+      ack-mode: manual_immediate
+
+    consumer:
+      group-id: apex-financial-engine-v2
+      enable-auto-commit: false
+      auto-offset-reset: latest
+
+      key-deserializer:
+        org.apache.kafka.common.serialization.StringDeserializer
+
+      value-deserializer:
+          org.apache.kafka.common.serialization.StringDeserializer
+
     producer:
       key-serializer:
         org.apache.kafka.common.serialization.StringSerializer
@@ -35,6 +49,15 @@ spring:
         linger.ms: 10
         retries: 2147483647
 
+
+
+apex:
+  messaging:
+    topics:
+      financial-events: apex.financial.events.v1
+
+    consumer:
+      concurrency: 3
 
 management:
   endpoints:

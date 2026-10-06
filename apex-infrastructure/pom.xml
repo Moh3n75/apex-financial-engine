@@ -152,7 +152,8 @@
                                 ledger_entry|
                                 outbox_event|
                                 credit_reservation|
-                                credit_hold
+                                credit_hold|
+                                processed_event
                             </includes>
 
 
