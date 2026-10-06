@@ -15,9 +15,12 @@ public class TransactionalEventHandlerExecutor
 
     private final ConsumerFailureRecoveryStore failureRecoveryStore;
 
+    private final ConsumerHandlerMetrics handlerMetrics;
+
     public TransactionalEventHandlerExecutor(
             ProcessedEventStore processedEventStore,
-            ConsumerFailureRecoveryStore failureRecoveryStore
+            ConsumerFailureRecoveryStore failureRecoveryStore,
+            ConsumerHandlerMetrics handlerMetrics
     ) {
 
         this.processedEventStore =
@@ -25,6 +28,8 @@ public class TransactionalEventHandlerExecutor
 
         this.failureRecoveryStore =
                 failureRecoveryStore;
+
+        this.handlerMetrics = handlerMetrics;
     }
 
     @Override
@@ -42,20 +47,24 @@ public class TransactionalEventHandlerExecutor
                 );
 
         if (!firstProcessing) {
-
             return DispatchResult.DUPLICATE;
         }
 
-        handler.handle(
-                event,
-                context
-        );
+        return handlerMetrics.record(
+                () -> {
 
-        failureRecoveryStore.markRecovered(
-                event.metadata().eventId(),
-                context.consumerGroup()
-        );
+                    handler.handle(
+                            event,
+                            context
+                    );
 
-        return DispatchResult.HANDLED;
+                    failureRecoveryStore.markRecovered(
+                            event.metadata().eventId(),
+                            context.consumerGroup()
+                    );
+
+                    return DispatchResult.HANDLED;
+                }
+        );
     }
 }
