@@ -144,6 +144,20 @@ public class ConsumerFailureAuditService {
                         now
                 )
 
+                .set(
+                        CONSUMER_EVENT_FAILURE.MESSAGE_KEY,
+                        record.key() != null
+                                ? record.key().toString()
+                                : null
+                )
+
+                .set(
+                        CONSUMER_EVENT_FAILURE.ORIGINAL_PAYLOAD,
+                        record.value() != null
+                                ? record.value().toString()
+                                : null
+                )
+
                 .onConflict(
                         CONSUMER_EVENT_FAILURE.CONSUMER_GROUP,
                         CONSUMER_EVENT_FAILURE.TOPIC,
@@ -176,6 +190,20 @@ public class ConsumerFailureAuditService {
                 .set(
                         CONSUMER_EVENT_FAILURE.LAST_FAILED_AT,
                         now
+                )
+
+                .set(
+                        CONSUMER_EVENT_FAILURE.MESSAGE_KEY,
+                        record.key() != null
+                                ? record.key().toString()
+                                : null
+                )
+
+                .set(
+                        CONSUMER_EVENT_FAILURE.ORIGINAL_PAYLOAD,
+                        record.value() != null
+                                ? record.value().toString()
+                                : null
                 )
 
                 .execute();

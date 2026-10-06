@@ -39,9 +39,7 @@ public class PurchaseCompletedProbeHandler
             ConsumerContext context
     ) {
 
-        if (true){
-            throw new  RuntimeException("Not implemented yet");
-        }
+
 
         log.info(
                 "PurchaseCompleted consumed eventId={} transactionId={}",

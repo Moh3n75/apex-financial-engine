@@ -2,11 +2,7 @@ package com.apex.infrastructure.messaging.consumer;
 
 import com.apex.platform.events.EventEnvelope;
 
-import com.apex.platform.messaging.consumer.ConsumerContext;
-import com.apex.platform.messaging.consumer.DispatchResult;
-import com.apex.platform.messaging.consumer.EventHandler;
-import com.apex.platform.messaging.consumer.EventHandlerExecutor;
-import com.apex.platform.messaging.consumer.ProcessedEventStore;
+import com.apex.platform.messaging.consumer.*;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +13,18 @@ public class TransactionalEventHandlerExecutor
 
     private final ProcessedEventStore processedEventStore;
 
+    private final ConsumerFailureRecoveryStore failureRecoveryStore;
+
     public TransactionalEventHandlerExecutor(
-            ProcessedEventStore processedEventStore
+            ProcessedEventStore processedEventStore,
+            ConsumerFailureRecoveryStore failureRecoveryStore
     ) {
 
         this.processedEventStore =
                 processedEventStore;
+
+        this.failureRecoveryStore =
+                failureRecoveryStore;
     }
 
     @Override
@@ -47,6 +49,11 @@ public class TransactionalEventHandlerExecutor
         handler.handle(
                 event,
                 context
+        );
+
+        failureRecoveryStore.markRecovered(
+                event.metadata().eventId(),
+                context.consumerGroup()
         );
 
         return DispatchResult.HANDLED;
