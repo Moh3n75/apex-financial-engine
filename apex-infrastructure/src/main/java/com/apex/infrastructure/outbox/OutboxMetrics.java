@@ -11,41 +11,72 @@ import org.springframework.stereotype.Component;
 public class OutboxMetrics {
 
 
-    private final Counter publishedCounter;
+    private final Counter claimSuccess;
 
-    private final Counter failedCounter;
+    private final Counter claimEmpty;
 
-    private final Counter deadLetterCounter;
+    private final Counter publishSuccess;
 
+    private final Counter publishFailed;
+
+    private final Counter retryCount;
+
+    private final Counter deadLetterCount;
 
 
     public OutboxMetrics(
             MeterRegistry registry
-    ) {
+    ){
 
-
-        this.publishedCounter =
-                Counter.builder("apex.outbox.published")
+        claimSuccess =
+                Counter.builder(
+                                "outbox.claim.success"
+                        )
                         .description(
-                                "Number of successfully published outbox events"
+                                "Number of successfully claimed events"
                         )
                         .register(registry);
 
 
 
-        this.failedCounter =
-                Counter.builder("apex.outbox.failed")
+        claimEmpty =
+                Counter.builder(
+                                "outbox.claim.empty"
+                        )
                         .description(
-                                "Number of failed outbox publish attempts"
+                                "Number of empty claim attempts"
                         )
                         .register(registry);
 
 
 
-        this.deadLetterCounter =
-                Counter.builder("apex.outbox.deadletter")
-                        .description(
-                                "Number of events moved to dead letter"
+        publishSuccess =
+                Counter.builder(
+                                "outbox.publish.success"
+                        )
+                        .register(registry);
+
+
+
+        publishFailed =
+                Counter.builder(
+                                "outbox.publish.failed"
+                        )
+                        .register(registry);
+
+
+
+        retryCount =
+                Counter.builder(
+                                "outbox.retry.count"
+                        )
+                        .register(registry);
+
+
+
+        deadLetterCount =
+                Counter.builder(
+                                "outbox.deadletter.count"
                         )
                         .register(registry);
 
@@ -53,26 +84,33 @@ public class OutboxMetrics {
 
 
 
-    public void incrementPublished(){
-
-        publishedCounter.increment();
-
+    public void claimSuccess(){
+        claimSuccess.increment();
     }
 
 
-
-    public void incrementFailed(){
-
-        failedCounter.increment();
-
+    public void claimEmpty(){
+        claimEmpty.increment();
     }
 
 
+    public void publishSuccess(){
+        publishSuccess.increment();
+    }
 
-    public void incrementDeadLetter(){
 
-        deadLetterCounter.increment();
+    public void publishFailed(){
+        publishFailed.increment();
+    }
 
+
+    public void retry(){
+        retryCount.increment();
+    }
+
+
+    public void deadLetter(){
+        deadLetterCount.increment();
     }
 
 }

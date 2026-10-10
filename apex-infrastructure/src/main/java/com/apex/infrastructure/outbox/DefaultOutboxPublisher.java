@@ -92,6 +92,15 @@ public class DefaultOutboxPublisher
                         leaseDuration
                 );
 
+        if(events.isEmpty()){
+
+            outboxMetrics.claimEmpty();
+
+            return;
+
+        }
+
+        outboxMetrics.claimSuccess();
 
         for (OutboxRecord event : events) {
 
@@ -130,7 +139,7 @@ public class DefaultOutboxPublisher
                 );
 
 
-                outboxMetrics.incrementPublished();
+                outboxMetrics.publishSuccess();
 
             } catch (Exception exception) {
 
@@ -150,7 +159,8 @@ public class DefaultOutboxPublisher
                             )
                     );
 
-                    outboxMetrics.incrementFailed();
+                    outboxMetrics.publishFailed();
+                    outboxMetrics.retry();
 
                 } else {
 
@@ -160,7 +170,7 @@ public class DefaultOutboxPublisher
                             exception.getMessage()
                     );
 
-                    outboxMetrics.incrementDeadLetter();
+                    outboxMetrics.deadLetter();
 
                 }
 
