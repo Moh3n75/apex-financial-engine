@@ -13,7 +13,7 @@ spring:
     locations: classpath:db/migration
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: 10.10.1.57:29092
 
     listener:
       ack-mode: manual_immediate

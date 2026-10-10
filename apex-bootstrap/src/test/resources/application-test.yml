@@ -6,7 +6,7 @@ spring:
     password: 123456789
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 10.10.1.57:9092
 
 
 flyway:
