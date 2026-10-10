@@ -33,7 +33,14 @@ public record OutboxRecord(
 
         int retryCount,
 
-        Instant nextRetryAt
+        Instant nextRetryAt,
+
+        UUID claimToken,
+
+        Instant claimedUntil,
+
+        String publisherInstanceId
+
 
 ) {
 }

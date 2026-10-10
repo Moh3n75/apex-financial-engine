@@ -9,10 +9,12 @@ import com.apex.platform.messaging.outbox.OutboxRecord;
 import com.apex.platform.messaging.outbox.OutboxStore;
 import com.apex.platform.messaging.outbox.RetryPolicy;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.Duration;
 import java.time.Instant;
 
 
@@ -22,7 +24,6 @@ public class DefaultOutboxPublisher
 
 
     private final String TOPIC;
-
 
     private final OutboxStore outboxStore;
 
@@ -35,6 +36,11 @@ public class DefaultOutboxPublisher
     private final RetryPolicy retryPolicy;
 
     private final OutboxMetrics outboxMetrics;
+
+    private final String publisherInstanceId;
+
+    private final Duration leaseDuration =
+            Duration.ofMinutes(5);
 
 
     public DefaultOutboxPublisher(
@@ -49,7 +55,10 @@ public class DefaultOutboxPublisher
 
             RetryPolicy retryPolicy,
 
-            OutboxMetrics outboxMetrics
+            OutboxMetrics outboxMetrics,
+
+            @Qualifier("outboxPublisherInstanceId")
+            String publisherInstanceId
 
     ) {
 
@@ -65,6 +74,8 @@ public class DefaultOutboxPublisher
 
         this.outboxMetrics = outboxMetrics;
 
+        this.publisherInstanceId = publisherInstanceId;
+
         TOPIC = KafkaPlatformConfiguration.FINANCIAL_EVENTS_TOPIC;
 
     }
@@ -75,7 +86,11 @@ public class DefaultOutboxPublisher
 
 
         var events =
-                outboxStore.findBatch(100);
+                outboxStore.claimBatch(
+                        100,
+                        publisherInstanceId,
+                        leaseDuration
+                );
 
 
         for (OutboxRecord event : events) {
@@ -110,7 +125,8 @@ public class DefaultOutboxPublisher
 
 
                 outboxStore.markPublished(
-                        event.id()
+                        event.id(),
+                        event.claimToken()
                 );
 
 
@@ -127,6 +143,7 @@ public class DefaultOutboxPublisher
 
                     outboxStore.markFailed(
                             event.id(),
+                            event.claimToken(),
                             exception.getMessage(),
                             retryPolicy.nextRetryTime(
                                     event.retryCount()
@@ -139,6 +156,7 @@ public class DefaultOutboxPublisher
 
                     outboxStore.moveToDeadLetter(
                             event.id(),
+                            event.claimToken(),
                             exception.getMessage()
                     );
 
