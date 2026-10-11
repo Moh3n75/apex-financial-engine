@@ -23,6 +23,18 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apex-platform-events</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>apex-platform-messaging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <!-- Spring JDBC -->
         <dependency>
@@ -56,6 +68,11 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
     </dependencies>
@@ -135,7 +152,9 @@
                                 ledger_entry|
                                 outbox_event|
                                 credit_reservation|
-                                credit_hold
+                                credit_hold|
+                                processed_event|
+                                consumer_event_failure
                             </includes>
 
 

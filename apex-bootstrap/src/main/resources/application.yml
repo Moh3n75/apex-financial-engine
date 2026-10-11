@@ -12,6 +12,63 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  kafka:
+    bootstrap-servers: localhost:29092
+
+    listener:
+      ack-mode: manual_immediate
+
+    consumer:
+      group-id: apex-financial-engine-v2
+      enable-auto-commit: false
+      auto-offset-reset: latest
+
+      key-deserializer:
+        org.apache.kafka.common.serialization.StringDeserializer
+
+      value-deserializer:
+          org.apache.kafka.common.serialization.StringDeserializer
+
+    producer:
+      key-serializer:
+        org.apache.kafka.common.serialization.StringSerializer
+
+      value-serializer:
+        org.apache.kafka.common.serialization.StringSerializer
+
+
+      acks: all
+
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        compression.type: zstd
+        batch.size: 65536
+        linger.ms: 10
+        retries: 2147483647
+
+
+
+apex:
+  messaging:
+    topics:
+      financial-events: apex.financial.events.v1
+
+    consumer:
+      concurrency: 3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - metrics
+          - prometheus
+          - outbox
+
 
 logging:
   level:

@@ -1,15 +1,19 @@
 package com.apex.credit.application.purchase;
 
 import com.apex.credit.application.exception.DuplicateRequestException;
-import com.apex.credit.application.outbox.OutboxMessage;
 import com.apex.credit.application.port.out.*;
 
 
+import com.apex.credit.application.purchase.event.PurchaseCompletedIntegrationEvent;
+import com.apex.credit.application.purchase.event.PurchaseEvents;
 import com.apex.credit.domain.ledger.LedgerEntry;
 import com.apex.credit.domain.ledger.LedgerEntryType;
 import com.apex.credit.domain.ledger.LedgerTransaction;
 import com.apex.credit.domain.transaction.model.FinancialTransaction;
 import com.apex.credit.domain.transaction.valueobject.TransactionType;
+import com.apex.platform.core.context.ExecutionContext;
+import com.apex.platform.events.EventEnvelope;
+import com.apex.platform.events.EventEnvelopeFactory;
 
 public final class PurchaseApplicationService {
 
@@ -29,13 +33,16 @@ public final class PurchaseApplicationService {
 
     private final OutboxRepository outboxRepository;
 
+    private final EventEnvelopeFactory eventEnvelopeFactory;
+
 
     public PurchaseApplicationService(
             CreditAccountRepository creditAccountRepository,
             FinancialTransactionRepository transactionRepository,
             LedgerRepository ledgerRepository,
             OutboxRepository outboxRepository,
-            UnitOfWork unitOfWork
+            UnitOfWork unitOfWork,
+            EventEnvelopeFactory eventEnvelopeFactory
     ) {
 
         this.creditAccountRepository =
@@ -52,6 +59,9 @@ public final class PurchaseApplicationService {
 
         this.unitOfWork =
                 unitOfWork;
+
+        this.eventEnvelopeFactory =
+                eventEnvelopeFactory;
     }
 
 
@@ -84,6 +94,12 @@ public final class PurchaseApplicationService {
         }
 
 
+        ExecutionContext executionContext =
+                ExecutionContext.root(
+                        "apex-financial-engine",
+                        "local-cell-1"
+                );
+
         try {
 
             /*
@@ -93,7 +109,8 @@ public final class PurchaseApplicationService {
 
                     () ->
                             executeInsideTransaction(
-                                    command
+                                    command,
+                                    executionContext
                             )
             );
 
@@ -127,7 +144,8 @@ public final class PurchaseApplicationService {
 
 
     private PurchaseResult executeInsideTransaction(
-            PurchaseCommand command
+            PurchaseCommand command,
+            ExecutionContext executionContext
     ) {
 
         /*
@@ -303,47 +321,25 @@ public final class PurchaseApplicationService {
         /*
          * 10. Build integration event payload
          */
-        String payload =
-                """
-                {
-                  "transactionId":"%s",
-                  "referenceId":"%s",
-                  "status":"COMPLETED",
-                  "amountUnits":%d
-                }
-                """.formatted(
-
-                        transaction
-                                .getId()
-                                .value(),
-
-                        command.referenceId(),
-
-                        command
-                                .amount()
-                                .units()
+        PurchaseCompletedIntegrationEvent event =
+                new PurchaseCompletedIntegrationEvent(
+                        transaction.getId().value(),
+                        transaction.getReferenceId(),
+                        transaction.getStatus().name(),
+                        transaction.getRequestedAmount().units()
                 );
 
+        EventEnvelope<PurchaseCompletedIntegrationEvent> envelope =
+                eventEnvelopeFactory.create(
+                        PurchaseEvents.PURCHASE_COMPLETED,
+                        PurchaseEvents.PURCHASE_COMPLETED_VERSION,
+                        transaction.getId().value().toString(),
+                        "FINANCIAL_TRANSACTION",
+                        executionContext,
+                        event
+                );
 
-        /*
-         * 11. Transactional Outbox
-         *
-         * این Event هنوز Kafka Publish نشده.
-         * فقط در همان DB Transaction ذخیره می‌شود.
-         */
-        outboxRepository.append(
-
-                new OutboxMessage(
-
-                        "PURCHASE_COMPLETED",
-
-                        transaction.getId(),
-
-                        payload
-                )
-        );
-
-
+        outboxRepository.append(envelope);
         /*
          * 12. Return application result
          */
