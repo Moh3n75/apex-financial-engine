@@ -55,27 +55,6 @@ public class JooqOutboxRepository
             );
         }
 
-        Long aggregateDbId =
-                dsl.select(
-                                FINANCIAL_TRANSACTION.ID
-                        )
-                        .from(
-                                FINANCIAL_TRANSACTION
-                        )
-                        .where(
-                                FINANCIAL_TRANSACTION.PUBLIC_ID.eq(
-                                        aggregatePublicId
-                                )
-                        )
-                        .fetchOne(
-                                FINANCIAL_TRANSACTION.ID
-                        );
-
-        if (aggregateDbId == null) {
-            throw new IllegalStateException(
-                    "Financial transaction not found for outbox"
-            );
-        }
 
         String payloadJson;
 
@@ -123,7 +102,7 @@ public class JooqOutboxRepository
 
                 .set(
                         OUTBOX_EVENT.AGGREGATE_ID,
-                        aggregateDbId
+                        aggregatePublicId
                 )
 
                 .set(

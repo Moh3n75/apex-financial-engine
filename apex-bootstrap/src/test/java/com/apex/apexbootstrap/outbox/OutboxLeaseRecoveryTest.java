@@ -114,7 +114,7 @@ class OutboxLeaseRecoveryTest {
 
                     .set(
                             OUTBOX_EVENT.AGGREGATE_ID,
-                            100L + i
+                            UUID.randomUUID()
                     )
 
                     .set(

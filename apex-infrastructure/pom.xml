@@ -154,7 +154,9 @@
                                 credit_reservation|
                                 credit_hold|
                                 processed_event|
-                                consumer_event_failure
+                                consumer_event_failure|
+                                saga_instance|
+                                saga_step
                             </includes>
 
 
