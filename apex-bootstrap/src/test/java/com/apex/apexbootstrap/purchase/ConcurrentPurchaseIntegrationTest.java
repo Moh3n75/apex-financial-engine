@@ -382,12 +382,27 @@ class ConcurrentPurchaseIntegrationTest {
                 ledgerCount
         );
 
+        UUID transactionPublicId =
+                dsl.select(
+                                FINANCIAL_TRANSACTION.PUBLIC_ID
+                        )
+                        .from(
+                                FINANCIAL_TRANSACTION
+                        )
+                        .where(
+                                FINANCIAL_TRANSACTION.REFERENCE_ID.eq(
+                                        referenceId
+                                )
+                        )
+                        .fetchOne(
+                                FINANCIAL_TRANSACTION.PUBLIC_ID
+                        );
 
         int outboxCount =
                 dsl.fetchCount(
                         OUTBOX_EVENT,
                         OUTBOX_EVENT.AGGREGATE_ID.eq(
-                                transactionDbId
+                                transactionPublicId
                         )
                 );
 

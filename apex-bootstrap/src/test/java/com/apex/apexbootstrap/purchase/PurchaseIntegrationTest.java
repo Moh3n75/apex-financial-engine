@@ -423,6 +423,8 @@ class PurchaseIntegrationTest {
                 credit
         );
 
+        UUID transactionPublicId =
+                financialTransaction.getPublicId();
 
         var outboxEvent =
                 dsl.selectFrom(
@@ -431,7 +433,7 @@ class PurchaseIntegrationTest {
 
                         .where(
                                 OUTBOX_EVENT.AGGREGATE_ID.eq(
-                                        transactionDbId
+                                        transactionPublicId
                                 )
                         )
 

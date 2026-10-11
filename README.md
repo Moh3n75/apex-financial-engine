@@ -350,7 +350,7 @@ DB `TIMESTAMPTZ` maps to `OffsetDateTime`; platform/application prefers `Instant
 Broker:
 
 ```text
-10.10.1.57:29092
+localhost:29092
 ```
 
 Main topic:
@@ -374,7 +374,7 @@ Current config includes:
 ```yaml
 spring:
   kafka:
-    bootstrap-servers: 10.10.1.57:29092
+    bootstrap-servers: localhost:29092
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

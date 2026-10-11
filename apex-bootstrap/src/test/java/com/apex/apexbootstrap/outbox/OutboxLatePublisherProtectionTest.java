@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 import static com.apex.infrastructure.jooq.generated.Tables.OUTBOX_EVENT;
@@ -127,7 +128,7 @@ class OutboxLatePublisherProtectionTest{
 
                 .set(
                         OUTBOX_EVENT.AGGREGATE_ID,
-                        100L
+                        UUID.randomUUID()
                 )
 
                 .set(
