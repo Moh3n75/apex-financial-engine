@@ -67,6 +67,7 @@ management:
           - health
           - metrics
           - prometheus
+          - outbox
 
 
 logging:
