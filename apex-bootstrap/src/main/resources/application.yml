@@ -68,6 +68,7 @@ management:
           - metrics
           - prometheus
           - outbox
+          - saga
 
 
 logging:
