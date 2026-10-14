@@ -1,0 +1,6 @@
+{
+  "customer.error.notFound": "مشتری پیدا نشد",
+  "customer.error.duplicateReference": "شناسه مرجع مشتری تکراری است",
+  "customer.validation.externalReference.required": "شناسه مرجع مشتری الزامی است",
+  "customer.validation.displayName.required": "نام مشتری الزامی است"
+}
