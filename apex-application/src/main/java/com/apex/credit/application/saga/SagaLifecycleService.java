@@ -46,6 +46,10 @@ public class SagaLifecycleService {
 
                         Instant.now(clock),
 
+                        null,
+
+                        null,
+
                         null
                 );
 

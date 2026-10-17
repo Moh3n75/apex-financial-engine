@@ -156,7 +156,8 @@
                                 processed_event|
                                 consumer_event_failure|
                                 saga_instance|
-                                saga_step
+                                saga_step|
+                                saga_context
                             </includes>
 
 

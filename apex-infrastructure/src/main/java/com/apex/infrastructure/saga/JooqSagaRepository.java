@@ -14,6 +14,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -239,6 +240,202 @@ public class JooqSagaRepository
 
     }
 
+    @Override
+    public List<SagaInstance> findRecoverable() {
+        return dsl.selectFrom(SAGA_INSTANCE)
+                .where(
+                        SAGA_INSTANCE.STATUS.in(
+                                SagaStatus.STARTED.name(),
+                                SagaStatus.RUNNING.name(),
+                                SagaStatus.COMPENSATING.name()
+                        )
+                )
+                .fetch()
+                .map(this::map);
+    }
+
+    @Override
+    public List<SagaStep> findSteps(
+            UUID sagaId
+    ){
+
+        return dsl.selectFrom(SAGA_STEP)
+
+                .where(
+                        SAGA_STEP.SAGA_ID.eq(
+                                sagaId
+                        )
+                )
+
+                .orderBy(
+                        SAGA_STEP.STARTED_AT.asc()
+                )
+
+                .fetch()
+                .map(this::mapStep);
+
+    }
+
+    @Override
+    public Optional<SagaInstance> claim(
+            UUID sagaId,
+            String owner
+    ){
+
+        int updated =
+                dsl.update(SAGA_INSTANCE)
+
+                        .set(
+                                SAGA_INSTANCE.CLAIMED_BY,
+                                owner
+                        )
+
+                        .set(
+                                SAGA_INSTANCE.CLAIMED_AT,
+                                OffsetDateTime.now()
+                        )
+
+                        .where(
+                                SAGA_INSTANCE.ID.eq(sagaId)
+                        )
+
+                        .and(
+                                SAGA_INSTANCE.CLAIMED_BY.isNull()
+                        )
+
+                        .execute();
+
+
+
+        if(updated == 0){
+
+            return Optional.empty();
+
+        }
+
+
+        return findById(sagaId);
+
+    }
+
+    @Override
+    public int releaseExpiredClaims(
+            Instant expirationTime
+    ){
+
+        return dsl.update(
+                        SAGA_INSTANCE
+                )
+
+                .set(
+                        SAGA_INSTANCE.CLAIMED_BY,
+                        (String) null
+                )
+
+                .set(
+                        SAGA_INSTANCE.CLAIMED_AT,
+                        (OffsetDateTime) null
+                )
+
+                .where(
+                        SAGA_INSTANCE.CLAIMED_AT.lt(
+                                expirationTime
+                                        .atZone(clock.getZone())
+                                        .toOffsetDateTime()
+                        )
+                )
+
+                .execute();
+
+    }
+
+    @Override
+    public long countAll(){
+
+        return dsl
+                .selectCount()
+                .from(SAGA_INSTANCE)
+                .fetchOne(0, long.class);
+
+    }
+
+
+    @Override
+    public long countByStatus(
+            SagaStatus status
+    ){
+
+        return dsl
+                .selectCount()
+                .from(SAGA_INSTANCE)
+                .where(
+                        SAGA_INSTANCE.STATUS.eq(
+                                status.name()
+                        )
+                )
+                .fetchOne(0, long.class);
+
+    }
+
+    @Override
+    public long countTimedOut(
+            Instant threshold
+    ){
+
+        return dsl
+                .selectCount()
+                .from(SAGA_INSTANCE)
+
+                .where(
+                        SAGA_INSTANCE.STATUS.in(
+                                SagaStatus.STARTED.name(),
+                                SagaStatus.RUNNING.name()
+                        )
+                )
+
+                .and(
+                        SAGA_INSTANCE.STARTED_AT.lt(
+                                threshold.atZone(clock.getZone())
+                                        .toOffsetDateTime()
+                        )
+                )
+
+                .fetchOne(
+                        0,
+                        long.class
+                );
+
+    }
+
+    @Override
+    public List<SagaInstance> findTimedOut(
+            Instant threshold
+    ){
+
+        return dsl.selectFrom(
+                        SAGA_INSTANCE
+                )
+
+                .where(
+                        SAGA_INSTANCE.STATUS.in(
+                                SagaStatus.STARTED.name(),
+                                SagaStatus.RUNNING.name()
+                        )
+                )
+
+                .and(
+                        SAGA_INSTANCE.STARTED_AT.lt(
+                                threshold.atZone(clock.getZone())
+                                        .toOffsetDateTime()
+                        )
+                )
+
+                .fetch()
+
+                .map(this::map);
+
+    }
+
     private SagaStep mapStep(
             SagaStepRecord record
     ){
@@ -297,11 +494,14 @@ public class JooqSagaRepository
                         ?
                         record.getCompletedAt().toInstant()
                         :
-                        null
+                        null,
+
+                record.getClaimedBy(),
+
+                record.getClaimedAt().toInstant()
 
         );
 
     }
-
 
 }

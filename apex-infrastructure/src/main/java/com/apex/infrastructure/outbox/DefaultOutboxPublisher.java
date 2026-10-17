@@ -10,6 +10,7 @@ import com.apex.platform.messaging.outbox.OutboxStore;
 import com.apex.platform.messaging.outbox.RetryPolicy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import tools.jackson.databind.json.JsonMapper;
@@ -58,7 +59,12 @@ public class DefaultOutboxPublisher
             OutboxMetrics outboxMetrics,
 
             @Qualifier("outboxPublisherInstanceId")
-            String publisherInstanceId
+            String publisherInstanceId,
+
+            @Value("${apex.messaging.publisher.topic:"
+                    + KafkaPlatformConfiguration.FINANCIAL_EVENTS_TOPIC
+                    + "}")
+            String publisherTopic
 
     ) {
 
@@ -76,7 +82,7 @@ public class DefaultOutboxPublisher
 
         this.publisherInstanceId = publisherInstanceId;
 
-        TOPIC = KafkaPlatformConfiguration.FINANCIAL_EVENTS_TOPIC;
+        TOPIC = publisherTopic;
 
     }
 

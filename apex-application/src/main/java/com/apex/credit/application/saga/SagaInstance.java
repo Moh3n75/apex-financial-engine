@@ -16,6 +16,11 @@ public record SagaInstance(
 
         Instant startedAt,
 
-        Instant completedAt
+        Instant completedAt,
 
-) {}
+        String claimedBy,
+
+        Instant claimedAt
+
+) {
+}

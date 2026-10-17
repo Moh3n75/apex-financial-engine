@@ -1,0 +1,17 @@
+.git
+.idea
+.vscode
+*.iml
+.env
+.env.*
+src
+.mvn
+mvnw
+mvnw.cmd
+pom.xml
+README.md
+target/classes
+target/test-classes
+target/surefire-reports
+target/*.jar.original
+!target/reporting-cell.jar

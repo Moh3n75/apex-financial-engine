@@ -1,0 +1,6 @@
+{
+  "customer.error.notFound": "Customer not found",
+  "customer.error.duplicateReference": "Customer external reference already exists",
+  "customer.validation.externalReference.required": "Customer external reference is required",
+  "customer.validation.displayName.required": "Customer display name is required"
+}
