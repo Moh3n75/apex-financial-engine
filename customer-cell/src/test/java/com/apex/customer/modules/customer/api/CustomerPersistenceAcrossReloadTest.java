@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -35,6 +36,7 @@ import tools.jackson.databind.json.JsonMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ExtendWith(CustomerDatabaseExtension.class)
+@EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CustomerPersistenceAcrossReloadTest {
 
@@ -45,6 +47,11 @@ class CustomerPersistenceAcrossReloadTest {
     @DynamicPropertySource
     static void datasource(DynamicPropertyRegistry registry) {
         CustomerDatabaseExtension.registerDatasource(registry);
+        registry.add("apex.messaging.cell.enabled", () -> "true");
+        registry.add("apex.messaging.publisher.topic", () -> "apex.customer.events.v1");
+        registry.add("apex.messaging.outbox.publisher.enabled", () -> "false");
+        registry.add("apex.messaging.consumer.enabled", () -> "false");
+        registry.add("apex.cell.id", () -> "customer-cell-reload-test");
     }
 
     @Autowired

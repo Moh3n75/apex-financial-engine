@@ -9,7 +9,32 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration,classpath:db/platform
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+
+apex:
+  cell:
+    id: ${CELL_ID:customer-cell}
+
+  messaging:
+    cell:
+      enabled: true
+    publisher:
+      topic: ${APEX_CUSTOMER_EVENTS_TOPIC:apex.customer.events.v1}
+    outbox:
+      publisher:
+        enabled: true
+        interval-ms: 1000
+    consumer:
+      enabled: false
 
 management:
   endpoints:

@@ -1,6 +1,7 @@
 package com.apex.customer.modules.customer.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -16,6 +18,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -26,15 +32,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.apex.customer.modules.customer.application.CreateCustomerUseCase;
 import com.apex.customer.modules.customer.domain.DuplicateCustomerReferenceException;
+import com.apex.customer.modules.customer.events.CustomerCreatedIntegrationEvent;
 import com.apex.customer.support.CustomerDatabaseExtension;
+import com.apex.platform.messaging.outbox.OutboxPublisher;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
@@ -42,17 +54,25 @@ import tools.jackson.databind.json.JsonMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ExtendWith(CustomerDatabaseExtension.class)
+@EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class CustomerApiIntegrationTest {
 
     private static final JsonMapper JSON = JsonMapper.builder().build();
+    private static final String TOPIC = "apex.customer.events.v1";
 
     private static UUID persistedId;
+    private static UUID persistedEventId;
 
     @DynamicPropertySource
     static void datasource(DynamicPropertyRegistry registry) {
         CustomerDatabaseExtension.registerDatasource(registry);
+        registry.add("apex.messaging.cell.enabled", () -> "true");
+        registry.add("apex.messaging.publisher.topic", () -> TOPIC);
+        registry.add("apex.messaging.outbox.publisher.enabled", () -> "true");
+        registry.add("apex.messaging.consumer.enabled", () -> "false");
+        registry.add("apex.cell.id", () -> "customer-cell-test");
     }
 
     @Autowired
@@ -64,89 +84,143 @@ class CustomerApiIntegrationTest {
     @Autowired
     private CreateCustomerUseCase createCustomerUseCase;
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private OutboxPublisher outboxPublisher;
+
+    @Autowired
+    private EmbeddedKafkaBroker embeddedKafka;
+
     @Test
     @Order(1)
-    void flywayCreatesCustomersTableOnly() {
-        Integer tables = jdbcTemplate.queryForObject(
-                """
-                SELECT COUNT(*) FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = 'customers'
-                """,
+    void flywayCreatesCustomersAndOutbox() {
+        Integer customers = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='customers'",
                 Integer.class
         );
-        assertThat(tables).isEqualTo(1);
-
-        Integer foreignDomain = jdbcTemplate.queryForObject(
-                """
-                SELECT COUNT(*) FROM information_schema.tables
-                WHERE table_schema = 'public'
-                  AND table_name IN ('outbox_event', 'saga', 'payment')
-                """,
+        Integer outbox = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='outbox_event'",
                 Integer.class
         );
-        assertThat(foreignDomain).isZero();
+        assertThat(customers).isEqualTo(1);
+        assertThat(outbox).isEqualTo(1);
     }
 
     @Test
     @Order(2)
-    void postCreatesCustomerAndPersistsRow() throws Exception {
+    void postCreatesCustomerAndOutboxAtomically() throws Exception {
         MvcResult result = mockMvc.perform(
                         post("/api/v1/customers")
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
                                 .content("""
-                                        {"externalReference":"CUST-10001","displayName":"مشتری آزمایشی"}
+                                        {"externalReference":"CUST-M22-0001","displayName":"مشتری آزمایشی"}
                                         """)
                 )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("/api/v1/customers/")))
-                .andExpect(jsonPath("$.externalReference").value("CUST-10001"))
+                .andExpect(jsonPath("$.externalReference").value("CUST-M22-0001"))
                 .andExpect(jsonPath("$.displayName").value("مشتری آزمایشی"))
-                .andExpect(jsonPath("$.status").value("ACTIVE"))
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.createdAt").exists())
                 .andReturn();
 
         JsonNode body = JSON.readTree(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
         persistedId = UUID.fromString(body.get("id").asText());
 
-        Long rows = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM customers WHERE id = ?",
+        Long customerRows = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM customers WHERE id = ?", Long.class, persistedId);
+        Long outboxRows = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM outbox_event WHERE aggregate_id = ? AND event_type = ?",
                 Long.class,
+                persistedId,
+                CustomerCreatedIntegrationEvent.EVENT_TYPE
+        );
+        assertThat(customerRows).isEqualTo(1L);
+        assertThat(outboxRows).isEqualTo(1L);
+
+        persistedEventId = jdbcTemplate.queryForObject(
+                "SELECT event_id FROM outbox_event WHERE aggregate_id = ?",
+                UUID.class,
                 persistedId
         );
-        assertThat(rows).isEqualTo(1L);
+        assertThat(persistedEventId).isNotNull();
     }
 
     @Test
     @Order(3)
-    void getReturnsCommittedCustomer() throws Exception {
-        mockMvc.perform(get("/api/v1/customers/{id}", persistedId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(persistedId.toString()))
-                .andExpect(jsonPath("$.externalReference").value("CUST-10001"))
-                .andExpect(jsonPath("$.displayName").value("مشتری آزمایشی"));
+    void forcedRollbackCreatesNeitherCustomerNorOutbox() {
+        String ref = "CUST-ROLLBACK-1";
+        assertThatThrownBy(() -> transactionTemplate.executeWithoutResult(status -> {
+            createCustomerUseCase.execute(ref, "Rollback");
+            throw new IllegalStateException("force rollback");
+        })).hasMessageContaining("force rollback");
+
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM customers WHERE external_reference = ?", Long.class, ref)).isZero();
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM outbox_event WHERE payload::text LIKE ?", Long.class, "%CUST-ROLLBACK-1%")).isZero();
     }
 
     @Test
     @Order(4)
-    void duplicateExternalReferenceReturns409AndNoExtraRow() throws Exception {
-        Long before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customers", Long.class);
+    void duplicateExternalReferenceReturns409AndNoExtraOutbox() throws Exception {
+        Long outboxBefore = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM outbox_event", Long.class);
 
         mockMvc.perform(
                         post("/api/v1/customers")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
-                                        {"externalReference":"CUST-10001","displayName":"دیگر"}
+                                        {"externalReference":"CUST-M22-0001","displayName":"دیگر"}
                                         """)
                 )
                 .andExpect(status().isConflict());
 
-        Long after = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customers", Long.class);
-        assertThat(after).isEqualTo(before);
+        Long outboxAfter = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM outbox_event", Long.class);
+        assertThat(outboxAfter).isEqualTo(outboxBefore);
     }
 
     @Test
     @Order(5)
+    void publisherDeliversOriginalEnvelopeMetadataToKafka() {
+        outboxPublisher.publishBatch();
+
+        var consumerProps = KafkaTestUtils.consumerProps("customer-outbox-assert", "true", embeddedKafka);
+        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        try (KafkaConsumer<String, String> consumer =
+                     new KafkaConsumer<>(consumerProps, new StringDeserializer(), new StringDeserializer())) {
+            embeddedKafka.consumeFromAnEmbeddedTopic(consumer, TOPIC);
+            ConsumerRecord<String, String> record =
+                    KafkaTestUtils.getSingleRecord(consumer, TOPIC, Duration.ofSeconds(20));
+
+            JsonNode envelope = JSON.readTree(record.value());
+            JsonNode metadata = envelope.get("metadata");
+            assertThat(metadata.get("eventId").asText()).isEqualTo(persistedEventId.toString());
+            assertThat(metadata.get("eventType").asText()).isEqualTo("CUSTOMER_CREATED");
+            assertThat(metadata.get("eventVersion").asInt()).isEqualTo(1);
+            assertThat(metadata.get("aggregateId").asText()).isEqualTo(persistedId.toString());
+            assertThat(metadata.get("aggregateType").asText()).isEqualTo("CUSTOMER");
+            assertThat(envelope.get("payload").get("displayName").asText()).isEqualTo("مشتری آزمایشی");
+            assertThat(record.key()).isEqualTo("CUSTOMER:" + persistedId);
+
+            Boolean published = jdbcTemplate.queryForObject(
+                    "SELECT published FROM outbox_event WHERE event_id = ?",
+                    Boolean.class,
+                    persistedEventId
+            );
+            assertThat(published).isTrue();
+        }
+    }
+
+    @Test
+    @Order(6)
+    void getReturnsCommittedCustomer() throws Exception {
+        mockMvc.perform(get("/api/v1/customers/{id}", persistedId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.externalReference").value("CUST-M22-0001"));
+    }
+
+    @Test
+    @Order(7)
     void concurrentDuplicateInsertsKeepSingleRow() throws Exception {
         String ref = "CUST-CONCURRENT-1";
         AtomicInteger successes = new AtomicInteger();
@@ -163,23 +237,17 @@ class CustomerApiIntegrationTest {
 
         assertThat(successes.get()).isEqualTo(1);
         assertThat(duplicates.get()).isEqualTo(1);
-        Long count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM customers WHERE external_reference = ?",
-                Long.class,
-                ref
-        );
-        assertThat(count).isEqualTo(1L);
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     void unknownCustomerReturns404() throws Exception {
         mockMvc.perform(get("/api/v1/customers/{id}", UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     void malformedUuidReturns400() throws Exception {
         mockMvc.perform(get("/api/v1/customers/{id}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());

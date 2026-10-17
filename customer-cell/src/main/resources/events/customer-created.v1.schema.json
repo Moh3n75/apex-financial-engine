@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apex.local/events/customer-created.v1.schema.json",
+  "title": "CustomerCreated.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["customerId", "externalReference", "displayName", "status", "createdAt"],
+  "properties": {
+    "customerId": { "type": "string", "format": "uuid" },
+    "externalReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 150 },
+    "status": { "type": "string", "const": "ACTIVE" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

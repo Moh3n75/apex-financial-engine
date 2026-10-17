@@ -44,7 +44,7 @@ public class KafkaEventConsumer {
     }
 
     @KafkaListener(
-            topics = "${apex.messaging.topics.financial-events}",
+            topics = "${apex.messaging.consumer.topics:${apex.messaging.topics.financial-events}}",
             groupId = "${spring.kafka.consumer.group-id}",
             concurrency = "${apex.messaging.consumer.concurrency:3}"
     )

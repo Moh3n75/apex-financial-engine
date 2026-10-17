@@ -76,6 +76,7 @@ public final class CustomerDatabaseExtension implements BeforeAllCallback {
         registry.add("spring.datasource.username", () -> username);
         registry.add("spring.datasource.password", () -> password);
         registry.add("server.port", () -> "0");
+        registry.add("spring.flyway.locations", () -> "classpath:db/migration,classpath:db/platform");
     }
 
     public static String mode() {
