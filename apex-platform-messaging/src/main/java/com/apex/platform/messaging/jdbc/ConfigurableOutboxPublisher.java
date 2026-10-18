@@ -2,6 +2,9 @@ package com.apex.platform.messaging.jdbc;
 
 import java.time.Duration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
 import com.apex.platform.messaging.outbox.OutboxEventMapper;
 import com.apex.platform.messaging.outbox.OutboxPublisher;
@@ -15,6 +18,8 @@ import tools.jackson.databind.json.JsonMapper;
  * Lease-based Outbox publisher with configurable topic (Cell-owned routing).
  */
 public class ConfigurableOutboxPublisher implements OutboxPublisher {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigurableOutboxPublisher.class);
 
     private final OutboxStore outboxStore;
     private final KafkaMessagePublisher kafkaPublisher;
@@ -62,21 +67,38 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
 
                 outboxStore.markPublished(event.id(), event.claimToken());
             } catch (Exception exception) {
+                String diagnostic = failureDiagnostic(exception);
+                // Do not log the producer record or payload: KafkaProducerException carries it.
+                log.warn("Outbox publication failed eventId={} correlationId={} topic={} failure={}",
+                        event.eventId(), event.correlationId(), topic, diagnostic);
                 if (retryPolicy.canRetry(event.retryCount())) {
                     outboxStore.markFailed(
                             event.id(),
                             event.claimToken(),
-                            exception.getMessage(),
+                            diagnostic,
                             retryPolicy.nextRetryTime(event.retryCount())
                     );
                 } else {
                     outboxStore.moveToDeadLetter(
                             event.id(),
                             event.claimToken(),
-                            exception.getMessage()
+                            diagnostic
                     );
                 }
             }
         }
+    }
+
+    private static String failureDiagnostic(Throwable failure) {
+        StringBuilder chain = new StringBuilder();
+        Throwable current = failure;
+        for (int depth = 0; current != null && depth < 12; depth++) {
+            if (!chain.isEmpty()) chain.append(" -> ");
+            chain.append(current.getClass().getName());
+            // Exception class chains expose nested causes without serializing customer data.
+            if (current.getCause() == current) break;
+            current = current.getCause();
+        }
+        return chain.toString();
     }
 }

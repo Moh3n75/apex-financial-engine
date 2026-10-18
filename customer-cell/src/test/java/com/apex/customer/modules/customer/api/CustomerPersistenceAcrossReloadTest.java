@@ -21,10 +21,12 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.apex.customer.support.CustomerDatabaseExtension;
+import com.apex.customer.support.IsolatedTestEnvironment;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
@@ -33,7 +35,10 @@ import tools.jackson.databind.json.JsonMapper;
  * Proves persistence is not in-memory: create in one Spring context, reload context,
  * GET still succeeds against the same dedicated PostgreSQL.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.config.location=classpath:application.yml", "spring.config.additional-location=",
+        "spring.config.import=", "spring.profiles.active=", "spring.profiles.include="})
+@ContextConfiguration(initializers = IsolatedTestEnvironment.class)
 @AutoConfigureMockMvc
 @ExtendWith(CustomerDatabaseExtension.class)
 @EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
@@ -47,6 +52,7 @@ class CustomerPersistenceAcrossReloadTest {
     @DynamicPropertySource
     static void datasource(DynamicPropertyRegistry registry) {
         CustomerDatabaseExtension.registerDatasource(registry);
+        IsolatedTestEnvironment.kafka(registry);
         registry.add("apex.messaging.cell.enabled", () -> "true");
         registry.add("apex.messaging.publisher.topic", () -> "apex.customer.events.v1");
         registry.add("apex.messaging.outbox.publisher.enabled", () -> "false");

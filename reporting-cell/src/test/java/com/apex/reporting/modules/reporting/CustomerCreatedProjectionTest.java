@@ -24,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -34,10 +35,14 @@ import com.apex.platform.messaging.consumer.DispatchResult;
 import com.apex.platform.messaging.consumer.EventMessageDispatcher;
 import com.apex.reporting.modules.reporting.events.CustomerCreatedV1Payload;
 import com.apex.reporting.support.ReportingDatabaseExtension;
+import com.apex.reporting.support.IsolatedTestEnvironment;
 
 import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.config.location=classpath:application.yml", "spring.config.additional-location=",
+        "spring.config.import=", "spring.profiles.active=", "spring.profiles.include="})
+@ContextConfiguration(initializers = IsolatedTestEnvironment.class)
 @AutoConfigureMockMvc
 @ExtendWith(ReportingDatabaseExtension.class)
 @EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
@@ -48,6 +53,7 @@ class CustomerCreatedProjectionTest {
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
         ReportingDatabaseExtension.registerDatasource(registry);
+        IsolatedTestEnvironment.kafka(registry);
         registry.add("apex.messaging.cell.enabled", () -> "true");
         registry.add("apex.messaging.publisher.topic", () -> "apex.customer.events.v1");
         registry.add("apex.messaging.outbox.publisher.enabled", () -> "false");
@@ -74,6 +80,7 @@ class CustomerCreatedProjectionTest {
 
     @Test
     void projectsCustomerCreatedAndExposesReadApi() throws Exception {
+        long before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_summary", Long.class);
         UUID customerId = UUID.randomUUID();
         UUID eventId = UUID.randomUUID();
         String envelope = envelopeJson(eventId, customerId, "CUST-R-1", "مشتری آزمایشی");
@@ -88,7 +95,7 @@ class CustomerCreatedProjectionTest {
 
         mockMvc.perform(get("/api/v1/reports/customers/count"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(1));
+                .andExpect(jsonPath("$.count").value(before + 1));
     }
 
     @Test
@@ -164,8 +171,6 @@ class CustomerCreatedProjectionTest {
             throw new IllegalStateException("force projection transaction rollback");
         })).hasMessageContaining("force projection transaction rollback");
 
-        // Nested @Transactional on executor may commit independently depending on proxy boundaries.
-        // Assert inbox marker / projection consistency for the forced outer rollback path when joined.
         Long processed = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM processed_event WHERE event_id = ?",
                 Long.class,
@@ -176,12 +181,18 @@ class CustomerCreatedProjectionTest {
                 Long.class,
                 customerId
         );
-        // If executor opened a new transaction that committed, both should be 1; if joined and rolled back, both 0.
-        assertThat(processed).isEqualTo(projections);
+        assertThat(processed).isZero();
+        assertThat(projections).isZero();
+        assertThat(dispatcher.dispatch(envelope, context(100))).isEqualTo(DispatchResult.HANDLED);
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM processed_event WHERE event_id = ?",
+                Long.class, eventId)).isEqualTo(1L);
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_summary WHERE customer_id = ?",
+                Long.class, customerId)).isEqualTo(1L);
     }
 
     @Test
     void unsupportedEventVersionIsIgnored() throws Exception {
+        long before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_summary", Long.class);
         UUID eventId = UUID.randomUUID();
         Map<String, Object> metadata = Map.of(
                 "eventId", eventId.toString(),
@@ -206,7 +217,9 @@ class CustomerCreatedProjectionTest {
         ));
 
         assertThat(dispatcher.dispatch(envelope, context(3))).isEqualTo(DispatchResult.IGNORED);
-        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_summary", Long.class)).isGreaterThanOrEqualTo(0L);
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_summary", Long.class)).isEqualTo(before);
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM processed_event WHERE event_id = ?",
+                Long.class, eventId)).isZero();
     }
 
     private static ConsumerContext context(long offset) {

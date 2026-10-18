@@ -38,6 +38,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -46,12 +47,15 @@ import com.apex.customer.modules.customer.application.CreateCustomerUseCase;
 import com.apex.customer.modules.customer.domain.DuplicateCustomerReferenceException;
 import com.apex.customer.modules.customer.events.CustomerCreatedIntegrationEvent;
 import com.apex.customer.support.CustomerDatabaseExtension;
-import com.apex.platform.messaging.outbox.OutboxPublisher;
+import com.apex.customer.support.IsolatedTestEnvironment;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.config.location=classpath:application.yml", "spring.config.additional-location=",
+        "spring.config.import=", "spring.profiles.active=", "spring.profiles.include="})
+@ContextConfiguration(initializers = IsolatedTestEnvironment.class)
 @AutoConfigureMockMvc
 @ExtendWith(CustomerDatabaseExtension.class)
 @EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
@@ -68,6 +72,7 @@ class CustomerApiIntegrationTest {
     @DynamicPropertySource
     static void datasource(DynamicPropertyRegistry registry) {
         CustomerDatabaseExtension.registerDatasource(registry);
+        IsolatedTestEnvironment.kafka(registry);
         registry.add("apex.messaging.cell.enabled", () -> "true");
         registry.add("apex.messaging.publisher.topic", () -> TOPIC);
         registry.add("apex.messaging.outbox.publisher.enabled", () -> "true");
@@ -86,9 +91,6 @@ class CustomerApiIntegrationTest {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
-
-    @Autowired
-    private OutboxPublisher outboxPublisher;
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafka;
@@ -181,9 +183,7 @@ class CustomerApiIntegrationTest {
 
     @Test
     @Order(5)
-    void publisherDeliversOriginalEnvelopeMetadataToKafka() {
-        outboxPublisher.publishBatch();
-
+    void scheduledPublisherDeliversOriginalEnvelopeMetadataToKafka() {
         var consumerProps = KafkaTestUtils.consumerProps("customer-outbox-assert", "true", embeddedKafka);
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         try (KafkaConsumer<String, String> consumer =
@@ -199,6 +199,16 @@ class CustomerApiIntegrationTest {
             assertThat(metadata.get("eventVersion").asInt()).isEqualTo(1);
             assertThat(metadata.get("aggregateId").asText()).isEqualTo(persistedId.toString());
             assertThat(metadata.get("aggregateType").asText()).isEqualTo("CUSTOMER");
+            var stored = jdbcTemplate.queryForMap(
+                    "SELECT correlation_id, causation_id, occurred_at, source_service, cell_id FROM outbox_event WHERE event_id = ?",
+                    persistedEventId);
+            assertThat(metadata.get("correlationId").asText()).isEqualTo(stored.get("correlation_id").toString());
+            assertThat(metadata.get("causationId").isNull()).isTrue();
+            assertThat(stored.get("causation_id")).isNull();
+            assertThat(java.time.Instant.parse(metadata.get("occurredAt").asText())).isEqualTo(
+                    ((java.sql.Timestamp) stored.get("occurred_at")).toInstant());
+            assertThat(metadata.get("sourceService").asText()).isEqualTo(stored.get("source_service"));
+            assertThat(metadata.get("cellId").asText()).isEqualTo(stored.get("cell_id"));
             assertThat(envelope.get("payload").get("displayName").asText()).isEqualTo("مشتری آزمایشی");
             assertThat(record.key()).isEqualTo("CUSTOMER:" + persistedId);
 
