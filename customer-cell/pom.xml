@@ -77,6 +77,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-platform-webmvc</artifactId>
+            <version>${apex.platform.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>

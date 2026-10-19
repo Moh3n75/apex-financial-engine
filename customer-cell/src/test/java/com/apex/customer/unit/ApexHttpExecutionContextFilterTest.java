@@ -1,7 +1,7 @@
 
 package com.apex.customer.unit;
 
-import com.apex.customer.config.ApexHttpExecutionContextFilter;
+import com.apex.platform.webmvc.ApexHttpExecutionContextFilter;
 import com.apex.platform.core.context.ExecutionContext;
 import com.apex.platform.core.context.ThreadLocalExecutionContextProvider;
 

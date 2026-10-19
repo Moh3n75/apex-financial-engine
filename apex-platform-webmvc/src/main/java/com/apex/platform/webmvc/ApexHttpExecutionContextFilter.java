@@ -1,5 +1,5 @@
 
-package com.apex.customer.config;
+package com.apex.platform.webmvc;
 
 import com.apex.platform.core.context.ExecutionContext;
 import com.apex.platform.core.context.ExecutionContextProvider;
@@ -9,14 +9,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Objects;
 
-@Component
 public final class ApexHttpExecutionContextFilter
         extends OncePerRequestFilter {
 
@@ -26,13 +23,17 @@ public final class ApexHttpExecutionContextFilter
 
     public ApexHttpExecutionContextFilter(
             ExecutionContextProvider contextProvider,
-            @Value("${spring.application.name}") String sourceService,
-            @Value("${apex.cell.id}") String cellId
+            String sourceService,
+            String cellId
     ) {
         this.contextProvider =
                 Objects.requireNonNull(contextProvider);
-        this.sourceService = sourceService;
-        this.cellId = cellId;
+
+        this.sourceService =
+                requireText(sourceService, "sourceService");
+
+        this.cellId =
+                requireText(cellId, "cellId");
     }
 
     @Override
@@ -50,5 +51,18 @@ public final class ApexHttpExecutionContextFilter
         try (var scope = contextProvider.open(context)) {
             chain.doFilter(request, response);
         }
+    }
+
+    private static String requireText(
+            String value,
+            String name
+    ) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(
+                    name + " must not be blank"
+            );
+        }
+
+        return value;
     }
 }

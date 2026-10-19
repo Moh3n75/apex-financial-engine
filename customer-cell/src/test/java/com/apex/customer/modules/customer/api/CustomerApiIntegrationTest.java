@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.apex.platform.core.context.ExecutionContext;
 import com.apex.platform.core.context.ExecutionContextProvider;
+import com.apex.platform.webmvc.ApexHttpExecutionContextFilter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -30,8 +32,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionEvaluationReport;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -103,6 +108,9 @@ class CustomerApiIntegrationTest {
 
     @Autowired
     private ExecutionContextProvider contextProvider;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @RestController
     static class ContextProbeController {
@@ -425,6 +433,109 @@ class CustomerApiIntegrationTest {
 
         assertThat(stored.get("cell_id"))
                 .isEqualTo("customer-cell-test");
+    }
+
+
+    @Test
+    @Order(12)
+    void shouldUseSharedApexWebMvcFilter() {
+
+        var filters = applicationContext.getBeansOfType(
+                ApexHttpExecutionContextFilter.class
+        );
+
+        assertThat(filters).hasSize(1);
+
+        assertThat(filters)
+                .containsKey("apexHttpExecutionContextFilter");
+
+        var filter = filters.get(
+                "apexHttpExecutionContextFilter"
+        );
+
+        assertThat(filter)
+                .isInstanceOf(
+                        ApexHttpExecutionContextFilter.class
+                );
+    }
+
+
+    @Test
+    void diagnoseWebMvcAutoConfiguration() {
+
+        System.out.println("=== APEX DIAGNOSTICS ===");
+
+        System.out.println(
+                "ExecutionContextProvider beans: " +
+                        Arrays.toString(
+                                applicationContext.getBeanNamesForType(
+                                        ExecutionContextProvider.class
+                                )
+                        )
+        );
+
+        System.out.println(
+                "APEX WebMVC Filter beans: " +
+                        Arrays.toString(
+                                applicationContext.getBeanNamesForType(
+                                        ApexHttpExecutionContextFilter.class
+                                )
+                        )
+        );
+
+        System.out.println(
+                "Existing filter name: " +
+                        applicationContext.containsBean(
+                                "apexHttpExecutionContextFilter"
+                        )
+        );
+
+        ConditionEvaluationReport report =
+                ConditionEvaluationReport.get(
+                        applicationContext.getBeanFactory()
+                );
+
+        report.getConditionAndOutcomesBySource()
+                .forEach((source, outcomes) -> {
+
+                    if (!source.contains(
+                            "ApexWebMvcAutoConfiguration"
+                    )) {
+                        return;
+                    }
+
+                    System.out.println("SOURCE: " + source);
+
+                    outcomes.forEach(conditionAndOutcome -> {
+                        System.out.println(
+                                conditionAndOutcome.getCondition()
+                                        .getClass()
+                                        .getSimpleName()
+                                        + " => "
+                                        + conditionAndOutcome.getOutcome()
+                                        .isMatch()
+                                        + " | "
+                                        + conditionAndOutcome.getOutcome()
+                                        .getMessage()
+                        );
+                    });
+                });
+
+        var bean = applicationContext.getBean(
+                "apexHttpExecutionContextFilter"
+        );
+
+        System.out.println(
+                "FILTER CLASS: " + bean.getClass().getName()
+        );
+
+        var definition = applicationContext
+                .getBeanFactory()
+                .getBeanDefinition("apexHttpExecutionContextFilter");
+
+        System.out.println(
+                "BEAN SOURCE: " + definition.getResourceDescription()
+        );
     }
 
 
