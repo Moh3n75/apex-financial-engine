@@ -2,6 +2,13 @@
 
 Independent Customer Cell. M21 REST + M22 Outbox publication of `CUSTOMER_CREATED` v1.
 
+## M23 dependencies
+
+Customer uses `apex-starter-webmvc` and `apex-starter-cell-messaging` at the configured
+`apex.platform.version`. The Starters expose the existing Core/Events APIs and runtime
+auto-configurations transitively. No application-specific APEX infrastructure Beans are needed.
+JDBC, Flyway/PostgreSQL, validation and Actuator remain explicit application persistence/API choices.
+
 ## Event
 
 - Type: `CUSTOMER_CREATED` / version `1`
@@ -39,7 +46,7 @@ From the repository root with `JAVA_HOME` pointing to Java 21:
 # Use -MavenCommand <maven-launcher> if Maven is not on PATH.
 ```
 
-The script rebuilds Platform libraries, runs all Customer tests and packages
+The script rebuilds both Starters and all required Platform libraries, runs all Customer tests and packages
 Customer, then runs all Reporting tests. Its content-based receipt is stored
 under ignored `out/`. Direct Reporting E2E runs reject missing receipts, changed
 Customer/Platform inputs and changed JARs. Re-run the script after such changes;

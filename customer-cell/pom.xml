@@ -27,8 +27,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-starter-webmvc</artifactId>
+            <version>${apex.platform.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -62,23 +63,7 @@
 
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-core</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-platform-events</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-platform-messaging</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-platform-webmvc</artifactId>
+            <artifactId>apex-starter-cell-messaging</artifactId>
             <version>${apex.platform.version}</version>
         </dependency>
 

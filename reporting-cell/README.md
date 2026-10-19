@@ -2,6 +2,13 @@
 
 Independent Reporting Cell (M22). Consumes `CUSTOMER_CREATED` v1 from Kafka via APEX Platform messaging and projects into **its own** `reporting_db`.
 
+## M23 dependencies
+
+Reporting uses `apex-starter-cell-messaging` at the configured `apex.platform.version`.
+Its existing Boot WebMVC dependency remains for reporting HTTP endpoints; the Messaging
+Starter supplies no WebMVC dependency or HTTP filter. JDBC, Flyway/PostgreSQL, validation
+and Actuator remain explicit application choices. No APEX infrastructure Beans are duplicated.
+
 ## APIs
 
 - `GET /api/v1/reports/customers/{customerId}`
@@ -35,7 +42,7 @@ Run from the repository root with Java 21:
 ```
 
 Use `-MavenCommand <launcher>` if Maven is not on PATH, or `-Offline` when all
-dependencies are cached. This builds Platform and Customer from source before
+dependencies are cached. This builds both Starters, their Platform dependencies and Customer from source before
 Reporting verification and writes an ignored SHA-256 receipt. E2E refuses a
 missing receipt, changed source/JAR or a different Platform JAR loaded by
 Reporting. Rebuild with the script after changing producer inputs; merely having

@@ -62,17 +62,7 @@
 
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-core</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-platform-events</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-platform-messaging</artifactId>
+            <artifactId>apex-starter-cell-messaging</artifactId>
             <version>${apex.platform.version}</version>
         </dependency>
 

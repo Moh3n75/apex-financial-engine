@@ -6,7 +6,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $evidencePath = Join-Path $repositoryRoot 'out/m22-build-evidence.properties'
-$modules = @('apex-platform-core', 'apex-platform-events', 'apex-platform-messaging', 'customer-cell')
+$modules = @('apex-platform-core', 'apex-platform-events', 'apex-platform-context-autoconfigure',
+    'apex-platform-webmvc', 'apex-platform-messaging', 'apex-starter-webmvc',
+    'apex-starter-cell-messaging', 'customer-cell')
 
 function Get-SourceFingerprint {
     $paths = [System.Collections.Generic.List[string]]::new()
@@ -14,8 +16,11 @@ function Get-SourceFingerprint {
     $paths.Add('tools/m22/verify-cells.ps1')
     foreach ($module in $modules) {
         $paths.Add("$module/pom.xml")
-        Get-ChildItem -LiteralPath (Join-Path $repositoryRoot "$module/src/main") -File -Recurse |
-            ForEach-Object { $paths.Add($_.FullName.Substring($repositoryRoot.Length + 1).Replace('\', '/')) }
+        $mainSources = Join-Path $repositoryRoot "$module/src/main"
+        if (Test-Path -LiteralPath $mainSources) {
+            Get-ChildItem -LiteralPath $mainSources -File -Recurse |
+                ForEach-Object { $paths.Add($_.FullName.Substring($repositoryRoot.Length + 1).Replace('\', '/')) }
+        }
     }
     $orderedPaths = $paths.ToArray()
     [Array]::Sort($orderedPaths, [StringComparer]::Ordinal)
@@ -54,7 +59,7 @@ try {
     if ($LASTEXITCODE -ne 0 -or $javaVersion -notmatch '(?m)^(java|openjdk) 21[\. ]') { throw 'Verification requires Java 21.' }
     New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
     $fingerprint = Get-SourceFingerprint
-    Invoke-CellMaven $repositoryRoot @('-pl', 'apex-platform-messaging', '-am', 'clean', 'install')
+    Invoke-CellMaven $repositoryRoot @('-pl', 'apex-starter-webmvc,apex-starter-cell-messaging', '-am', 'clean', 'install')
     Invoke-CellMaven (Join-Path $repositoryRoot 'customer-cell') @('clean', 'verify')
     if ((Get-SourceFingerprint) -ne $fingerprint) { throw 'Source changed during the build; rerun verification.' }
     $evidence = @('schemaVersion=1', "sourceSha256=$fingerprint")
