@@ -18,6 +18,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.apex.platform.core.context.ExecutionContext;
+import com.apex.platform.core.context.ExecutionContextProvider;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -49,6 +52,8 @@ import com.apex.customer.modules.customer.events.CustomerCreatedIntegrationEvent
 import com.apex.customer.support.CustomerDatabaseExtension;
 import com.apex.customer.support.IsolatedTestEnvironment;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -61,6 +66,7 @@ import tools.jackson.databind.json.JsonMapper;
 @EmbeddedKafka(partitions = 1, topics = {"apex.customer.events.v1"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Import(CustomerApiIntegrationTest.ContextProbeController.class)
 class CustomerApiIntegrationTest {
 
     private static final JsonMapper JSON = JsonMapper.builder().build();
@@ -94,6 +100,27 @@ class CustomerApiIntegrationTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafka;
+
+    @Autowired
+    private ExecutionContextProvider contextProvider;
+
+    @RestController
+    static class ContextProbeController {
+
+        private final ExecutionContextProvider provider;
+
+        ContextProbeController(
+                ExecutionContextProvider provider
+        ) {
+            this.provider = provider;
+        }
+
+        @GetMapping("/__test/apex-context")
+        ExecutionContext currentContext() {
+            return provider.requireCurrent();
+        }
+    }
+
 
     @Test
     @Order(1)
@@ -148,20 +175,46 @@ class CustomerApiIntegrationTest {
         assertThat(persistedEventId).isNotNull();
     }
 
+
     @Test
     @Order(3)
     void forcedRollbackCreatesNeitherCustomerNorOutbox() {
+
         String ref = "CUST-ROLLBACK-1";
-        assertThatThrownBy(() -> transactionTemplate.executeWithoutResult(status -> {
-            createCustomerUseCase.execute(ref, "Rollback");
-            throw new IllegalStateException("force rollback");
-        })).hasMessageContaining("force rollback");
+
+        assertThatThrownBy(() ->
+                transactionTemplate.executeWithoutResult(status -> {
+
+                    ExecutionContext context = ExecutionContext.root(
+                            "customer-cell-test",
+                            "customer-cell-test"
+                    );
+
+                    try (var scope = contextProvider.open(context)) {
+
+                        createCustomerUseCase.execute(
+                                ref,
+                                "Rollback"
+                        );
+
+                        throw new IllegalStateException("force rollback");
+                    }
+                })
+        ).hasMessageContaining("force rollback");
 
         assertThat(jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM customers WHERE external_reference = ?", Long.class, ref)).isZero();
+                "SELECT COUNT(*) FROM customers WHERE external_reference = ?",
+                Long.class,
+                ref
+        )).isZero();
+
         assertThat(jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM outbox_event WHERE payload::text LIKE ?", Long.class, "%CUST-ROLLBACK-1%")).isZero();
+                "SELECT COUNT(*) FROM outbox_event WHERE payload::text LIKE ?",
+                Long.class,
+                "%CUST-ROLLBACK-1%"
+        )).isZero();
     }
+
 
     @Test
     @Order(4)
@@ -263,6 +316,119 @@ class CustomerApiIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    @Test
+    @Order(10)
+    void httpContextIsSharedAndCleanedUp() throws Exception {
+
+        MvcResult first = mockMvc.perform(
+                        get("/__test/apex-context")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode firstContext = JSON.readTree(
+                first.getResponse().getContentAsString(
+                        StandardCharsets.UTF_8
+                )
+        );
+
+        UUID firstCorrelationId = UUID.fromString(
+                firstContext.get("correlationId").asText()
+        );
+
+        assertThat(firstContext.get("causationId").isNull())
+                .isTrue();
+
+        assertThat(firstContext.get("sourceService").asText())
+                .isNotBlank();
+
+        assertThat(firstContext.get("cellId").asText())
+                .isEqualTo("customer-cell-test");
+
+        assertThatThrownBy(contextProvider::requireCurrent)
+                .isInstanceOf(IllegalStateException.class);
+
+        MvcResult second = mockMvc.perform(
+                        get("/__test/apex-context")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode secondContext = JSON.readTree(
+                second.getResponse().getContentAsString(
+                        StandardCharsets.UTF_8
+                )
+        );
+
+        UUID secondCorrelationId = UUID.fromString(
+                secondContext.get("correlationId").asText()
+        );
+
+        assertThat(secondCorrelationId)
+                .isNotEqualTo(firstCorrelationId);
+
+        assertThatThrownBy(contextProvider::requireCurrent)
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+
+    @Test
+    @Order(11)
+    void httpCreatedEventShouldHaveRootExecutionContext()
+            throws Exception {
+
+        String ref = "CUST-CONTEXT-" + UUID.randomUUID();
+
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/customers")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                    {
+                                      "externalReference": "%s",
+                                      "displayName": "Context Test"
+                                    }
+                                    """.formatted(ref))
+                )
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        JsonNode body = JSON.readTree(
+                result.getResponse().getContentAsString(
+                        StandardCharsets.UTF_8
+                )
+        );
+
+        UUID customerId = UUID.fromString(
+                body.get("id").asText()
+        );
+
+        var stored = jdbcTemplate.queryForMap(
+                """
+                SELECT correlation_id,
+                       causation_id,
+                       source_service,
+                       cell_id
+                FROM outbox_event
+                WHERE aggregate_id = ?
+                  AND event_type = ?
+                """,
+                customerId,
+                CustomerCreatedIntegrationEvent.EVENT_TYPE
+        );
+
+        assertThat(stored.get("correlation_id"))
+                .isNotNull();
+
+        assertThat(stored.get("causation_id"))
+                .isNull();
+
+        assertThat(stored.get("cell_id"))
+                .isEqualTo("customer-cell-test");
+    }
+
+
+
     private void runCreate(
             String ref,
             CountDownLatch start,
@@ -271,12 +437,24 @@ class CustomerApiIntegrationTest {
     ) {
         try {
             start.await(10, TimeUnit.SECONDS);
-            createCustomerUseCase.execute(ref, "Concurrent");
+
+            ExecutionContext context = ExecutionContext.root(
+                    "customer-cell-test",
+                    "customer-cell-test"
+            );
+
+            try (var scope = contextProvider.open(context)) {
+                createCustomerUseCase.execute(ref, "Concurrent");
+            }
+
             successes.incrementAndGet();
+
         } catch (DuplicateCustomerReferenceException ex) {
             duplicates.incrementAndGet();
+
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
+
 }

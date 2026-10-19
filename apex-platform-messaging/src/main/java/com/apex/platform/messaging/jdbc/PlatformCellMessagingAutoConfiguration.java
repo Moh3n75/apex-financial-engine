@@ -4,6 +4,10 @@ import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
+import com.apex.platform.core.context.ExecutionContextProvider;
+import com.apex.platform.core.context.ThreadLocalExecutionContextProvider;
+import com.apex.platform.events.api.CellEvents;
+import com.apex.platform.messaging.internal.DefaultCellEvents;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -136,9 +140,19 @@ public class PlatformCellMessagingAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    EventHandlerExecutor eventHandlerExecutor(ProcessedEventStore processedEventStore) {
-        return new SimpleTransactionalEventHandlerExecutor(processedEventStore);
+    @ConditionalOnMissingBean(EventHandlerExecutor.class)
+    EventHandlerExecutor eventHandlerExecutor(
+            ProcessedEventStore processedEventStore,
+            ExecutionContextProvider executionContextProvider,
+            @Value("${spring.application.name}") String sourceService,
+            @Value("${apex.cell.id}") String cellId
+    ) {
+        return new SimpleTransactionalEventHandlerExecutor(
+                processedEventStore,
+                executionContextProvider,
+                sourceService,
+                cellId
+        );
     }
 
     @Bean
@@ -166,4 +180,26 @@ public class PlatformCellMessagingAutoConfiguration {
     ) {
         return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup);
     }
+
+    @Bean
+    @ConditionalOnMissingBean(ExecutionContextProvider.class)
+    ExecutionContextProvider executionContextProvider() {
+        return new ThreadLocalExecutionContextProvider();
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(CellEvents.class)
+    CellEvents cellEvents(
+            EventEnvelopeFactory envelopeFactory,
+            OutboxAppender outboxAppender,
+            ExecutionContextProvider contextProvider
+    ) {
+        return new DefaultCellEvents(
+                envelopeFactory,
+                outboxAppender,
+                contextProvider::requireCurrent
+        );
+    }
+
 }
