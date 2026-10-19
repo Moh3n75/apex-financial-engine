@@ -1,13 +1,14 @@
 package com.apex.platform.messaging.jdbc;
 
-import java.time.Clock;
-import java.util.List;
-import java.util.UUID;
-
+import com.apex.platform.context.autoconfigure.ApexExecutionContextAutoConfiguration;
 import com.apex.platform.core.context.ExecutionContextProvider;
-import com.apex.platform.core.context.ThreadLocalExecutionContextProvider;
+import com.apex.platform.events.EventEnvelopeFactory;
 import com.apex.platform.events.api.CellEvents;
+import com.apex.platform.messaging.consumer.*;
 import com.apex.platform.messaging.internal.DefaultCellEvents;
+import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
+import com.apex.platform.messaging.kafka.SpringKafkaMessagePublisher;
+import com.apex.platform.messaging.outbox.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,27 +17,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import com.apex.platform.events.EventEnvelopeFactory;
-import com.apex.platform.messaging.consumer.DefaultEventHandlerRegistry;
-import com.apex.platform.messaging.consumer.EventHandler;
-import com.apex.platform.messaging.consumer.EventHandlerExecutor;
-import com.apex.platform.messaging.consumer.EventHandlerRegistry;
-import com.apex.platform.messaging.consumer.EventMessageDispatcher;
-import com.apex.platform.messaging.consumer.ProcessedEventStore;
-import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
-import com.apex.platform.messaging.kafka.SpringKafkaMessagePublisher;
-import com.apex.platform.messaging.outbox.OutboxAppender;
-import com.apex.platform.messaging.outbox.OutboxEventMapper;
-import com.apex.platform.messaging.outbox.OutboxPublisher;
-import com.apex.platform.messaging.outbox.OutboxStore;
-import com.apex.platform.messaging.outbox.RetryPolicy;
-
 import tools.jackson.databind.json.JsonMapper;
 
-@AutoConfiguration
+import java.time.Clock;
+import java.util.List;
+import java.util.UUID;
+
+@AutoConfiguration(
+        after = ApexExecutionContextAutoConfiguration.class
+)
 @EnableScheduling
-@ConditionalOnProperty(prefix = "apex.messaging.cell", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(
+        prefix = "apex.messaging.cell",
+        name = "enabled",
+        havingValue = "true"
+)
 public class PlatformCellMessagingAutoConfiguration {
 
     @Bean
@@ -180,13 +175,7 @@ public class PlatformCellMessagingAutoConfiguration {
     ) {
         return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup);
     }
-
-    @Bean
-    @ConditionalOnMissingBean(ExecutionContextProvider.class)
-    ExecutionContextProvider executionContextProvider() {
-        return new ThreadLocalExecutionContextProvider();
-    }
-
+    
 
     @Bean
     @ConditionalOnMissingBean(CellEvents.class)

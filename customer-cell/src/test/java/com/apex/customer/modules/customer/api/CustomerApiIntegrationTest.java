@@ -457,6 +457,12 @@ class CustomerApiIntegrationTest {
                 .isInstanceOf(
                         ApexHttpExecutionContextFilter.class
                 );
+
+        assertThat(
+                applicationContext.getBeansOfType(
+                        ExecutionContextProvider.class
+                )
+        ).hasSize(1);
     }
 
 
