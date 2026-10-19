@@ -1,6 +1,7 @@
 
 package com.apex.platform.webmvc.integration;
 
+import com.apex.platform.context.autoconfigure.ApexExecutionContextAutoConfiguration;
 import com.apex.platform.core.context.ExecutionContextProvider;
 import com.apex.platform.core.context.ThreadLocalExecutionContextProvider;
 import com.apex.platform.webmvc.ApexHttpExecutionContextFilter;
@@ -114,4 +115,41 @@ class ApexWebMvcAutoConfigurationTest {
                     );
                 });
     }
+
+
+    @Test
+    void shouldAutoConfigureContextWithoutMessaging() {
+
+        new WebApplicationContextRunner()
+                .withConfiguration(
+                        AutoConfigurations.of(
+                                ApexExecutionContextAutoConfiguration.class,
+                                ApexWebMvcAutoConfiguration.class
+                        )
+                )
+                .withPropertyValues(
+                        "spring.application.name=standalone-cell",
+                        "apex.cell.id=standalone-cell"
+                )
+                .run(context -> {
+
+                    assertThat(context).hasNotFailed();
+
+                    assertThat(context).hasSingleBean(
+                            ExecutionContextProvider.class
+                    );
+
+                    assertThat(context).hasSingleBean(
+                            ApexHttpExecutionContextFilter.class
+                    );
+
+                    assertThat(context.getBean(
+                            ExecutionContextProvider.class
+                    )).isInstanceOf(
+                            ThreadLocalExecutionContextProvider.class
+                    );
+                });
+    }
+
+
 }

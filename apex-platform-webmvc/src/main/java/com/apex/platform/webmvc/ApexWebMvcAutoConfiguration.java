@@ -1,6 +1,7 @@
 
 package com.apex.platform.webmvc;
 
+import com.apex.platform.context.autoconfigure.ApexExecutionContextAutoConfiguration;
 import com.apex.platform.core.context.ExecutionContextProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@AutoConfiguration
-@AutoConfigureAfter(name =
-        "com.apex.platform.messaging.jdbc.PlatformCellMessagingAutoConfiguration")
+
+@AutoConfiguration(after = ApexExecutionContextAutoConfiguration.class)
 @ConditionalOnWebApplication(
         type = ConditionalOnWebApplication.Type.SERVLET
 )
