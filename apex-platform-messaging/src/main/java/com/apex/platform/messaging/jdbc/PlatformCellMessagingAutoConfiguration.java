@@ -52,11 +52,21 @@ public class PlatformCellMessagingAutoConfiguration {
         return new EventEnvelopeFactory(clock);
     }
 
+
     @Bean
     @ConditionalOnMissingBean
-    KafkaMessagePublisher kafkaMessagePublisher(KafkaTemplate<String, String> kafkaTemplate) {
+    @ConditionalOnProperty(
+            prefix = "apex.messaging.outbox.publisher",
+            name = "enabled",
+            havingValue = "true",
+            matchIfMissing = true
+    )
+    KafkaMessagePublisher kafkaMessagePublisher(
+            KafkaTemplate<String, String> kafkaTemplate
+    ) {
         return new SpringKafkaMessagePublisher(kafkaTemplate);
     }
+
 
     @Bean
     @ConditionalOnMissingBean
@@ -90,6 +100,12 @@ public class PlatformCellMessagingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(
+            prefix = "apex.messaging.outbox.publisher",
+            name = "enabled",
+            havingValue = "true",
+            matchIfMissing = true
+    )
     OutboxPublisher outboxPublisher(
             OutboxStore outboxStore,
             KafkaMessagePublisher kafkaMessagePublisher,
@@ -124,18 +140,21 @@ public class PlatformCellMessagingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
     ProcessedEventStore processedEventStore(JdbcTemplate jdbcTemplate, Clock clock) {
         return new JdbcProcessedEventStore(jdbcTemplate, clock);
     }
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
     EventHandlerRegistry eventHandlerRegistry(List<EventHandler<?>> handlers) {
         return new DefaultEventHandlerRegistry(handlers);
     }
 
     @Bean
     @ConditionalOnMissingBean(EventHandlerExecutor.class)
+    @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
     EventHandlerExecutor eventHandlerExecutor(
             ProcessedEventStore processedEventStore,
             ExecutionContextProvider executionContextProvider,
@@ -152,6 +171,7 @@ public class PlatformCellMessagingAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
     EventMessageDispatcher eventMessageDispatcher(
             JsonMapper jsonMapper,
             EventHandlerRegistry eventHandlerRegistry,

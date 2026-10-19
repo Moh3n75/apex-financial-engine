@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.apex.platform.core.context.ExecutionContext;
 import com.apex.platform.core.context.ExecutionContextProvider;
+import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
+import com.apex.platform.messaging.outbox.OutboxPublisher;
 import com.apex.platform.webmvc.ApexHttpExecutionContextFilter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -129,6 +131,18 @@ class CustomerApiIntegrationTest {
         }
     }
 
+
+    @Test
+    @Order(0)
+    void shouldConfigurePublisherBeansWhenEnabled() {
+        assertThat(applicationContext.getBeansOfType(
+                KafkaMessagePublisher.class
+        )).hasSize(1);
+
+        assertThat(applicationContext.getBeansOfType(
+                OutboxPublisher.class
+        )).hasSize(1);
+    }
 
     @Test
     @Order(1)

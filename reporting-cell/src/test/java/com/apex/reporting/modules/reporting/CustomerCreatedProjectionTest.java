@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -33,6 +34,8 @@ import com.apex.platform.events.EventMetadata;
 import com.apex.platform.messaging.consumer.ConsumerContext;
 import com.apex.platform.messaging.consumer.DispatchResult;
 import com.apex.platform.messaging.consumer.EventMessageDispatcher;
+import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
+import com.apex.platform.messaging.outbox.OutboxPublisher;
 import com.apex.reporting.modules.reporting.events.CustomerCreatedV1Payload;
 import com.apex.reporting.support.ReportingDatabaseExtension;
 import com.apex.reporting.support.IsolatedTestEnvironment;
@@ -77,6 +80,20 @@ class CustomerCreatedProjectionTest {
 
     @Autowired
     private JsonMapper jsonMapper;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Test
+    void shouldNotConfigurePublisherBeansWhenDisabled() {
+        assertThat(applicationContext.getBeansOfType(
+                KafkaMessagePublisher.class
+        )).isEmpty();
+
+        assertThat(applicationContext.getBeansOfType(
+                OutboxPublisher.class
+        )).isEmpty();
+    }
 
     @Test
     void projectsCustomerCreatedAndExposesReadApi() throws Exception {
