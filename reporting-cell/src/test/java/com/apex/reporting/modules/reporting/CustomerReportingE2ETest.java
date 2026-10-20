@@ -38,9 +38,11 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 
 import com.apex.platform.messaging.consumer.EventHandlerRegistry;
+import com.apex.platform.messaging.consumer.EventHandler;
 import com.apex.platform.messaging.jdbc.ConfigurableKafkaEventConsumer;
 import com.apex.platform.messaging.jdbc.SimpleTransactionalEventHandlerExecutor;
 import com.apex.reporting.ReportingCellApplication;
+import com.apex.reporting.modules.reporting.application.ProjectCustomerCreatedHandler;
 import com.apex.reporting.modules.reporting.events.CustomerCreatedV1Payload;
 import com.apex.reporting.support.M22BuildPrerequisite;
 
@@ -120,6 +122,9 @@ class CustomerReportingE2ETest {
 
                 reporting = startReporting(reportingDb, bootstrap);
                 int reportingPort = ((WebServerApplicationContext) reporting).getWebServer().getPort();
+                assertThat(reporting.getBeansOfType(EventHandlerRegistry.class)).hasSize(1);
+                assertThat(reporting.getBeansOfType(EventHandler.class)).isEmpty();
+                assertThat(reporting.getBean(ProjectCustomerCreatedHandler.class)).isNotInstanceOf(EventHandler.class);
                 assertThat(reporting.getBeansOfType(ConfigurableKafkaEventConsumer.class)).hasSize(1);
                 assertThat(reporting.getBeansOfType(SimpleTransactionalEventHandlerExecutor.class)).hasSize(1);
                 assertThat(reporting.getBean(org.springframework.transaction.PlatformTransactionManager.class))

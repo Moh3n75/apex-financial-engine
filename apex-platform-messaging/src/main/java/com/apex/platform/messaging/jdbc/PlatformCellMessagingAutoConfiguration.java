@@ -5,11 +5,13 @@ import com.apex.platform.core.context.ExecutionContextProvider;
 import com.apex.platform.events.EventEnvelopeFactory;
 import com.apex.platform.events.api.CellEvents;
 import com.apex.platform.messaging.consumer.*;
+import com.apex.platform.messaging.consumer.internal.DiscoveringEventHandlerRegistry;
 import com.apex.platform.messaging.internal.DefaultCellEvents;
 import com.apex.platform.messaging.kafka.KafkaMessagePublisher;
 import com.apex.platform.messaging.kafka.SpringKafkaMessagePublisher;
 import com.apex.platform.messaging.outbox.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,7 +22,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Clock;
-import java.util.List;
 import java.util.UUID;
 
 @AutoConfiguration(
@@ -145,12 +146,16 @@ public class PlatformCellMessagingAutoConfiguration {
         return new JdbcProcessedEventStore(jdbcTemplate, clock);
     }
 
+
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(EventHandlerRegistry.class)
     @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
-    EventHandlerRegistry eventHandlerRegistry(List<EventHandler<?>> handlers) {
-        return new DefaultEventHandlerRegistry(handlers);
+    EventHandlerRegistry eventHandlerRegistry(
+            ConfigurableListableBeanFactory beanFactory
+    ) {
+        return new DiscoveringEventHandlerRegistry(beanFactory);
     }
+
 
     @Bean
     @ConditionalOnMissingBean(EventHandlerExecutor.class)
