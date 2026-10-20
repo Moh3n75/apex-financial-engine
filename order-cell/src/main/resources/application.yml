@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: order-cell
+  datasource:
+    url: ${CELL_DB_URL}
+    username: ${CELL_DB_USERNAME}
+    password: ${CELL_DB_PASSWORD}
+  flyway:
+    locations: classpath:db/migration,classpath:db/platform
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      auto-create: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+
+apex:
+  cell:
+    id: ${CELL_ID:order-cell}
+  messaging:
+    cell:
+      enabled: true
+    publisher:
+      topic: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
+    outbox:
+      publisher:
+        enabled: true
+    consumer:
+      enabled: false
+
+server:
+  port: ${SERVER_PORT:8083}
