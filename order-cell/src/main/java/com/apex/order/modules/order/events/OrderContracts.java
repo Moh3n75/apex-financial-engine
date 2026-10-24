@@ -8,4 +8,13 @@ public final class OrderContracts {
 
     public static final EventContract<OrderCreatedIntegrationEvent> CREATED_V1 = EventContracts.define(
             "ORDER_CREATED", 1, "ORDER", OrderCreatedIntegrationEvent.class, "order.created.v1");
+
+    public static final EventContract<OrderPlacedIntegrationEvent>
+            PLACED_V1 = EventContracts.define(
+            OrderPlacedIntegrationEvent.EVENT_TYPE,
+            OrderPlacedIntegrationEvent.EVENT_VERSION,
+            OrderPlacedIntegrationEvent.AGGREGATE_TYPE,
+            OrderPlacedIntegrationEvent.class,
+            "order.placed.v1"
+    );
 }

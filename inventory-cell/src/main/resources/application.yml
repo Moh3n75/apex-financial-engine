@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: inventory-cell
+  datasource:
+    url: ${INVENTORY_DB_URL}
+    username: ${INVENTORY_DB_USERNAME}
+    password: ${INVENTORY_DB_PASSWORD}
+  flyway:
+    locations: classpath:db/migration,classpath:db/platform
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      auto-create: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+    consumer:
+      group-id: ${APEX_INVENTORY_CONSUMER_GROUP:inventory-cell-order-placed-v1}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        allow.auto.create.topics: false
+    listener:
+      ack-mode: manual_immediate
+      # No ORDER_PLACED handler exists yet. Prevent ACK of unhandled records.
+      auto-startup: false
+
+apex:
+  cell:
+    id: inventory-cell
+  messaging:
+    cell:
+      enabled: true
+    consumer:
+      enabled: true
+      topics: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
+    publisher:
+      topic: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
+    outbox:
+      publisher:
+        enabled: true
+
+server:
+  port: ${SERVER_PORT:8084}
