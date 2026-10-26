@@ -1,0 +1,10 @@
+# Opt-in only, after verified handler coverage. Base configuration stays paused.
+spring:
+  kafka:
+    listener:
+      auto-startup: true
+apex:
+  messaging:
+    consumer:
+      reliability:
+        enabled: true

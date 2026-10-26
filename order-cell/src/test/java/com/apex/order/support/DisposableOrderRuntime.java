@@ -23,6 +23,10 @@ public final class DisposableOrderRuntime implements AutoCloseable {
     private DisposableOrderRuntime() {}
 
     public static DisposableOrderRuntime start() throws Exception {
+        return start(false);
+    }
+
+    public static DisposableOrderRuntime start(boolean sagaConsumer) throws Exception {
         DisposableOrderRuntime runtime = new DisposableOrderRuntime();
         try {
             runtime.database = EmbeddedPostgres.builder().start();
@@ -43,7 +47,14 @@ public final class DisposableOrderRuntime implements AutoCloseable {
                             "--spring.datasource.username=postgres", "--spring.datasource.password=",
                             "--spring.kafka.bootstrap-servers=" + runtime.broker.getBrokersAsString(),
                             "--apex.cell.id=order-cell", "--apex.messaging.publisher.topic=" + TOPIC,
-                            "--apex.messaging.cell.enabled=true", "--apex.messaging.consumer.enabled=false",
+                            "--apex.messaging.cell.enabled=true", "--apex.messaging.consumer.enabled=" + sagaConsumer,
+                            "--spring.kafka.consumer.group-id=order-cell-test-" + java.util.UUID.randomUUID(),
+                            "--apex.messaging.consumer.topics=apex.inventory.events.v1",
+                            "--spring.kafka.listener.auto-startup=false",
+                            "--spring.kafka.consumer.enable-auto-commit=false",
+                            "--spring.kafka.listener.ack-mode=manual_immediate",
+                            "--spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
+                            "--spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
                             "--apex.messaging.outbox.publisher.enabled=true",
                             "--apex.messaging.outbox.publisher.interval-ms=100");
             return runtime;

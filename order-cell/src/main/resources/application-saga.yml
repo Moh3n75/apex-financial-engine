@@ -1,0 +1,28 @@
+# Opt-in Saga runtime. Explicit connection overrides are required for this profile.
+spring:
+  datasource:
+    url: ${ORDER_DB_URL}
+    username: ${ORDER_DB_USERNAME}
+    password: ${ORDER_DB_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      auto-create: false
+    consumer:
+      group-id: ${APEX_ORDER_CONSUMER_GROUP:order-cell-inventory-outcome-v1}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        allow.auto.create.topics: false
+    listener:
+      ack-mode: manual_immediate
+      auto-startup: true
+apex:
+  messaging:
+    consumer:
+      enabled: true
+      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
+      reliability:
+        enabled: true

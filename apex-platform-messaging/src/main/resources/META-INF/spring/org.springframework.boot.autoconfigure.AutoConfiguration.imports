@@ -1,1 +1,2 @@
 com.apex.platform.messaging.jdbc.PlatformCellMessagingAutoConfiguration
+com.apex.platform.messaging.jdbc.PlatformConsumerReliabilityAutoConfiguration

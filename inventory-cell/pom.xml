@@ -57,6 +57,26 @@
         <finalName>inventory-cell</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>saga-packaged-e2e</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>test</goal></goals>
+                        <configuration>
+                            <includes><include>**/OrderInventorySagaIT.java</include></includes>
+                            <failIfNoTests>true</failIfNoTests>
+                            <reportsDirectory>${project.build.directory}/saga-e2e-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
+                                <saga.inventoryJar>${project.build.directory}/inventory-cell.jar</saga.inventoryJar>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>

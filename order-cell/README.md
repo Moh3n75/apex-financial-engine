@@ -23,7 +23,7 @@ mvn -B -ntp -f order-cell/pom.xml clean verify
 ```
 
 The first command builds/installs current Starters and their dependencies. The second
-builds this Cell independently and runs seven integration tests against a real HTTP
+builds this Cell independently and runs its creation and Saga integration tests against a real HTTP
 server, disposable embedded PostgreSQL and an embedded Kafka KRaft broker. No Docker,
 development broker or development database is required. Test topics are provisioned
 only inside the disposable broker, whose auto-topic-creation is disabled.
@@ -36,8 +36,8 @@ Spring Boot auto-configuration; there are no test replacements for the persisten
 Outbox, publisher, Clock or execution-context Beans.
 
 The executable artifact is `order-cell/target/order-cell.jar`. Tests launch the real
-Boot context from compiled classes; starting the packaged JAR separately is not part
-of this reference verification.
+Boot context from compiled classes. The cross-Cell verification runner described below also
+starts this packaged JAR and Inventory in separate JVMs.
 
 ## Running outside tests
 
@@ -100,5 +100,40 @@ use case does not build envelopes, call Kafka or manage trace scopes for HTTP re
   an explicitly enabled publishing path. No fallback delivery mechanism is added.
 - Selecting the existing `db/platform` location installs its bundled Inbox migration
   as well as Outbox even though this reference has no Consumer Beans.
-- This is a creation-path reference: it has no GET API, consumer, business duplicate
-  error mapping, production deployment automation, or new event delivery guarantees.
+- The original M24 POST /api/v1/orders and ORDER_CREATED contract remain compatible.
+  Saga placement and its read-only status query are separate endpoints described below.
+
+## Order / Inventory Saga stage (M26.6–M26.7)
+
+`POST /api/v1/order-placements` accepts externalReference, description and a nonempty
+items array [{productId, quantity}]. Order/items/ORDER_PLACED V1 Outbox append are atomic.
+The response is HTTP 201 with {orderId,status:"PENDING_INVENTORY"}.
+`GET /api/v1/order-placements/{orderId}` returns {orderId,status} or 404.
+
+Opt-in `--spring.profiles.active=saga` enables the Inventory outcome consumer, whose
+group defaults to `order-cell-inventory-outcome-v1` (APEX_ORDER_CONSUMER_GROUP override).
+It subscribes to apex.inventory.events.v1 (APEX_INVENTORY_EVENTS_TOPIC override) and
+retains publishing to apex.order.events.v1. This profile requires ORDER_DB_URL,
+ORDER_DB_USERNAME, ORDER_DB_PASSWORD and KAFKA_BOOTSTRAP_SERVERS, with no connection
+defaults. Existing base YAML/local credentials are untouched.
+
+Before Kafka containers start, lifecycle preflight requires both INVENTORY_RESERVED V1
+and INVENTORY_RESERVATION_REJECTED V1 handlers. These use Order-owned {orderId} wire DTOs;
+no Inventory business JAR is imported. A conditional SQL update changes only
+PENDING_INVENTORY to PENDING_PAYMENT or CANCELLED, respectively. An already matching
+status is harmless; missing, conflicting and late outcomes throw and roll back Inbox.
+Payment, CONFIRMED transitions and compensation are not implemented.
+
+Run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File inventory-cell/tools/verify-saga.ps1 -Offline`
+from the repository root for clean Platform builds, both complete Cell suites and the
+real Kafka/two-PostgreSQL/two-child-JVM demo. It records content hashes to reject stale
+Order/Platform artifacts. See inventory-cell/README.md for manual startup and topic provisioning.
+
+The saga profile opts in to Platform reliable consumption. Provision `apex.inventory.events.v1-dlt`
+with at least the source partition count before startup. Unsupported/malformed records and
+exhausted business failures are quarantined with the original key/raw value; source offsets
+commit only after broker-confirmed DLT publication. Unavailable DLT blocks recovery. Legacy
+mode without the reliability flag retains the pre-existing risks. See
+[Platform reliability configuration](../apex-platform-messaging/README.md) for retry knobs,
+ACL/retention requirements, duplicate-DLT boundaries and explicit M26.9 operator replay.
+There is no automatic replay or exactly-once Kafka claim; Inbox/business idempotency remains required.

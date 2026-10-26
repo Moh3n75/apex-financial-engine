@@ -12,6 +12,8 @@ import org.springframework.kafka.support.Acknowledgment;
 import com.apex.platform.messaging.consumer.ConsumerContext;
 import com.apex.platform.messaging.consumer.DispatchResult;
 import com.apex.platform.messaging.consumer.EventMessageDispatcher;
+import com.apex.platform.messaging.consumer.UnsupportedEventContractException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Kafka listener with configurable topic(s). ACK only after successful dispatch.
@@ -23,20 +25,34 @@ public class ConfigurableKafkaEventConsumer {
     private final EventMessageDispatcher dispatcher;
     private final Clock clock;
     private final String consumerGroup;
+    private final boolean reliable;
+    private final JsonMapper jsonMapper;
 
     public ConfigurableKafkaEventConsumer(
             EventMessageDispatcher dispatcher,
             Clock clock,
             String consumerGroup
     ) {
+        this(dispatcher, clock, consumerGroup, false, null);
+    }
+
+    public ConfigurableKafkaEventConsumer(EventMessageDispatcher dispatcher, Clock clock,
+            String consumerGroup, boolean reliable, JsonMapper jsonMapper) {
         this.dispatcher = dispatcher;
         this.clock = clock;
         this.consumerGroup = consumerGroup;
+        this.reliable = reliable;
+        this.jsonMapper = jsonMapper;
+    }
+
+    public boolean isReliable() {
+        return reliable;
     }
 
     @KafkaListener(
             topics = "${apex.messaging.consumer.topics}",
             groupId = "${spring.kafka.consumer.group-id}",
+            containerFactory = "#{${apex.messaging.consumer.reliability.enabled:false} ? 'apexReliableKafkaListenerContainerFactory' : ''}",
             concurrency = "${apex.messaging.consumer.concurrency:1}"
     )
     public void consume(ConsumerRecord<String, String> record, Acknowledgment acknowledgment) {
@@ -61,6 +77,23 @@ public class ConfigurableKafkaEventConsumer {
         }
 
         if (result == DispatchResult.IGNORED) {
+            if (reliable) {
+                // Also guard custom dispatchers that still return IGNORED.
+                String type = null;
+                Integer version = null;
+                try {
+                    var metadata = jsonMapper.readTree(record.value()).path("metadata");
+                    if (metadata.path("eventType").isTextual()) {
+                        type = metadata.path("eventType").asText();
+                    }
+                    if (metadata.path("eventVersion").isIntegralNumber()) {
+                        version = metadata.path("eventVersion").asInt();
+                    }
+                } catch (RuntimeException ignored) {
+                    // Identification is best-effort; the raw record is preserved only in DLT.
+                }
+                throw new UnsupportedEventContractException(type, version, context);
+            }
             log.debug(
                     "No handler registered topic={} partition={} offset={}",
                     record.topic(),

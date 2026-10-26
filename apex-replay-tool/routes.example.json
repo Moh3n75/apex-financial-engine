@@ -1,0 +1,18 @@
+[
+  {
+    "originTopic": "apex.order.events.v1",
+    "dltTopic": "apex.order.events.v1-dlt",
+    "targetGroup": "inventory-cell-order-placed-v1",
+    "replayTopic": "apex.inventory.order-placed.replay.v1",
+    "replayDltTopic": "apex.inventory.order-placed.replay.v1-dlt",
+    "eventTypes": ["ORDER_PLACED"]
+  },
+  {
+    "originTopic": "apex.inventory.events.v1",
+    "dltTopic": "apex.inventory.events.v1-dlt",
+    "targetGroup": "order-cell-inventory-outcome-v1",
+    "replayTopic": "apex.order.inventory-outcome.replay.v1",
+    "replayDltTopic": "apex.order.inventory-outcome.replay.v1-dlt",
+    "eventTypes": ["INVENTORY_RESERVED", "INVENTORY_RESERVATION_REJECTED"]
+  }
+]

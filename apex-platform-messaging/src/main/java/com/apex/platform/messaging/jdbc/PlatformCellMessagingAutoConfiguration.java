@@ -180,9 +180,10 @@ public class PlatformCellMessagingAutoConfiguration {
     EventMessageDispatcher eventMessageDispatcher(
             JsonMapper jsonMapper,
             EventHandlerRegistry eventHandlerRegistry,
-            EventHandlerExecutor eventHandlerExecutor
+            EventHandlerExecutor eventHandlerExecutor,
+            @Value("${apex.messaging.consumer.reliability.enabled:false}") boolean reliable
     ) {
-        return new JacksonEventMessageDispatcher(jsonMapper, eventHandlerRegistry, eventHandlerExecutor);
+        return new JacksonEventMessageDispatcher(jsonMapper, eventHandlerRegistry, eventHandlerExecutor, reliable);
     }
 
     @Bean
@@ -196,9 +197,11 @@ public class PlatformCellMessagingAutoConfiguration {
     ConfigurableKafkaEventConsumer configurableKafkaEventConsumer(
             EventMessageDispatcher dispatcher,
             Clock clock,
-            @Value("${spring.kafka.consumer.group-id}") String consumerGroup
+            @Value("${spring.kafka.consumer.group-id}") String consumerGroup,
+            @Value("${apex.messaging.consumer.reliability.enabled:false}") boolean reliable,
+            JsonMapper jsonMapper
     ) {
-        return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup);
+        return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup, reliable, jsonMapper);
     }
     
 
