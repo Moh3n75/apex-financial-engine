@@ -22,13 +22,14 @@ public final class ReplayToolApplication {
         try {
             require(args.length > 0, "COMMAND_REQUIRED");
             String command = args[0];
-            if (command.equals("execute") || command.equals("reconcile")) {
-                throw new IllegalStateException("NOT_IMPLEMENTED_NO_PUBLICATION_AVAILABLE");
-            }
             Map<String, Set<String>> commands = Map.of(
                     "init-audit", Set.of(),
                     "status", Set.of("plan-id"),
                     "approve", Set.of("plan-id", "confirm-digest", "actor", "reason"),
+                    "execute", Set.of("plan-id", "confirm-digest", "actor", "reason", "routes", "target-group", "replay-topic",
+                            "failure-resolved", "max-records", "rate", "attempts", "allow-kafka-interaction"),
+                    "reconcile", Set.of("plan-id", "confirm-digest", "actor", "reason", "routes", "target-group", "replay-topic",
+                            "from-offset", "max-scan", "allow-kafka-interaction"),
                     "inspect", Set.of("routes", "dlt-topic", "partition", "offset", "allow-kafka-interaction"),
                     "plan", Set.of("routes", "selector", "target-group", "replay-topic", "actor", "reason", "limit",
                             "allow-kafka-interaction"));
@@ -37,11 +38,26 @@ public final class ReplayToolApplication {
             if (command.equals("approve")) {
                 audit(environment).approve(UUID.fromString(options.get("plan-id")), options.get("confirm-digest"),
                         options.get("actor"), options.get("reason"));
-                output.println("APPROVED; publication NOT IMPLEMENTED; business processing NOT VERIFIED");
+                output.println("APPROVED; publication NOT YET VERIFIED; business processing NOT VERIFIED");
             } else if (command.equals("status")) {
                 output.println(JSON.writeValueAsString(audit(environment).status(UUID.fromString(options.get("plan-id")))));
             } else if (command.equals("init-audit")) {
                 audit(environment).initialize(); output.println("AUDIT_SCHEMA_INITIALIZED");
+            } else if (command.equals("execute") || command.equals("reconcile")) {
+                var audit = audit(environment);
+                UUID id = UUID.fromString(options.get("plan-id")); String digest = options.get("confirm-digest");
+                var plan = audit.approved(id, digest);
+                List<Route> routes = List.of(JSON.readValue(file(options.get("routes")), Route[].class));
+                require(plan.items().stream().allMatch(i -> routes.contains(i.route())
+                        && i.route().targetGroup().equals(options.get("target-group"))
+                        && i.route().replayTopic().equals(options.get("replay-topic"))), "TARGET_NOT_ALLOWLISTED");
+                var executor = new ReplayExecutor(audit, kafka(environment), routes);
+                var status = command.equals("execute")
+                        ? executor.execute(id, digest, options.get("actor"), options.get("reason"), options.get("failure-resolved"),
+                            Integer.parseInt(options.get("max-records")), Integer.parseInt(options.get("rate")), Integer.parseInt(options.get("attempts")))
+                        : executor.reconcile(id, digest, options.get("actor"), options.get("reason"),
+                            Long.parseLong(options.get("from-offset")), Integer.parseInt(options.get("max-scan")));
+                output.println(JSON.writeValueAsString(status));
             } else {
                 List<Route> routes = List.of(JSON.readValue(file(options.get("routes")), Route[].class));
                 // Validate manifest, limits and destination allowlist before opening Kafka clients.
@@ -94,7 +110,7 @@ public final class ReplayToolApplication {
                         var plan = ReplayPlanner.plan(selections, route, options.get("actor"), options.get("reason"), limit, reader);
                         audit(environment).save(plan);
                         output.println(JSON.writeValueAsString(Map.of("planId", plan.planId(), "digest", plan.digest(),
-                                "planned", plan.items().size(), "status", "PLANNED", "publication", "NOT_IMPLEMENTED")));
+                                "planned", plan.items().size(), "status", "PLANNED", "publication", "NOT_PUBLISHED")));
                     }
                 }
             }

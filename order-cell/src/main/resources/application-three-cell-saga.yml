@@ -1,0 +1,23 @@
+# Use saga,three-cell-saga; add replay explicitly if desired.
+apex:
+  messaging:
+    consumer:
+      topics: apex.inventory.events.v1,apex.payment.events.v1
+    publisher:
+      routing:
+        enabled: true
+        required-contracts: [ORDER_PLACED:1, ORDER_CREATED:1, ORDER_READY_FOR_PAYMENT:1, ORDER_CANCELLATION_REQUESTED:1]
+        routes:
+          - {event-type: ORDER_PLACED, event-version: 1, topic: apex.order.events.v1}
+          - {event-type: ORDER_CREATED, event-version: 1, topic: apex.order.legacy.events.v1}
+          - {event-type: ORDER_READY_FOR_PAYMENT, event-version: 1, topic: apex.order.payment-requests.v1}
+          - {event-type: ORDER_CANCELLATION_REQUESTED, event-version: 1, topic: apex.order.inventory-release-requests.v1}
+---
+spring:
+  config:
+    activate:
+      on-profile: "three-cell-saga & replay"
+apex:
+  messaging:
+    consumer:
+      topics: apex.inventory.events.v1,apex.payment.events.v1,${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1},${APEX_ORDER_PAYMENT_REPLAY_TOPIC:apex.order.payment-outcome.replay.v1}

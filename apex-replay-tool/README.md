@@ -1,173 +1,175 @@
-# Operator DLT approval tool — M26.9 PARTIAL
+# Operator-controlled DLT replay
 
-Implemented: **inspect → plan → approve → status**, with independent PostgreSQL audit.
-`execute` and `reconcile` always exit 2 with `NOT_IMPLEMENTED_NO_PUBLICATION_AVAILABLE`,
-before opening any infrastructure connection. Approval does not publish anything.
-There is no producer, subscription, scheduled job, source offset commit/reset or automatic replay.
-Do not use this partial delivery to claim recovery of a business operation.
+Independent Java 21 / Boot and Spring Kafka 4.1.1 CLI. Commands are human-initiated:
+**inspect → plan → approve → execute → status/reconcile**. No automatic replay, startup
+listener, source-topic publication or consumer-group offset reset exists.
+`PUBLISHED_TO_REPLAY_TOPIC` means broker receipt, not business completion.
 
-## Build and isolated verification
+## Build and isolated tests
 
-From the repository root, Java 21 and Maven 3.9.x:
+From the repository root:
 
 ```powershell
 mvn -B -ntp -o -f apex-replay-tool/pom.xml clean verify
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File inventory-cell/tools/verify-saga.ps1 -Offline -MavenCommand mvn.cmd
 ```
 
-Remove `-o` only if dependency downloads are needed. The standalone project uses Boot's
-4.1.1 dependency management, Spring Kafka 4.1.1, Kafka clients 4.2.1, Jackson 3 and
-Flyway PostgreSQL. It imports no Cell, Starter or Platform runtime and is outside the
-root reactor. Tests start their own native EmbeddedPostgres/KRaft resources, with
-broker topic auto-creation disabled; no Docker or inherited deployment connection is used.
-The integration-test phase invokes the actual packaged operator JAR in child JVMs.
-Those processes are **not** an Order/Inventory replay E2E.
+The tool tests use disposable KRaft/native PostgreSQL and real packaged CLI processes.
+The Saga runner clean-installs Platform, verifies Order, verifies/packages the CLI, then
+verifies Inventory including the original Saga and bidirectional replay with two packaged
+Cell JVMs. No Docker/shared service is needed. Remove offline flags only for downloads.
 
-## Explicit connection setup
+## Explicit environment and audit database
 
-Obtain authorization and provision a **separate, empty operator-owned PostgreSQL
-database**. Never supply a Cell database. `init-audit` refuses a populated public
-schema unless it contains only this tool's recognized audit tables/history and marker.
-It installs only `db/replay/V1__replay_approval_audit.sql`; inspect/status/approve/plan
-never run migrations implicitly. This public-schema check is a guard, not proof of
-exclusive database ownership; operators must provision a dedicated database/role.
-
-Supply these environment variables through your approved secret mechanism:
-
-| Variable | Required by | Default |
-|---|---|---|
-| `REPLAY_AUDIT_DB_URL` | init-audit, plan, approve, status | None; PostgreSQL JDBC URL, no credentials embedded |
-| `REPLAY_AUDIT_DB_USERNAME` | same | None |
-| `REPLAY_AUDIT_DB_PASSWORD` | same | None; explicit empty value permitted for isolated tests |
-| `REPLAY_KAFKA_BOOTSTRAP_SERVERS` | inspect, plan | None |
-| `REPLAY_KAFKA_PROPERTIES_FILE` | optional for inspect/plan | None; Java properties file for TLS/SASL settings |
-
-Keep credentials/properties outside Git. Do not put passwords in URLs, command arguments,
-actor/reason values or route/selector manifests. The CLI suppresses nested exception details
-and never prints raw envelopes. Kafka clients may log connection metadata; protect logs.
-Every Kafka command requires `--allow-kafka-interaction`. This is operator opt-in, not
-permission to access shared infrastructure; all implementation validation used temporary resources.
-
-## Tested CLI syntax
-
-The following commands show the exact supported argument structure. Placeholder values
-must come from an authorized environment and inspection; examples are not provisioning commands.
-All options shown are mandatory, including `--limit`; unknown/duplicate options are rejected.
-Use PowerShell's actual backtick continuation or write each command on one line.
+Provide `REPLAY_AUDIT_DB_URL`, `REPLAY_AUDIT_DB_USERNAME`, `REPLAY_AUDIT_DB_PASSWORD`
+through an approved secret mechanism. The audit database must be separate from both Cells.
+Kafka commands also require `REPLAY_KAFKA_BOOTSTRAP_SERVERS`; optional
+`REPLAY_KAFKA_PROPERTIES_FILE` supplies Java properties for TLS/SASL. No network default
+exists. Keep passwords/properties outside Git, URLs, actor/reason values and CLI arguments.
+Protect Kafka client logs, which can include connection metadata. Raw payloads and nested
+exceptions are suppressed by the CLI; inspect always redacts exception message text.
 
 ```powershell
 java -jar apex-replay-tool/target/apex-replay-tool.jar init-audit
-
-java -jar apex-replay-tool/target/apex-replay-tool.jar inspect `
-  --routes apex-replay-tool/routes.example.json `
-  --dlt-topic apex.order.events.v1-dlt --partition 1 --offset 7 `
-  --allow-kafka-interaction
 ```
 
-Inspection assigns/seeks the exact DLT coordinate without a group ID, subscription or
-commit. It returns coordinates, raw SHA-256/byte length, parseable event identity,
-origin and exception class. Exception text is always redacted. Broken provenance is
-flagged, never fabricated. Inspection accepts only DLTs listed in the explicit route file.
+Only this explicit command installs/upgrades tool-local `db/replay` V1/V2. Applied V1 is
+unchanged; existing plans/approvals survive V2. Other commands never migrate implicitly.
+Unknown public tables cause refusal, but operators remain responsible for choosing a
+separately provisioned audit DB. Use distinct migration and restricted runtime DB roles.
 
-Create a selector manifest outside publishable source (e.g. ignored `out/replay-selector.json`):
+## Eight-topic topology and opt-in subscriptions
+
+`routes.example.json` is the explicit whitelist. Provision these existing source/DLT pairs:
+`apex.order.events.v1` / `apex.order.events.v1-dlt` and
+`apex.inventory.events.v1` / `apex.inventory.events.v1-dlt`.
+
+| Target / existing group | Dedicated replay / replay DLT |
+|---|---|
+| Inventory / `inventory-cell-order-placed-v1` | `apex.inventory.order-placed.replay.v1` / `apex.inventory.order-placed.replay.v1-dlt` |
+| Order / `order-cell-inventory-outcome-v1` | `apex.order.inventory-outcome.replay.v1` / `apex.order.inventory-outcome.replay.v1-dlt` |
+
+Topics are never auto-created by the tool. Source DLT >= source partitions, replay >=
+source partitions, replay DLT >= replay partitions. Preserve original partition, including
+nonzero partitions; no fallback. Replay topics must be distinct and target-specific.
+
+In separately authorized disposable/manual environments, provide existing Cell DB/Kafka
+variables and launch in separate terminals:
+
+```powershell
+java -jar order-cell/target/order-cell.jar --spring.profiles.active=saga,replay
+java -jar inventory-cell/target/inventory-cell.jar --spring.profiles.active=saga,replay
+```
+
+Both profiles are required for replay configuration. Base YAML and group IDs are unchanged.
+Optional `APEX_ORDER_REPLAY_TOPIC` / `APEX_INVENTORY_REPLAY_TOPIC` and existing source topic
+variables must match the route file. The same APEX listener/registry/transactional Inbox/
+handler/reliable DLT policy processes both topics. A shared canonical parser validates and
+trims exact CSV names for listener and preflight; empty/invalid/duplicate names fail startup.
+No wildcard/bypass listener exists. ACLs must restrict replay subscriptions to intended groups;
+a whitelist alone cannot prove external deployment/ACL correctness.
+
+### M29 full three-Cell recovery
+
+`three-cell-routes.example.json` adds explicit Payment-request, Payment-outcome and
+Inventory-release-request routes and permits INVENTORY_RELEASED on the existing
+Inventory-outcome route. Only the listed V1 contract families are accepted. Old
+two-Cell routes and already-approved immutable plans retain their original contract sets.
+One group may own several sources; each `(originTopic,targetGroup)` route and each replay
+destination must still be unique. A plan selects **both** target group and replay topic.
+An origin DLT's group header must match; it is never broadcast to other groups.
+
+Use `saga,three-cell-saga,replay` for Order/Inventory and
+`three-cell-saga,simulation,replay` for Payment. Provision every subscribed replay topic
+and its `-dlt` first, with source-compatible partition capacity. No default profile or
+shared broker is modified. See the [M29 operational guide](../inventory-cell/tools/OPERATIONAL_RECOVERY.md)
+for the five-route map, protected stalled view, owner-specific checks and complete
+inspect/plan/approve/execute/reconcile commands. The existing CLI approval, digest,
+broker-confirmation and UNKNOWN/no-resend rules below are unchanged.
+
+## Tested command syntax
+
+All shown options are mandatory; unknown/duplicate options refuse. Every Kafka command
+requires `--allow-kafka-interaction`. Example coordinates below require substitution from
+an authorized inspection; they are not shared-infrastructure operations.
+
+```powershell
+java -jar apex-replay-tool/target/apex-replay-tool.jar inspect --routes apex-replay-tool/routes.example.json --dlt-topic apex.order.events.v1-dlt --partition 1 --offset 7 --allow-kafka-interaction
+```
+
+Inspect uses manual assignment/seek without group membership or commits. Copy its eventId
+and raw SHA-256 into `out/replay-selector.json`:
 
 ```json
-[
-  {
-    "dlt": {"topic": "apex.order.events.v1-dlt", "partition": 1, "offset": 7},
-    "eventId": "<UUID returned by inspect>",
-    "rawSha256": "<64 lowercase hex characters returned by inspect>"
-  }
-]
+[{"dlt":{"topic":"apex.order.events.v1-dlt","partition":1,"offset":7},"eventId":"<inspection UUID>","rawSha256":"<inspection lowercase SHA-256>"}]
 ```
 
 ```powershell
-java -jar apex-replay-tool/target/apex-replay-tool.jar plan `
-  --routes apex-replay-tool/routes.example.json --selector out/replay-selector.json `
-  --target-group inventory-cell-order-placed-v1 `
-  --replay-topic apex.inventory.order-placed.replay.v1 `
-  --actor operator-id --reason "Reviewed transient database failure" `
-  --limit 10 --allow-kafka-interaction
-
-java -jar apex-replay-tool/target/apex-replay-tool.jar approve `
-  --plan-id <returned-plan-UUID> --confirm-digest <returned-digest> `
-  --actor approver-id --reason "Explicit approval after inspection"
-
-java -jar apex-replay-tool/target/apex-replay-tool.jar status --plan-id <returned-plan-UUID>
+java -jar apex-replay-tool/target/apex-replay-tool.jar plan --routes apex-replay-tool/routes.example.json --selector out/replay-selector.json --target-group inventory-cell-order-placed-v1 --replay-topic apex.inventory.order-placed.replay.v1 --actor operator-id --reason "Reviewed technical failure" --limit 10 --allow-kafka-interaction
+java -jar apex-replay-tool/target/apex-replay-tool.jar approve --plan-id <plan-UUID> --confirm-digest <digest> --actor approver-id --reason "Explicit plan approval"
+java -jar apex-replay-tool/target/apex-replay-tool.jar execute --plan-id <plan-UUID> --confirm-digest <digest> --routes apex-replay-tool/routes.example.json --target-group inventory-cell-order-placed-v1 --replay-topic apex.inventory.order-placed.replay.v1 --actor operator-id --reason "Recover selected event" --failure-resolved "Technical cause removed and checked" --max-records 10 --rate 10 --attempts 1 --allow-kafka-interaction
+java -jar apex-replay-tool/target/apex-replay-tool.jar status --plan-id <plan-UUID>
+java -jar apex-replay-tool/target/apex-replay-tool.jar reconcile --plan-id <plan-UUID> --confirm-digest <digest> --routes apex-replay-tool/routes.example.json --target-group inventory-cell-order-placed-v1 --replay-topic apex.inventory.order-placed.replay.v1 --actor operator-id --reason "Positive broker evidence review" --from-offset 0 --max-scan 1000 --allow-kafka-interaction
 ```
 
-Approval is a separate durable command, under a PostgreSQL row lock. Wrong digest,
-missing plan, repeated/concurrent approval fail. Actor values are **unverified CLI
-claims**, not authenticated RBAC, and separation of commands does not enforce a
-two-person approval policy. Kafka ACLs and dedicated DB roles enforce external access.
-Status distinguishes APPROVED from `NOT_IMPLEMENTED_ZERO_PUBLICATIONS` and
-business processing `NOT_VERIFIED`. No failure-resolved execute attestation is accepted
-because publication is unavailable in this increment.
+For Order, substitute its group/replay topic. Actor values are **unverified identity claims**,
+not authenticated RBAC. Separate approval does not enforce two-person control. Failure-resolved
+is an operator attestation, not machine proof; an unresolved fault can quarantine the replay.
+External authorization and actual root-cause/handler deployment checks remain mandatory.
 
-## Validation and audit policy
+## Validation, bounds and durable audit
 
-The route file is an explicit operator-owned whitelist; preserve production group identities.
-The supplied example maps the two approved Saga streams. Renaming entries cannot deploy
-handlers or subscribe Cells. Only `ORDER_PLACED V1` for Inventory, or the two Inventory
-outcome V1 contracts for Order, are accepted. V99, unknown types, malformed envelopes,
-missing/conflicting headers, wrong original topic/group, mismatched selection hash/event ID
-or DLT coordinates all refuse planning. This is structural metadata validation and a local
-contract allowlist, **not proof of deployed handler support or business payload validity**.
-Business conflicts require reconciliation, not blind replay.
+Plans bind immutable source/DLT coordinates, routes, eventId/type/version, raw SHA/length,
+key SHA/null and ordered-header SHA. Raw body/key are not stored. Missing/conflicting origin
+headers, mismatched topic/group/hash/key/eventId, unknown/V99, malformed metadata, expired
+DLT coordinates, missing/undersized topics or unavailable audit refuse sends. Mandatory DLT
+headers are `kafka_dlt-original-topic`, `-original-consumer-group` (UTF-8),
+`-original-partition` (4-byte big-endian) and `-original-offset` (8-byte big-endian).
+Only original-source DLTs and approved Saga V1 contract sets are supported. This allowlist
+is not proof of business DTO validity or deployed handler coverage.
 
-Mandatory Spring Kafka headers (verified against 4.1.1):
+Selection hard cap is ten before dedupe. Duplicate DLT copies dedupe deterministically;
+conflicting identities and same eventId at different offsets require manual review. Unique
+audit constraints reject another plan for an already planned origin/eventId/group. No
+cancel/replan/override command exists. Execute requires the whole plan fit max-records
+(1–10 and <= approved limit), rate 1–100 records/second and attempts exactly 1. Producer
+internal idempotent retries are time-bounded; they are not automatic application replay.
 
-| Header | Encoding |
-|---|---|
-| `kafka_dlt-original-topic` | UTF-8 |
-| `kafka_dlt-original-consumer-group` | UTF-8 |
-| `kafka_dlt-original-partition` | 4-byte big-endian int |
-| `kafka_dlt-original-offset` | 8-byte big-endian long |
+V1 plans/items/approvals remain immutable. V2 adds unique durable run claims, deliveries
+and append-only execution/receipt actions. Execute revalidates the entire batch before
+claim, and each source again before send. PUBLISHING intent commits first; exact original
+bytes/key and original partition are sent with acks=all/idempotence and bounded timeout.
+Business headers are copied; `kafka_dlt-*` and prior `apex-replay-*` headers are stripped.
+New safe provenance headers: `apex-replay-marker`, `-plan-id`, `-event-id`, `-origin`, `-dlt`,
+`-target-group`, `-attempt`. The stable marker binds plan/event/origin. No stack trace is copied.
+Only positive broker metadata can mark PUBLISHED and append the receipt atomically.
 
-Exactly one of each is required. DLT partition must match original source partition.
-Metadata-only preflight describes source, source DLT, replay and replay DLT, creating none.
-Replay partitions must be at least the entire source partition count; replay DLT partitions
-must be at least replay count. The original partition must actually exist on the source.
-The eventual publisher must preserve that partition; no fallback is authorized.
+Send exceptions conservatively become PUBLISH_UNKNOWN. Crash/audit outage may leave
+PUBLISHING. Both block automatic resend. Completely published execute is a no-op. A durable
+run claim is never reclaimed/expired automatically, including interrupted batches with
+unsent items. Such cases require engineering review; no unsafe resume/reset command exists.
+PostgreSQL audit and Kafka are not atomic, and producer idempotence does not provide
+exactly-once cross-process replay. Inbox/business keys protect duplicate effects. Owners/
+superusers can bypass audit triggers; this is not a tamper-proof external ledger.
 
-The hard cap is ten selected coordinates, counted before deduplication. Duplicate DLT
-copies of one origin/event/key/raw value select the lowest DLT coordinate deterministically.
-Conflicting hashes/keys/event IDs fail. Different origin offsets with the same eventId
-require manual review. Globally unique audit constraints also reject a second plan for
-an already planned origin or eventId in the same target group; they never silently resend.
-There is no cancel/replan or exception-to-dedupe command in v1.
+Reconcile independently scans the approved replay partition from the requested offset,
+bounded to 1–10000 offsets and ten seconds. Exact marker + raw SHA/length + key SHA/null
+must match. Positive evidence persists coordinates with RECONCILED action; repeats are
+idempotent. No match leaves UNKNOWN with NO_EVIDENCE: absence/retention expiry is never
+proof of non-delivery. Widen a justified search or escalate; never blindly resend, delete
+audit rows or reset source offsets. Inspect/status do not mutate the audit database.
 
-Plan JSON includes immutable route, actor/reason/limit, source/DLT coordinates, raw SHA/length,
-key SHA/null marker and exact ordered-header fingerprint; the raw body/key are not stored.
-Items are canonically sorted and JSON/digest verified again on approval/status. DB triggers
-protect immutable plans/items and append-only PLAN/APPROVAL actions. All inserts/approval
-and their audit actions commit atomically. Provision separate migration and restricted
-operating roles; database superusers/owners can bypass these protections. This is not a
-tamper-proof external ledger. Audit text may itself contain operator-supplied sensitive data;
-retention/access control remain operator responsibilities.
+## Business verification and operations
 
-## Topology, ACLs and remaining implementation
+After broker publication, independently verify the owning Cell Inbox/group/eventId,
+reservation/projection/outcome, Order HTTP status and replay DLT. Tool status deliberately
+keeps business processing NOT_VERIFIED. A handler failure follows M26.8 retries into the
+replay topic's own DLT before recovered offset commit; no forwarding/replay loop exists.
 
-Future opt-in topology is **eight** explicitly provisioned topics: two sources, two source
-DLTs, two replay topics and two replay DLTs, listed in `routes.example.json`.
-No existing Cell configuration or subscription is modified by this partial delivery.
-Current M26.8 preflight splits CSV but the listener annotation does not: the resolved
-Spring `resolveTopics/resolveAsString` treats a property String as one topic. That mismatch
-must be fixed and tested before enabling multi-topic replay subscription. Use existing
-group, transactional dispatcher/Inbox and reliable DLT policy, never a bypass listener.
-
-Operators need Describe on relevant topics and Read on source DLTs; this phase has no
-group-offset access requirement at runtime. Audit role needs SELECT/INSERT plus the
-constrained approval UPDATE, action sequence usage; the migration role owns DDL. Future
-execute additionally needs replay Write/idempotent-producer permissions. Cells need Read
-on replay topics using their existing group, and Write to replay DLT. Configure partition
-counts, replication/min ISR, retention, encryption and ACL boundaries explicitly. DLT
-durability is finite within broker retention/replication policy, not indefinite archival.
-
-**NOT IMPLEMENTED:** broker-confirmed execute, rate/batch execution limits, item claims,
-PUBLISHING/PUBLISH_UNKNOWN reconciliation, sanitized replay headers, replay subscriptions,
-operator reconciliation command and positive two-Cell replay E2E. Do not approve a rollout
-based on this partial result. Before adding execute, implement durable PUBLISHING-before-send,
-positive ACK coordinates, unknown/crash blocking without automatic retransmit, exact raw/key
-revalidation, failure-cause-resolved attestation, and independent business verification.
-PostgreSQL audit and Kafka publish will not be atomic. An ambiguous send must stop for manual
-reconciliation; approval alone must never be reported as broker delivery or business success.
+Operators need Describe on route topics, Read on DLT/replay evidence, Write and appropriate
+idempotent-producer permission on replay. Cells need replay Read/group permission and replay
+DLT Write. Audit runtime needs restricted SELECT/INSERT, approval/delivery UPDATE and action
+sequence usage; migration role owns DDL. Explicitly configure TLS/ACLs, replication/min ISR,
+retention and finite DLT durability. Production identity/RBAC, live ACL-denial/TLS/failover
+qualification and production readiness are outside this milestone. No shared infrastructure
+operation is authorized by these examples.

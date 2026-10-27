@@ -39,13 +39,258 @@ import static org.awaitility.Awaitility.await;
 /** Packaged applications in TWO CHILD JVMs; all databases, topics and groups belong to this test. */
 @Tag("integration")
 class OrderInventorySagaIT {
-    private static final String ORDER_TOPIC = "apex.order.events.v1";
-    private static final String INVENTORY_TOPIC = "apex.inventory.events.v1";
-    private static final String PERSIAN = "سفارش آزمایشی";
-    private static final List<String> MODULES = List.of("apex-platform-core", "apex-platform-events",
+    static final String ORDER_TOPIC = "apex.order.events.v1";
+    static final String INVENTORY_TOPIC = "apex.inventory.events.v1";
+    static final String PERSIAN = "سفارش آزمایشی";
+    static final List<String> MODULES = List.of("apex-platform-core", "apex-platform-events",
             "apex-platform-context-autoconfigure", "apex-platform-webmvc", "apex-platform-messaging",
             "apex-starter-webmvc", "apex-starter-cell-messaging", "order-cell");
-    private static final JsonMapper JSON = JsonMapper.builder().build();
+    static final JsonMapper JSON = JsonMapper.builder().build();
+
+    @Test
+    void controlledReplayRecoversBothPackagedCellsThroughDedicatedTopics() throws Exception {
+        Path root = Path.of(System.getProperty("saga.repositoryRoot")).toAbsolutePath().normalize();
+        Path inventoryJar = Path.of(System.getProperty("saga.inventoryJar")).toAbsolutePath().normalize();
+        Path orderJar = verifyBuild(root, inventoryJar);
+        Path toolJar = root.resolve("apex-replay-tool/target/apex-replay-tool.jar");
+        assertThat(toolJar).isRegularFile();
+        Path output = inventoryJar.getParent();
+        String inventoryReplay = "apex.inventory.order-placed.replay.v1";
+        String orderReplay = "apex.order.inventory-outcome.replay.v1";
+        List<String> topics = List.of(ORDER_TOPIC, INVENTORY_TOPIC, ORDER_TOPIC + "-dlt", INVENTORY_TOPIC + "-dlt",
+                inventoryReplay, inventoryReplay + "-dlt", orderReplay, orderReplay + "-dlt");
+        List<Map<String, Object>> evidence = new ArrayList<>();
+        var broker = new EmbeddedKafkaKraftBroker(1, 1, topics.toArray(String[]::new));
+        broker.brokerProperty("auto.create.topics.enable", "false");
+        broker.brokerListProperty("apex.m269.replay.test.brokers");
+        Process order = null; Process inventory = null;
+        try (var orderDb = EmbeddedPostgres.builder().start(); var inventoryDb = EmbeddedPostgres.builder().start();
+             var auditDb = EmbeddedPostgres.builder().start();
+             var http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build()) {
+            try {
+                broker.afterPropertiesSet(); String brokers = broker.getBrokersAsString();
+                String orderGroup = "order-replay-test-" + UUID.randomUUID();
+                String inventoryGroup = "inventory-replay-test-" + UUID.randomUUID();
+                var orders = new JdbcTemplate(orderDb.getPostgresDatabase());
+                var stock = new JdbcTemplate(inventoryDb.getPostgresDatabase());
+                var audit = new JdbcTemplate(auditDb.getPostgresDatabase());
+                int orderPort = freePort(); int inventoryPort = freePort();
+                Path orderLog = output.resolve("replay-order.log"); Path inventoryLog = output.resolve("replay-inventory.log");
+                order = launch(orderJar, orderDb, brokers, orderGroup, orderPort, orderLog, ORDER_TOPIC,
+                        INVENTORY_TOPIC + "," + orderReplay, "--spring.profiles.active=saga,replay");
+                inventory = launch(inventoryJar, inventoryDb, brokers, inventoryGroup, inventoryPort, inventoryLog, INVENTORY_TOPIC,
+                        ORDER_TOPIC + "," + inventoryReplay, "--spring.profiles.active=saga,replay");
+                ready(order, orderLog, http, orderPort); ready(inventory, inventoryLog, http, inventoryPort);
+                assertThat(read(orderLog)).contains("topics=[" + INVENTORY_TOPIC + ", " + orderReplay + "]",
+                        "Saga preflight validated INVENTORY_RESERVED V1", "Saga preflight validated INVENTORY_RESERVATION_REJECTED V1");
+                assertThat(read(inventoryLog)).contains("topics=[" + ORDER_TOPIC + ", " + inventoryReplay + "]",
+                        "Saga preflight validated ORDER_PLACED V1");
+                evidence.add(Map.of("stage", "processes", "orderPid", order.pid(), "inventoryPid", inventory.pid(),
+                        "brokers", brokers, "orderGroup", orderGroup, "inventoryGroup", inventoryGroup, "topics", topics));
+                Path routes = output.resolve("replay-routes.json");
+                Files.writeString(routes, JSON.writeValueAsString(List.of(
+                        replayRoute(ORDER_TOPIC, inventoryGroup, inventoryReplay, List.of("ORDER_PLACED")),
+                        replayRoute(INVENTORY_TOPIC, orderGroup, orderReplay, List.of("INVENTORY_RESERVED", "INVENTORY_RESERVATION_REJECTED")))));
+                replayCli(toolJar, auditDb, brokers, evidence, output, "init-audit");
+                UUID a = UUID.randomUUID(); UUID b = UUID.randomUUID();
+                stock.update("INSERT INTO inventory_stock(product_id,available_quantity,reserved_quantity) VALUES (?,10,0),(?,5,0)", a, b);
+                technicalFailure(stock); technicalFailure(orders);
+                try (var admin = Admin.create(Map.of("bootstrap.servers", brokers));
+                     var sourceObserver = observer(brokers); var dltObserver = observer(brokers);
+                     var replayObserver = observer(brokers); var unrelated = observer(brokers);
+                     var duplicateProducer = producer(brokers)) {
+                    assertThat(admin.listTopics().names().get(10, TimeUnit.SECONDS)).containsAll(topics);
+                    sourceObserver.assign(List.of(new TopicPartition(ORDER_TOPIC, 0), new TopicPartition(INVENTORY_TOPIC, 0)));
+                    sourceObserver.seekToBeginning(sourceObserver.assignment());
+                    dltObserver.assign(List.of(new TopicPartition(ORDER_TOPIC + "-dlt", 0), new TopicPartition(INVENTORY_TOPIC + "-dlt", 0)));
+                    dltObserver.seekToBeginning(dltObserver.assignment());
+                    replayObserver.assign(List.of(new TopicPartition(inventoryReplay, 0), new TopicPartition(orderReplay, 0)));
+                    replayObserver.seekToBeginning(replayObserver.assignment());
+                    unrelated.subscribe(List.of(ORDER_TOPIC));
+                    await().atMost(Duration.ofSeconds(20)).until(() -> {
+                        unrelated.poll(Duration.ofMillis(100)); return !unrelated.assignment().isEmpty();
+                    });
+                    unrelated.seekToBeginning(unrelated.assignment());
+                    var sources = new HashMap<UUID, ConsumerRecord<String, String>>();
+                    var dlts = new HashMap<UUID, ConsumerRecord<String, String>>();
+                    var replays = new HashMap<UUID, ConsumerRecord<String, String>>();
+                    UUID orderId = UUID.fromString(post(http, orderPort, List.of(item(a, 2), item(b, 1))).path("orderId").asText());
+                    var placed = eventFor(orders, orderId, null); UUID eventId = (UUID) placed.get("event_id");
+                    var original = observe(sourceObserver, sources, eventId);
+                    var quarantine = observe(dltObserver, dlts, eventId);
+                    assertQuarantine(quarantine, original.value(), ORDER_TOPIC, original.offset(), inventoryGroup, "PSQLException");
+                    awaitConsumed(admin, inventoryGroup, ORDER_TOPIC, original.offset());
+                    assertThat(count(stock, "processed_event", "event_id", eventId)).isZero();
+                    assertThat(count(stock, "inventory_reservations", "order_id", orderId)).isZero();
+                    assertThat(count(stock, "outbox_event", "aggregate_id", orderId)).isZero();
+                    assertStock(stock, a, 10, 0); assertStock(stock, b, 5, 0);
+                    await().atMost(Duration.ofSeconds(20)).until(() -> {
+                        boolean found = false;
+                        for (var record : unrelated.poll(Duration.ofMillis(100))) { if (record.offset() == original.offset()) { found = true; } }
+                        return found;
+                    });
+                    // Both faults are genuine deferred PostgreSQL commit failures, not business rejection.
+                    stock.update("UPDATE replay_test_gate SET enabled=false");
+                    long originalEnd = topicEnd(admin, ORDER_TOPIC);
+                    var inventoryPlan = replayApproval(toolJar, auditDb, brokers, routes, quarantine, inventoryGroup,
+                            inventoryReplay, evidence, output);
+                    var inventoryReceipt = replayExecute(toolJar, auditDb, brokers, routes, inventoryPlan,
+                            inventoryGroup, inventoryReplay, evidence, output);
+                    assertThat(inventoryReceipt.path("publication").asText()).isEqualTo("PUBLISHED_TO_REPLAY_TOPIC");
+                    var replayed = observe(replayObserver, replays, eventId);
+                    assertReplayIdentity(original, replayed, inventoryPlan);
+                    assertThat(topicEnd(admin, ORDER_TOPIC)).isEqualTo(originalEnd);
+                    await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> assertThat(stock.queryForObject(
+                            "SELECT status FROM inventory_reservations WHERE order_id=?", String.class, orderId)).isEqualTo("RESERVED"));
+                    assertStock(stock, a, 8, 2); assertStock(stock, b, 4, 1);
+                    assertThat(stock.queryForObject("SELECT topic FROM processed_event WHERE event_id=? AND consumer_group=?",
+                            String.class, eventId, inventoryGroup)).isEqualTo(inventoryReplay);
+                    var outcome = eventFor(stock, orderId, eventId); UUID outcomeId = (UUID) outcome.get("event_id");
+                    assertThat(outcome.get("correlation_id")).isEqualTo(placed.get("correlation_id"));
+                    assertThat(outcome.get("causation_id")).isEqualTo(eventId);
+                    var outcomeSource = observe(sourceObserver, sources, outcomeId);
+                    var outcomeDlt = observe(dltObserver, dlts, outcomeId);
+                    assertQuarantine(outcomeDlt, outcomeSource.value(), INVENTORY_TOPIC, outcomeSource.offset(), orderGroup, "PSQLException");
+                    awaitConsumed(admin, orderGroup, INVENTORY_TOPIC, outcomeSource.offset());
+                    assertThat(status(orders, orderId)).isEqualTo("PENDING_INVENTORY");
+                    assertThat(count(orders, "processed_event", "event_id", outcomeId)).isZero();
+                    orders.update("UPDATE replay_test_gate SET enabled=false");
+                    long outcomeEnd = topicEnd(admin, INVENTORY_TOPIC);
+                    var orderPlan = replayApproval(toolJar, auditDb, brokers, routes, outcomeDlt, orderGroup,
+                            orderReplay, evidence, output);
+                    var orderReceipt = replayExecute(toolJar, auditDb, brokers, routes, orderPlan, orderGroup, orderReplay, evidence, output);
+                    assertThat(orderReceipt.path("publication").asText()).isEqualTo("PUBLISHED_TO_REPLAY_TOPIC");
+                    assertReplayIdentity(outcomeSource, observe(replayObserver, replays, outcomeId), orderPlan);
+                    awaitStatus(orders, orderId, "PENDING_PAYMENT");
+                    assertThat(getStatus(http, orderPort, orderId)).isEqualTo("PENDING_PAYMENT");
+                    assertThat(orders.queryForObject("SELECT topic FROM processed_event WHERE event_id=? AND consumer_group=?",
+                            String.class, outcomeId, orderGroup)).isEqualTo(orderReplay);
+                    assertThat(topicEnd(admin, INVENTORY_TOPIC)).isEqualTo(outcomeEnd);
+                    assertThat(unrelated.poll(Duration.ofMillis(500)).isEmpty()).isTrue();
+                    long replayEnd = topicEnd(admin, inventoryReplay);
+                    replayExecute(toolJar, auditDb, brokers, routes, inventoryPlan, inventoryGroup, inventoryReplay, evidence, output);
+                    assertThat(topicEnd(admin, inventoryReplay)).isEqualTo(replayEnd);
+                    var duplicate = duplicateProducer.send(new ProducerRecord<>(inventoryReplay, 0, original.key(), original.value())).get(10, TimeUnit.SECONDS);
+                    awaitConsumed(admin, inventoryGroup, inventoryReplay, duplicate.offset());
+                    assertStock(stock, a, 8, 2); assertStock(stock, b, 4, 1);
+                    assertThat(count(stock, "outbox_event", "aggregate_id", orderId)).isEqualTo(1);
+                    assertThat(count(stock, "processed_event", "event_id", eventId)).isEqualTo(1);
+                    assertThat(audit.queryForObject("SELECT count(*) FROM replay_delivery WHERE state='PUBLISHED'", Integer.class)).isEqualTo(2);
+                    assertThat(audit.queryForObject("SELECT count(*) FROM replay_action WHERE action='PUBLISHED'", Integer.class)).isEqualTo(2);
+                    evidence.add(Map.of("stage", "bidirectional-recovery", "orderId", orderId, "placedId", eventId,
+                            "outcomeId", outcomeId, "correlationId", placed.get("correlation_id"), "status", "PENDING_PAYMENT",
+                            "inventoryReceipt", inventoryReceipt, "orderReceipt", orderReceipt, "sourceOffsetsUnchanged", true,
+                            "unrelatedGroupReceivedNoReplay", true));
+                    // Deliberately unresolved test-only fault: replay itself must quarantine, never loop.
+                    stock.update("UPDATE replay_test_gate SET enabled=true");
+                    UUID failedOrder = UUID.fromString(post(http, orderPort, List.of(item(a, 1))).path("orderId").asText());
+                    UUID failedId = (UUID) eventFor(orders, failedOrder, null).get("event_id");
+                    var failedDlt = observe(dltObserver, dlts, failedId);
+                    var negativePlan = replayApproval(toolJar, auditDb, brokers, routes, failedDlt, inventoryGroup,
+                            inventoryReplay, evidence, output);
+                    var negativeReceipt = replayExecute(toolJar, auditDb, brokers, routes, negativePlan,
+                            inventoryGroup, inventoryReplay, evidence, output);
+                    try (var replayDlt = observer(brokers)) {
+                        replayDlt.assign(List.of(new TopicPartition(inventoryReplay + "-dlt", 0)));
+                        replayDlt.seekToBeginning(replayDlt.assignment());
+                        var failedReplay = observe(replayDlt, new HashMap<>(), failedId);
+                        assertQuarantine(failedReplay, failedDlt.value(), inventoryReplay,
+                                negativeReceipt.path("deliveries").get(0).path("offset").asLong(), inventoryGroup, "PSQLException");
+                        awaitConsumed(admin, inventoryGroup, inventoryReplay,
+                                negativeReceipt.path("deliveries").get(0).path("offset").asLong());
+                    }
+                    assertThat(count(stock, "inventory_reservations", "order_id", failedOrder)).isZero();
+                    assertThat(count(stock, "processed_event", "event_id", failedId)).isZero();
+                    assertStock(stock, a, 8, 2);
+                    stock.update("UPDATE replay_test_gate SET enabled=false");
+                    long noLoopEnd = topicEnd(admin, inventoryReplay);
+                    long oldPid = inventory.pid(); stop(inventory); inventory = null;
+                    inventory = launch(inventoryJar, inventoryDb, brokers, inventoryGroup, inventoryPort,
+                            output.resolve("replay-inventory-restarted.log"), INVENTORY_TOPIC, ORDER_TOPIC + "," + inventoryReplay,
+                            "--spring.profiles.active=saga,replay");
+                    ready(inventory, output.resolve("replay-inventory-restarted.log"), http, inventoryPort);
+                    assertThat(topicEnd(admin, inventoryReplay)).isEqualTo(noLoopEnd);
+                    assertThat(count(stock, "processed_event", "event_id", failedId)).isZero();
+                    assertThat(status(orders, failedOrder)).isEqualTo("PENDING_INVENTORY");
+                    evidence.add(Map.of("stage", "replay-dlt-no-auto-replay", "failedEventId", failedId,
+                            "oldInventoryPid", oldPid, "newInventoryPid", inventory.pid(), "replayEnd", noLoopEnd));
+                }
+                Files.writeString(output.resolve("controlled-replay-evidence.json"), JSON.writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
+            } finally {
+                try { stop(inventory); } finally { try { stop(order); } finally { broker.destroy(); } }
+            }
+        }
+    }
+
+    static Map<String, Object> replayRoute(String source, String group, String replay, List<String> types) {
+        return Map.of("originTopic", source, "dltTopic", source + "-dlt", "targetGroup", group,
+                "replayTopic", replay, "replayDltTopic", replay + "-dlt", "eventTypes", types);
+    }
+
+    static void technicalFailure(JdbcTemplate db) {
+        db.execute("CREATE TABLE replay_test_gate(enabled boolean NOT NULL)"); db.update("INSERT INTO replay_test_gate VALUES(true)");
+        db.execute("CREATE FUNCTION replay_test_commit_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN "
+                + "IF (SELECT enabled FROM replay_test_gate) THEN RAISE EXCEPTION 'test technical commit failure'; END IF; RETURN NEW; END $$");
+        db.execute("CREATE CONSTRAINT TRIGGER replay_test_failure AFTER INSERT ON processed_event "
+                + "DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION replay_test_commit_failure()");
+    }
+
+    static long topicEnd(Admin admin, String topic) throws Exception {
+        return admin.listOffsets(Map.of(new TopicPartition(topic, 0), org.apache.kafka.clients.admin.OffsetSpec.latest()))
+                .all().get(10, TimeUnit.SECONDS).values().iterator().next().offset();
+    }
+
+    static JsonNode replayApproval(Path jar, EmbeddedPostgres db, String brokers, Path routes,
+            ConsumerRecord<String, String> dlt, String group, String replay, List<Map<String, Object>> evidence, Path output) throws Exception {
+        var inspection = replayCli(jar, db, brokers, evidence, output, "inspect", "--routes", routes.toString(),
+                "--dlt-topic", dlt.topic(), "--partition", "0", "--offset", Long.toString(dlt.offset()), "--allow-kafka-interaction");
+        String eventId = JSON.readTree(dlt.value()).path("metadata").path("eventId").asText();
+        assertThat(inspection.path("eventId").asText()).isEqualTo(eventId);
+        Path selector = output.resolve("selector-" + eventId + ".json");
+        Files.writeString(selector, JSON.writeValueAsString(List.of(Map.of("dlt", Map.of("topic", dlt.topic(), "partition", 0,
+                "offset", dlt.offset()), "eventId", eventId, "rawSha256", inspection.path("rawSha256").asText()))));
+        var plan = replayCli(jar, db, brokers, evidence, output, "plan", "--routes", routes.toString(), "--selector", selector.toString(),
+                "--target-group", group, "--replay-topic", replay, "--actor", "test-operator", "--reason", "controlled test cause review",
+                "--limit", "10", "--allow-kafka-interaction");
+        replayCli(jar, db, brokers, evidence, output, "approve", "--plan-id", plan.path("planId").asText(),
+                "--confirm-digest", plan.path("digest").asText(), "--actor", "test-approver", "--reason", "explicit bounded test approval");
+        return plan;
+    }
+
+    static JsonNode replayExecute(Path jar, EmbeddedPostgres db, String brokers, Path routes, JsonNode plan,
+            String group, String replay, List<Map<String, Object>> evidence, Path output) throws Exception {
+        return replayCli(jar, db, brokers, evidence, output, "execute", "--routes", routes.toString(),
+                "--plan-id", plan.path("planId").asText(), "--confirm-digest", plan.path("digest").asText(),
+                "--target-group", group, "--replay-topic", replay, "--actor", "test-operator", "--reason", "explicit test recovery",
+                "--failure-resolved", "operator test attestation; negative scenario intentionally retains fault",
+                "--max-records", "10", "--rate", "10", "--attempts", "1", "--allow-kafka-interaction");
+    }
+
+    static JsonNode replayCli(Path jar, EmbeddedPostgres db, String brokers, List<Map<String, Object>> evidence,
+            Path output, String... args) throws Exception {
+        var command = new ArrayList<>(List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+                "-Xmx128m", "-Dfile.encoding=UTF-8", "-jar", jar.toString())); command.addAll(List.of(args));
+        Path log = output.resolve("replay-cli-" + UUID.randomUUID() + ".log");
+        var builder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(log.toFile());
+        builder.environment().keySet().removeIf(k -> k.matches("(?i)(REPLAY_.*|SPRING_.*|JAVA_TOOL_OPTIONS|JDK_JAVA_OPTIONS|_JAVA_OPTIONS)"));
+        builder.environment().putAll(Map.of("REPLAY_KAFKA_BOOTSTRAP_SERVERS", brokers,
+                "REPLAY_AUDIT_DB_URL", db.getJdbcUrl("postgres", "postgres"), "REPLAY_AUDIT_DB_USERNAME", "postgres", "REPLAY_AUDIT_DB_PASSWORD", ""));
+        var process = builder.start();
+        try {
+            assertThat(process.waitFor(30, TimeUnit.SECONDS)).isTrue(); assertThat(process.exitValue()).as(read(log)).isZero();
+            String result = Files.readAllLines(log).stream().filter(s -> !s.isBlank()).reduce((a,b) -> b).orElseThrow();
+            JsonNode json = result.startsWith("{") ? JSON.readTree(result) : JSON.valueToTree(Map.of("message", result));
+            evidence.add(Map.of("stage", "cli", "command", args[0], "pid", process.pid(), "result", json)); return json;
+        } finally { stop(process); }
+    }
+
+    static void assertReplayIdentity(ConsumerRecord<String, String> original, ConsumerRecord<String, String> replay, JsonNode plan) {
+        assertThat(replay.value().getBytes(StandardCharsets.UTF_8)).isEqualTo(original.value().getBytes(StandardCharsets.UTF_8));
+        assertThat(replay.key()).isEqualTo(original.key());
+        assertThat(new String(replay.headers().lastHeader("apex-replay-plan-id").value(), StandardCharsets.UTF_8))
+                .isEqualTo(plan.path("planId").asText());
+        replay.headers().forEach(header -> assertThat(header.key()).doesNotStartWith("kafka_dlt-"));
+    }
 
     @Test
     void twoPackagedProcessesReserveRejectDeduplicateRollbackRetryAndRecoverAfterRestart() throws Exception {
@@ -197,13 +442,18 @@ class OrderInventorySagaIT {
                     // Sequence increments survive rollback, so the test can observe actual retries.
                     stock.execute("CREATE SEQUENCE saga_failure_attempt");
                     stock.execute("CREATE FUNCTION saga_fail_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN "
-                            + "IF (SELECT enabled FROM saga_failure_gate) THEN PERFORM nextval('saga_failure_attempt'); "
-                            + "PERFORM pg_sleep(2); "
-                            + "RAISE EXCEPTION 'saga injected commit failure'; END IF; RETURN NEW; END $$");
+                            + "IF (SELECT enabled FROM saga_failure_gate) THEN "
+                            + "IF nextval('saga_failure_attempt') >= 3 THEN PERFORM pg_advisory_xact_lock(268267); END IF; "
+                            + "IF (SELECT enabled FROM saga_failure_gate) THEN RAISE EXCEPTION 'saga injected commit failure'; END IF; "
+                            + "END IF; RETURN NEW; END $$");
                     stock.execute("CREATE CONSTRAINT TRIGGER saga_commit_failure AFTER INSERT ON outbox_event "
                             + "DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION saga_fail_commit()");
                     UUID failureId;
-                    try {
+                    try (var faultConnection=inventoryDb.getPostgresDatabase().getConnection();
+                         var faultBarrier=faultConnection.createStatement()) {
+                        // Hold the final attempt until rollback/offset assertions finish; no timing race with retry exhaustion.
+                        faultBarrier.execute("SELECT pg_advisory_lock(268267)");
+                        try {
                         var failing = post(http, orderPort, List.of(item(a, 1), item(b, 1)));
                         failureId = UUID.fromString(failing.get("orderId").asText());
                         var failingPlaced = eventFor(orders, failureId, null);
@@ -223,6 +473,7 @@ class OrderInventorySagaIT {
                         var committed = offsets.get(new TopicPartition(ORDER_TOPIC, 0));
                         assertThat(committed == null || committed.offset() <= failingRecord.offset()).isTrue();
                         stock.update("UPDATE saga_failure_gate SET enabled=false");
+                        faultBarrier.execute("SELECT pg_advisory_unlock(268267)");
                         awaitStatus(orders, failureId, "PENDING_PAYMENT");
                         assertStock(stock, a, 7, 3);
                         assertStock(stock, b, 3, 2);
@@ -239,10 +490,12 @@ class OrderInventorySagaIT {
                                 "statusAfterRecovery", "PENDING_PAYMENT"));
                     } finally {
                         stock.update("UPDATE saga_failure_gate SET enabled=false");
+                        faultBarrier.execute("SELECT pg_advisory_unlock(268267)");
                         stock.execute("DROP TRIGGER saga_commit_failure ON outbox_event");
                         stock.execute("DROP FUNCTION saga_fail_commit()");
                         stock.execute("DROP SEQUENCE saga_failure_attempt");
                         stock.execute("DROP TABLE saga_failure_gate");
+                    }
                     }
 
                     awaitPublished(stock, (UUID) eventFor(stock, failureId, null).get("event_id"));
@@ -353,8 +606,8 @@ class OrderInventorySagaIT {
         }
     }
 
-    private static Process launch(Path jar, EmbeddedPostgres db, String brokers, String group,
-                                  int port, Path log, String publish, String subscribe) throws Exception {
+    static Process launch(Path jar, EmbeddedPostgres db, String brokers, String group,
+                                  int port, Path log, String publish, String subscribe, String... overrides) throws Exception {
         var command = new ArrayList<>(List.of(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
                 "-Xms64m", "-Xmx256m", "-Dfile.encoding=UTF-8", "-jar", jar.toString(),
                 "--server.address=127.0.0.1", "--server.port=" + port, "--spring.profiles.active=saga",
@@ -372,13 +625,21 @@ class OrderInventorySagaIT {
                 "--apex.messaging.publisher.topic=" + publish, "--apex.messaging.consumer.topics=" + subscribe,
                 "--apex.messaging.consumer.enabled=true", "--apex.messaging.outbox.publisher.enabled=true",
                 "--apex.messaging.outbox.publisher.interval-ms=100"));
+        if (subscribe == null) {
+            // New profile acceptance can exercise the packaged topic configuration instead of masking it with CLI values.
+            command.removeIf(arg -> arg.startsWith("--apex.messaging.consumer.topics="));
+        }
+        for (String override : overrides) {
+            String name = override.substring(0, override.indexOf('=') + 1);
+            command.removeIf(arg -> arg.startsWith(name)); command.add(override);
+        }
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.environment().keySet().removeIf(key -> key.matches(
-                "(?i)(SPRING_.*|APEX_.*|CELL_.*|ORDER_.*|INVENTORY_.*|KAFKA_.*|SERVER_.*|JAVA_TOOL_OPTIONS|JDK_JAVA_OPTIONS|_JAVA_OPTIONS)"));
+                "(?i)(SPRING_.*|APEX_.*|CELL_.*|ORDER_.*|INVENTORY_.*|PAYMENT_.*|KAFKA_.*|SERVER_.*|JAVA_TOOL_OPTIONS|JDK_JAVA_OPTIONS|_JAVA_OPTIONS)"));
         return builder.redirectErrorStream(true).redirectOutput(log.toFile()).start();
     }
 
-    private static void ready(Process process, Path log, HttpClient http, int port) {
+    static void ready(Process process, Path log, HttpClient http, int port) {
         await().atMost(Duration.ofSeconds(60)).pollInterval(Duration.ofMillis(100)).untilAsserted(() -> {
             assertThat(process.isAlive()).withFailMessage(() -> read(log)).isTrue();
             try {
@@ -391,11 +652,11 @@ class OrderInventorySagaIT {
         });
     }
 
-    private static String read(Path file) {
+    static String read(Path file) {
         try { return Files.readString(file); } catch (Exception failure) { return failure.toString(); }
     }
 
-    private static void stop(Process process) throws Exception {
+    static void stop(Process process) throws Exception {
         if (process != null && process.isAlive()) {
             process.destroy();
             if (!process.waitFor(20, TimeUnit.SECONDS)) {
@@ -405,17 +666,17 @@ class OrderInventorySagaIT {
         }
     }
 
-    private static int freePort() throws Exception {
+    static int freePort() throws Exception {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
         }
     }
 
-    private static Map<String, Object> item(UUID id, int quantity) {
+    static Map<String, Object> item(UUID id, int quantity) {
         return Map.of("productId", id, "quantity", quantity);
     }
 
-    private static JsonNode post(HttpClient http, int port, List<Map<String, Object>> items) throws Exception {
+    static JsonNode post(HttpClient http, int port, List<Map<String, Object>> items) throws Exception {
         String body = JSON.writeValueAsString(Map.of("externalReference", "saga-" + UUID.randomUUID(),
                 "description", PERSIAN, "items", items));
         var response = http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/v1/order-placements"))
@@ -428,7 +689,7 @@ class OrderInventorySagaIT {
         return json;
     }
 
-    private static String getStatus(HttpClient http, int port, UUID id) throws Exception {
+    static String getStatus(HttpClient http, int port, UUID id) throws Exception {
         var response = http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port
                 + "/api/v1/order-placements/" + id)).timeout(Duration.ofSeconds(10)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
@@ -436,38 +697,38 @@ class OrderInventorySagaIT {
         return JSON.readTree(response.body()).get("status").asText();
     }
 
-    private static String status(JdbcTemplate jdbc, UUID id) {
+    static String status(JdbcTemplate jdbc, UUID id) {
         return jdbc.queryForObject("SELECT status FROM orders WHERE id=?", String.class, id);
     }
 
-    private static void awaitStatus(JdbcTemplate jdbc, UUID id, String status) {
+    static void awaitStatus(JdbcTemplate jdbc, UUID id, String status) {
         await().atMost(Duration.ofSeconds(40)).untilAsserted(() -> assertThat(status(jdbc, id)).isEqualTo(status));
     }
 
-    private static void assertStock(JdbcTemplate jdbc, UUID product, int available, int reserved) {
+    static void assertStock(JdbcTemplate jdbc, UUID product, int available, int reserved) {
         assertThat(jdbc.queryForObject("SELECT available_quantity FROM inventory_stock WHERE product_id=?",
                 Integer.class, product)).isEqualTo(available);
         assertThat(jdbc.queryForObject("SELECT reserved_quantity FROM inventory_stock WHERE product_id=?",
                 Integer.class, product)).isEqualTo(reserved);
     }
 
-    private static long count(JdbcTemplate jdbc, String table, String column, UUID id) {
+    static long count(JdbcTemplate jdbc, String table, String column, UUID id) {
         return jdbc.queryForObject("SELECT count(*) FROM " + table + " WHERE " + column + "=?", Long.class, id);
     }
 
-    private static Map<String, Object> eventFor(JdbcTemplate jdbc, UUID orderId, UUID causation) {
+    static Map<String, Object> eventFor(JdbcTemplate jdbc, UUID orderId, UUID causation) {
         if (causation == null) {
             return jdbc.queryForMap("SELECT * FROM outbox_event WHERE aggregate_id=?", orderId);
         }
         return jdbc.queryForMap("SELECT * FROM outbox_event WHERE aggregate_id=? AND causation_id=?", orderId, causation);
     }
 
-    private static void awaitPublished(JdbcTemplate jdbc, UUID id) {
+    static void awaitPublished(JdbcTemplate jdbc, UUID id) {
         await().atMost(Duration.ofSeconds(20)).untilAsserted(() -> assertThat(jdbc.queryForObject(
                 "SELECT published FROM outbox_event WHERE event_id=?", Boolean.class, id)).isTrue());
     }
 
-    private static void assertEnvelope(JdbcTemplate jdbc, UUID id, ConsumerRecord<String, String> wire) {
+    static void assertEnvelope(JdbcTemplate jdbc, UUID id, ConsumerRecord<String, String> wire) {
         var row = jdbc.queryForMap("SELECT * FROM outbox_event WHERE event_id=?", id);
         JsonNode metadata = JSON.readTree(wire.value()).get("metadata");
         Map<String, String> names = Map.of("eventId", "event_id", "eventType", "event_type", "eventVersion",
@@ -486,13 +747,13 @@ class OrderInventorySagaIT {
         assertThat(JSON.readTree(wire.value()).get("payload")).isEqualTo(JSON.readTree(row.get("payload").toString()));
     }
 
-    private static KafkaConsumer<String, String> observer(String brokers) {
+    static KafkaConsumer<String, String> observer(String brokers) {
         return new KafkaConsumer<>(Map.of("bootstrap.servers", brokers, "group.id", "saga-observer-" + UUID.randomUUID(),
                 "enable.auto.commit", false, "allow.auto.create.topics", false,
                 "key.deserializer", StringDeserializer.class, "value.deserializer", StringDeserializer.class));
     }
 
-    private static void assertQuarantine(ConsumerRecord<String, String> record, String raw, String source,
+    static void assertQuarantine(ConsumerRecord<String, String> record, String raw, String source,
             long offset, String group, String errorType) {
         assertThat(record.topic()).isEqualTo(source + "-dlt");
         assertThat(record.partition()).isZero();
@@ -511,12 +772,12 @@ class OrderInventorySagaIT {
         assertThat(headers.lastHeader(org.springframework.kafka.support.KafkaHeaders.DLT_EXCEPTION_STACKTRACE)).isNull();
     }
 
-    private static KafkaProducer<String, String> producer(String brokers) {
+    static KafkaProducer<String, String> producer(String brokers) {
         return new KafkaProducer<>(Map.of("bootstrap.servers", brokers, "acks", "all",
                 "key.serializer", StringSerializer.class, "value.serializer", StringSerializer.class));
     }
 
-    private static ConsumerRecord<String, String> observe(KafkaConsumer<String, String> consumer,
+    static ConsumerRecord<String, String> observe(KafkaConsumer<String, String> consumer,
             Map<UUID, ConsumerRecord<String, String>> cache, UUID id) {
         await().atMost(Duration.ofSeconds(30)).until(() -> {
             if (!cache.containsKey(id)) {
@@ -530,7 +791,7 @@ class OrderInventorySagaIT {
         return cache.get(id);
     }
 
-    private static void awaitConsumed(Admin admin, String group, String topic, long offset) {
+    static void awaitConsumed(Admin admin, String group, String topic, long offset) {
         await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
             var committed = admin.listConsumerGroupOffsets(group).partitionsToOffsetAndMetadata()
                     .get(10, TimeUnit.SECONDS).get(new TopicPartition(topic, 0));
@@ -539,7 +800,7 @@ class OrderInventorySagaIT {
         });
     }
 
-    private static Path verifyBuild(Path root, Path inventoryJar) throws Exception {
+    static Path verifyBuild(Path root, Path inventoryJar) throws Exception {
         Path receipt = root.resolve("out/m26-order-build.properties");
         assertThat(receipt).withFailMessage("Run inventory-cell/tools/verify-saga.ps1 for fresh, ordered builds").isRegularFile();
         Properties properties = new Properties();
@@ -587,12 +848,12 @@ class OrderInventorySagaIT {
         return root.resolve("order-cell/target/order-cell.jar");
     }
 
-    private static String sha(Path path) throws Exception {
+    static String sha(Path path) throws Exception {
         assertThat(path).isRegularFile();
         return hex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(path)));
     }
 
-    private static String hex(byte[] hash) {
+    static String hex(byte[] hash) {
         return HexFormat.of().formatHex(hash);
     }
 }

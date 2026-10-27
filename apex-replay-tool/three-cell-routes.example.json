@@ -1,0 +1,42 @@
+[
+  {
+    "originTopic": "apex.order.events.v1",
+    "dltTopic": "apex.order.events.v1-dlt",
+    "targetGroup": "inventory-cell-order-placed-v1",
+    "replayTopic": "apex.inventory.order-placed.replay.v1",
+    "replayDltTopic": "apex.inventory.order-placed.replay.v1-dlt",
+    "eventTypes": ["ORDER_PLACED"]
+  },
+  {
+    "originTopic": "apex.inventory.events.v1",
+    "dltTopic": "apex.inventory.events.v1-dlt",
+    "targetGroup": "order-cell-inventory-outcome-v1",
+    "replayTopic": "apex.order.inventory-outcome.replay.v1",
+    "replayDltTopic": "apex.order.inventory-outcome.replay.v1-dlt",
+    "eventTypes": ["INVENTORY_RESERVED", "INVENTORY_RESERVATION_REJECTED", "INVENTORY_RELEASED"]
+  },
+  {
+    "originTopic": "apex.order.payment-requests.v1",
+    "dltTopic": "apex.order.payment-requests.v1-dlt",
+    "targetGroup": "payment-cell-authorization-v1",
+    "replayTopic": "apex.payment.authorization-request.replay.v1",
+    "replayDltTopic": "apex.payment.authorization-request.replay.v1-dlt",
+    "eventTypes": ["ORDER_READY_FOR_PAYMENT"]
+  },
+  {
+    "originTopic": "apex.payment.events.v1",
+    "dltTopic": "apex.payment.events.v1-dlt",
+    "targetGroup": "order-cell-inventory-outcome-v1",
+    "replayTopic": "apex.order.payment-outcome.replay.v1",
+    "replayDltTopic": "apex.order.payment-outcome.replay.v1-dlt",
+    "eventTypes": ["PAYMENT_AUTHORIZED", "PAYMENT_DECLINED"]
+  },
+  {
+    "originTopic": "apex.order.inventory-release-requests.v1",
+    "dltTopic": "apex.order.inventory-release-requests.v1-dlt",
+    "targetGroup": "inventory-cell-order-placed-v1",
+    "replayTopic": "apex.inventory.release-request.replay.v1",
+    "replayDltTopic": "apex.inventory.release-request.replay.v1-dlt",
+    "eventTypes": ["ORDER_CANCELLATION_REQUESTED"]
+  }
+]

@@ -28,6 +28,7 @@ import java.util.UUID;
         after = ApexExecutionContextAutoConfiguration.class
 )
 @EnableScheduling
+@org.springframework.boot.context.properties.EnableConfigurationProperties(PublisherRouting.class)
 @ConditionalOnProperty(
         prefix = "apex.messaging.cell",
         name = "enabled",
@@ -114,7 +115,8 @@ public class PlatformCellMessagingAutoConfiguration {
             OutboxEventMapper outboxEventMapper,
             RetryPolicy retryPolicy,
             String outboxPublisherInstanceId,
-            @Value("${apex.messaging.publisher.topic}") String topic
+            @Value("${apex.messaging.publisher.topic}") String topic,
+            PublisherRouting routing
     ) {
         return new ConfigurableOutboxPublisher(
                 outboxStore,
@@ -123,7 +125,7 @@ public class PlatformCellMessagingAutoConfiguration {
                 outboxEventMapper,
                 retryPolicy,
                 outboxPublisherInstanceId,
-                topic
+                topic, routing
         );
     }
 

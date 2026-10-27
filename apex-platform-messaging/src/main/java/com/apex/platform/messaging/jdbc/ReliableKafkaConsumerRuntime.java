@@ -1,7 +1,6 @@
 package com.apex.platform.messaging.jdbc;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ public final class ReliableKafkaConsumerRuntime implements SmartLifecycle, AutoC
         this.properties = properties;
         this.adminProperties = new HashMap<>(adminProperties);
         this.adminProperties.put("bootstrap.servers", bootstrapServers);
-        this.topics = Arrays.stream(topics.split(",")).map(String::trim).filter(value -> !value.isEmpty()).distinct().toList();
+        this.topics = List.of(ConsumerTopics.parse(topics));
         if (this.topics.isEmpty()) {
             throw new IllegalArgumentException("Reliable APEX consumer requires explicit source topics");
         }

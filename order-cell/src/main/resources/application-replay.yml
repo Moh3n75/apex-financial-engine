@@ -1,0 +1,11 @@
+# Explicitly activate saga,replay together. Existing group and handlers are reused.
+spring:
+  config:
+    activate:
+      on-profile: "saga & replay & !three-cell-saga"
+apex:
+  messaging:
+    consumer:
+      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1},${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1}
+      reliability:
+        enabled: true

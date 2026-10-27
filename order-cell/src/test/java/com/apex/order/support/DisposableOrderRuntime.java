@@ -27,6 +27,10 @@ public final class DisposableOrderRuntime implements AutoCloseable {
     }
 
     public static DisposableOrderRuntime start(boolean sagaConsumer) throws Exception {
+        return start(sagaConsumer, new String[0]);
+    }
+
+    public static DisposableOrderRuntime start(boolean sagaConsumer, String... extra) throws Exception {
         DisposableOrderRuntime runtime = new DisposableOrderRuntime();
         try {
             runtime.database = EmbeddedPostgres.builder().start();
@@ -38,9 +42,7 @@ public final class DisposableOrderRuntime implements AutoCloseable {
             StandardEnvironment environment = new StandardEnvironment();
             environment.getPropertySources().remove(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);
             environment.getPropertySources().remove(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME);
-            runtime.application = new SpringApplicationBuilder(OrderCellApplication.class)
-                    .environment(environment)
-                    .run("--server.port=0", "--spring.config.location=classpath:application.yml",
+            var args = new java.util.ArrayList<>(java.util.List.of("--server.port=0", "--spring.config.location=classpath:application.yml",
                             "--spring.config.additional-location=", "--spring.config.import=",
                             "--spring.profiles.active=", "--spring.profiles.include=",
                             "--spring.datasource.url=" + runtime.database.getJdbcUrl("postgres", "postgres"),
@@ -56,7 +58,12 @@ public final class DisposableOrderRuntime implements AutoCloseable {
                             "--spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
                             "--spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer",
                             "--apex.messaging.outbox.publisher.enabled=true",
-                            "--apex.messaging.outbox.publisher.interval-ms=100");
+                            "--apex.messaging.outbox.publisher.interval-ms=100"));
+            for (String option: extra) {
+                String name=option.substring(0,option.indexOf('=')+1);
+                args.removeIf(a->a.startsWith(name)); args.add(option);
+            }
+            runtime.application = new SpringApplicationBuilder(OrderCellApplication.class).environment(environment).run(args.toArray(String[]::new));
             return runtime;
         } catch (Exception | Error failure) {
             try {

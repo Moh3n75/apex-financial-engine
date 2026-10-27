@@ -144,10 +144,61 @@ class ReliableConsumerIntegrationTest {
                 "--apex.messaging.consumer.reliability.retry-delay=100ms",
                 "--apex.messaging.consumer.reliability.send-timeout=1s",
                 "--apex.messaging.consumer.reliability.preflight-timeout=2s"));
-        args.addAll(List.of(extra));
+        for (String override : extra) {
+            String name = override.substring(0, override.indexOf('=') + 1);
+            args.removeIf(arg -> arg.startsWith(name));
+            args.add(override);
+        }
         application = new SpringApplicationBuilder(TestApplication.class).environment(environment)
                 .web(WebApplicationType.NONE).run(args.toArray(String[]::new));
         jdbc.execute("CREATE TABLE IF NOT EXISTS reliability_probe(id UUID PRIMARY KEY)");
+    }
+
+    @Test
+    void routedScheduledPublisherConfirmsBrokerBeforeMarkingOutbox() throws Exception {
+        start(true); application.close(); application=null;
+        String destination=topic+".results";
+        admin.createTopics(List.of(new NewTopic(destination,2,(short)1))).all().get(10,TimeUnit.SECONDS);
+        boot("--apex.messaging.outbox.publisher.enabled=true","--apex.messaging.publisher.topic=unused-legacy",
+                "--apex.messaging.publisher.routing.enabled=true",
+                "--apex.messaging.publisher.routing.routes[0].event-type=PROBE_RESULT",
+                "--apex.messaging.publisher.routing.routes[0].event-version=1",
+                "--apex.messaging.publisher.routing.routes[0].topic="+destination,
+                "--apex.messaging.outbox.publisher.interval-ms=100");
+        UUID id=UUID.randomUUID(); send(id,"OK","PROBE",1);
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(()->assertThat(jdbc.queryForObject(
+                "SELECT published FROM outbox_event WHERE aggregate_id=?",Boolean.class,id)).isTrue());
+        dlt.assign(List.of(new TopicPartition(destination,0),new TopicPartition(destination,1)));dlt.seekToBeginning(dlt.assignment());
+        var received=quarantine("PROBE:"+id);
+        assertThat(json.readTree(received.value()).path("metadata").path("eventType").asText()).isEqualTo("PROBE_RESULT");
+        application.close();application=null;
+        boot("--apex.messaging.outbox.publisher.enabled=true","--apex.messaging.publisher.topic=unused-legacy",
+                "--apex.messaging.publisher.routing.enabled=true",
+                "--apex.messaging.publisher.routing.routes[0].event-type=OTHER",
+                "--apex.messaging.publisher.routing.routes[0].event-version=1",
+                "--apex.messaging.publisher.routing.routes[0].topic="+destination,
+                "--apex.messaging.outbox.publisher.interval-ms=100");
+        UUID missing=UUID.randomUUID();send(missing,"OK","PROBE",1);
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(()->assertThat(jdbc.queryForObject(
+                "SELECT retry_count FROM outbox_event WHERE aggregate_id=?",Integer.class,missing)).isGreaterThan(0));
+        assertThat(jdbc.queryForObject("SELECT published FROM outbox_event WHERE aggregate_id=?",Boolean.class,missing)).isFalse();
+        application.close(); application=null;
+        String absent=topic+".unprovisioned";
+        boot("--apex.messaging.outbox.publisher.enabled=true","--apex.messaging.publisher.topic=unused-legacy",
+                "--apex.messaging.publisher.routing.enabled=true",
+                "--apex.messaging.publisher.routing.routes[0].event-type=PROBE_RESULT",
+                "--apex.messaging.publisher.routing.routes[0].event-version=1",
+                "--apex.messaging.publisher.routing.routes[0].topic="+absent,
+                "--spring.kafka.producer.properties.max.block.ms=500",
+                "--spring.kafka.producer.properties.request.timeout.ms=500",
+                "--spring.kafka.producer.properties.delivery.timeout.ms=500",
+                "--spring.kafka.producer.properties.linger.ms=0",
+                "--apex.messaging.outbox.publisher.interval-ms=100");
+        UUID unavailable=UUID.randomUUID();send(unavailable,"OK","PROBE",1);
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(()->assertThat(jdbc.queryForObject(
+                "SELECT retry_count FROM outbox_event WHERE aggregate_id=?",Integer.class,unavailable)).isGreaterThan(0));
+        assertThat(jdbc.queryForObject("SELECT published FROM outbox_event WHERE aggregate_id=?",Boolean.class,unavailable)).isFalse();
+        assertThat(admin.listTopics().names().get(10,TimeUnit.SECONDS)).doesNotContain(absent);
     }
 
     @Test
@@ -220,6 +271,49 @@ class ReliableConsumerIntegrationTest {
         committed(sent.partition(), sent.offset());
         assertThat(handler().attempts).doesNotContainKey(id);
         rolledBack(id);
+    }
+
+    @Test
+    void exactMultiTopicSubscriptionSharesInboxAndReliableReplayDlt() throws Exception {
+        start(true);
+        application.close(); application = null;
+        String replay = topic + ".replay";
+        admin.createTopics(List.of(new NewTopic(replay, 2, (short) 1), new NewTopic(replay + "-dlt", 2, (short) 1)))
+                .all().get(10, TimeUnit.SECONDS);
+        boot("--apex.messaging.consumer.topics= " + topic + " , " + replay + " ");
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> application.getBean(KafkaListenerEndpointRegistry.class)
+                .getListenerContainers().forEach(container -> {
+                    assertThat(container.getContainerProperties().getTopics()).containsExactly(topic, replay);
+                    assertThat(container.getAssignedPartitions()).contains(new TopicPartition(replay, 1), new TopicPartition(topic, 1));
+                }));
+        UUID id = UUID.randomUUID();
+        var source = send(id, "OK", "PROBE", 1); committed(1, source.offset());
+        var duplicate = producer.send(new ProducerRecord<>(replay, 1, id.toString(), envelope(id, "OK", "PROBE", 1))).get(10, TimeUnit.SECONDS);
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+            var offsets = admin.listConsumerGroupOffsets(group).partitionsToOffsetAndMetadata().get(10, TimeUnit.SECONDS);
+            assertThat(offsets.get(new TopicPartition(replay, 1)).offset()).isGreaterThan(duplicate.offset());
+        });
+        assertThat(count("reliability_probe", "id", id)).isEqualTo(1);
+        assertThat(handler().attempts.get(id).get()).isEqualTo(1);
+        UUID failure = UUID.randomUUID(); String raw = envelope(failure, "PERMANENT", "PROBE", 1);
+        var failed = producer.send(new ProducerRecord<>(replay, 1, failure.toString(), raw)).get(10, TimeUnit.SECONDS);
+        dlt.assign(List.of(new TopicPartition(replay + "-dlt", 1))); dlt.seekToBeginning(dlt.assignment());
+        var quarantined = quarantine(failure.toString());
+        assertThat(quarantined.value()).isEqualTo(raw);
+        assertThat(text(quarantined, KafkaHeaders.DLT_ORIGINAL_TOPIC)).isEqualTo(replay);
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> assertThat(admin.listConsumerGroupOffsets(group)
+                .partitionsToOffsetAndMetadata().get(10, TimeUnit.SECONDS).get(new TopicPartition(replay, 1)).offset())
+                .isGreaterThan(failed.offset()));
+        rolledBack(failure);
+    }
+
+    @Test
+    void secondSubscriptionWithoutDltFailsBeforeListenerStarts() throws Exception {
+        start(true); application.close(); application = null;
+        String replay = topic + ".missing-dlt";
+        admin.createTopics(List.of(new NewTopic(replay, 2, (short) 1))).all().get(10, TimeUnit.SECONDS);
+        assertThatThrownBy(() -> boot("--apex.messaging.consumer.topics=" + topic + "," + replay))
+                .hasStackTraceContaining("provisioning preflight failed");
     }
 
     @Test

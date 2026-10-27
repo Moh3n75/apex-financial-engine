@@ -1,0 +1,9 @@
+# Target-only replay is opt-in; the stable Payment group and ordinary Inbox/handler are reused.
+spring:
+  config:
+    activate:
+      on-profile: "three-cell-saga & replay"
+apex:
+  messaging:
+    consumer:
+      topics: apex.order.payment-requests.v1,${APEX_PAYMENT_REQUEST_REPLAY_TOPIC:apex.payment.authorization-request.replay.v1}

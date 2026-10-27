@@ -3,36 +3,85 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.1</version><relativePath/>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
     </parent>
-    <groupId>com.apex</groupId><artifactId>apex-replay-tool</artifactId><version>0.1.0-SNAPSHOT</version>
-    <description>Operator-only DLT inspection and durable replay approval. Publication is not implemented.</description>
-    <properties><java.version>21</java.version></properties>
+    <groupId>com.apex</groupId>
+    <artifactId>apex-replay-tool</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <description>Operator-controlled targeted DLT replay with durable approval and conservative reconciliation.
+    </description>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
     <dependencies>
-        <dependency><groupId>org.springframework.kafka</groupId><artifactId>spring-kafka</artifactId></dependency>
-        <dependency><groupId>tools.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
-        <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
-        <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-database-postgresql</artifactId></dependency>
-        <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId></dependency>
-        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
-        <dependency><groupId>org.springframework.kafka</groupId><artifactId>spring-kafka-test</artifactId><scope>test</scope></dependency>
-        <dependency><groupId>io.zonky.test</groupId><artifactId>embedded-postgres</artifactId><version>2.1.0</version><scope>test</scope></dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zonky.test</groupId>
+            <artifactId>embedded-postgres</artifactId>
+            <version>2.1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>apex-replay-tool</finalName>
         <plugins>
-            <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId>
-                <executions><execution>
-                    <id>packaged-cli</id><phase>integration-test</phase><goals><goal>test</goal></goals>
-                    <configuration>
-                        <includes><include>**/PackagedReplayCliIT.java</include></includes>
-                        <reportsDirectory>${project.build.directory}/cli-it-reports</reportsDirectory>
-                        <systemPropertyVariables><replay.tool.jar>${project.build.directory}/apex-replay-tool.jar</replay.tool.jar></systemPropertyVariables>
-                    </configuration>
-                </execution></executions>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>packaged-cli</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/PackagedReplayCliIT.java</include>
+                            </includes>
+                            <reportsDirectory>${project.build.directory}/cli-it-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <replay.tool.jar>${project.build.directory}/apex-replay-tool.jar</replay.tool.jar>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

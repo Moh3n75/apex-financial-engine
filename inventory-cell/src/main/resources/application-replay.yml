@@ -1,0 +1,11 @@
+# Explicitly activate saga,replay together. No base-profile subscription change.
+spring:
+  config:
+    activate:
+      on-profile: "saga & replay & !three-cell-saga"
+apex:
+  messaging:
+    consumer:
+      topics: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1},${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1}
+      reliability:
+        enabled: true

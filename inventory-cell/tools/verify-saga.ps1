@@ -57,6 +57,7 @@ try {
     }
     [IO.File]::WriteAllLines((Join-Path $repositoryRoot 'out/m26-order-build.properties'), $receipt,
         [Text.UTF8Encoding]::new($false))
+    Invoke-Maven @('-f', 'apex-replay-tool/pom.xml', 'clean', 'verify')
     Invoke-Maven @('-f', 'inventory-cell/pom.xml', 'clean', 'verify')
     if ((Get-SourceFingerprint) -ne $before) { throw 'Order/Platform source changed during E2E' }
 } finally {

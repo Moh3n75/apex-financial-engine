@@ -28,6 +28,7 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
     private final RetryPolicy retryPolicy;
     private final String publisherInstanceId;
     private final String topic;
+    private final PublisherRouting routing;
     private final Duration leaseDuration = Duration.ofMinutes(5);
 
     public ConfigurableOutboxPublisher(
@@ -39,6 +40,13 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
             String publisherInstanceId,
             String topic
     ) {
+        this(outboxStore,kafkaPublisher,jsonMapper,outboxEventMapper,retryPolicy,publisherInstanceId,topic,
+                new PublisherRouting(false, java.util.List.of()));
+    }
+
+    public ConfigurableOutboxPublisher(OutboxStore outboxStore, KafkaMessagePublisher kafkaPublisher,
+            JsonMapper jsonMapper, OutboxEventMapper outboxEventMapper, RetryPolicy retryPolicy,
+            String publisherInstanceId, String topic, PublisherRouting routing) {
         this.outboxStore = outboxStore;
         this.kafkaPublisher = kafkaPublisher;
         this.jsonMapper = jsonMapper;
@@ -46,6 +54,7 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
         this.retryPolicy = retryPolicy;
         this.publisherInstanceId = publisherInstanceId;
         this.topic = topic;
+        this.routing = routing;
     }
 
     @Override
@@ -56,12 +65,14 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
         }
 
         for (OutboxRecord event : events) {
+            String destination = topic;
             try {
                 var envelope = outboxEventMapper.map(event);
                 String message = jsonMapper.writeValueAsString(envelope);
                 String key = event.aggregateType() + ":" + event.aggregateId();
 
-                kafkaPublisher.publish(topic, key, message)
+                destination = routing.destination(event.eventType(), event.eventVersion(), topic);
+                kafkaPublisher.publish(destination, key, message)
                         .toCompletableFuture()
                         .join();
 
@@ -70,7 +81,7 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
                 String diagnostic = failureDiagnostic(exception);
                 // Do not log the producer record or payload: KafkaProducerException carries it.
                 log.warn("Outbox publication failed eventId={} correlationId={} topic={} failure={}",
-                        event.eventId(), event.correlationId(), topic, diagnostic);
+                        event.eventId(), event.correlationId(), destination, diagnostic);
                 if (retryPolicy.canRetry(event.retryCount())) {
                     outboxStore.markFailed(
                             event.id(),

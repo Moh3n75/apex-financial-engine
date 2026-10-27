@@ -1,0 +1,6 @@
+# Explicit operator opt-in. Bind loopback or protect with an authorized TLS ingress.
+apex:
+  order:
+    operations:
+      age-threshold: ${APEX_ORDER_STALLED_AGE_THRESHOLD:15m}
+      read-token: ${APEX_ORDER_OPERATIONS_READ_TOKEN}

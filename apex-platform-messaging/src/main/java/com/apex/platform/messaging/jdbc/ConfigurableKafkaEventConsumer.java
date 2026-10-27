@@ -50,7 +50,7 @@ public class ConfigurableKafkaEventConsumer {
     }
 
     @KafkaListener(
-            topics = "${apex.messaging.consumer.topics}",
+            topics = "#{T(com.apex.platform.messaging.jdbc.ConsumerTopics).parse('${apex.messaging.consumer.topics}')}",
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "#{${apex.messaging.consumer.reliability.enabled:false} ? 'apexReliableKafkaListenerContainerFactory' : ''}",
             concurrency = "${apex.messaging.consumer.concurrency:1}"

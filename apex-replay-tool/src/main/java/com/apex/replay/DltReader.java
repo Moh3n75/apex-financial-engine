@@ -34,7 +34,9 @@ public final class DltReader implements AutoCloseable {
         var destinations = routes.stream().flatMap(r -> java.util.stream.Stream.of(r.replayTopic(), r.replayDltTopic())).toList();
         require(routes.stream().noneMatch(r -> destinations.contains(r.originTopic())
                 || destinations.contains(r.dltTopic())), "SOURCE_DESTINATION_COLLISION");
-        require(routes.stream().map(Route::targetGroup).distinct().count() == routes.size(), "DUPLICATE_ROUTE_GROUP");
+        require(routes.stream().map(r -> List.of(r.originTopic(), r.targetGroup())).distinct().count() == routes.size(),
+                "DUPLICATE_SOURCE_GROUP_ROUTE");
+        require(routes.stream().map(Route::replayTopic).distinct().count() == routes.size(), "SHARED_REPLAY_DESTINATION_FORBIDDEN");
         require(connection.getProperty("bootstrap.servers") != null, "BOOTSTRAP_REQUIRED");
         Map<String, Object> properties = new HashMap<>();
         connection.forEach((key, value) -> properties.put(key.toString(), value));
@@ -110,6 +112,14 @@ public final class DltReader implements AutoCloseable {
         String type = metadata.path("eventType").asText();
         require(metadata.path("eventVersion").isIntegralNumber() && metadata.path("eventVersion").asText().equals("1")
                 && route.eventTypes().contains(type), "UNSUPPORTED_CONTRACT");
+        if (List.of("ORDER_READY_FOR_PAYMENT", "ORDER_CANCELLATION_REQUESTED", "PAYMENT_AUTHORIZED",
+                "PAYMENT_DECLINED", "INVENTORY_RELEASED").contains(type)) {
+            String aggregateType = type.startsWith("ORDER_") ? "ORDER"
+                    : type.startsWith("PAYMENT_") ? "PAYMENT_AUTHORIZATION" : "INVENTORY_RESERVATION";
+            UUID orderId = UUID.fromString(envelope.path("payload").path("orderId").asText());
+            require(aggregateType.equals(metadata.path("aggregateType").asText())
+                    && orderId.toString().equals(metadata.path("aggregateId").asText()), "BUSINESS_IDENTITY_MISMATCH");
+        }
         var encodedHeaders = new ArrayList<String>();
         headers.forEach(h -> encodedHeaders.add(h.key() + ":" + (h.value() == null ? "null"
                 : Base64.getEncoder().encodeToString(h.value()))));
@@ -131,6 +141,37 @@ public final class DltReader implements AutoCloseable {
             return sourceCount;
         } catch (IllegalArgumentException failure) { throw failure; }
         catch (Exception failure) { throw new IllegalStateException("TOPIC_PREFLIGHT_FAILED"); }
+    }
+
+    public java.util.Optional<Coordinate> find(ReplayAudit.Delivery delivery, Item item, long from, int maximum) {
+        require(from >= 0 && maximum >= 1 && maximum <= 10000, "INVALID_RECONCILE_BOUND");
+        require(routes.contains(item.route()) && delivery.topic().equals(item.route().replayTopic())
+                && delivery.partition() == item.origin().partition(), "RECONCILE_ROUTE_MISMATCH");
+        var partition = new TopicPartition(delivery.topic(), delivery.partition());
+        consumer.assign(List.of(partition));
+        long beginning = consumer.beginningOffsets(List.of(partition)).get(partition);
+        long end = consumer.endOffsets(List.of(partition)).get(partition);
+        long start = Math.max(beginning, from);
+        long upper = Math.min(end, start > Long.MAX_VALUE - maximum ? Long.MAX_VALUE : start + maximum);
+        consumer.seek(partition, start);
+        long deadline = System.nanoTime() + Duration.ofSeconds(10).toNanos();
+        while (consumer.position(partition) < upper && System.nanoTime() < deadline) {
+            for (var record : consumer.poll(Duration.ofMillis(200))) {
+                if (record.offset() >= upper) { break; }
+                var marker = record.headers().lastHeader(ReplayExecutor.MARKER_HEADER);
+                if (marker != null && marker.value() != null
+                        && new String(marker.value(), StandardCharsets.UTF_8).equals(delivery.marker())) {
+                    require(record.value() != null && sha(record.value()).equals(item.rawSha256())
+                            && record.value().length == item.rawLength()
+                            && (record.key() == null ? "NULL" : sha(record.key())).equals(item.keySha256()),
+                            "RECONCILE_MARKER_HASH_CONFLICT");
+                    require(java.util.Arrays.equals(header(record.headers(), ReplayExecutor.MARKER_HEADER), marker.value()),
+                            "AMBIGUOUS_REPLAY_MARKER");
+                    return java.util.Optional.of(new Coordinate(record.topic(), record.partition(), record.offset()));
+                }
+            }
+        }
+        return java.util.Optional.empty(); // Never proof of non-delivery.
     }
 
     static byte[] header(Headers headers, String name) {

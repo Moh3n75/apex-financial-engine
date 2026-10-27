@@ -14,6 +14,12 @@
 
     <artifactId>apex-infrastructure</artifactId>
 
+    <properties>
+        <!-- No implicit database connection during ordinary reactor builds.
+             tools/m30/verify-m30.ps1 supplies an owned disposable schema. -->
+        <jooq.codegen.skip>true</jooq.codegen.skip>
+    </properties>
+
     <dependencies>
 
         <!-- Application Layer -->
@@ -109,7 +115,7 @@
 
                 <configuration>
 
-                    <addCompileSourceRoot>true</addCompileSourceRoot>
+                    <skip>${jooq.codegen.skip}</skip>
 
                     <jdbc>
 
@@ -118,15 +124,15 @@
                         </driver>
 
                         <url>
-                            jdbc:postgresql://localhost:5432/postgres
+                            ${apex.jooq.url}
                         </url>
 
                         <user>
-                            postgres
+                            ${apex.jooq.user}
                         </user>
 
                         <password>
-                            123456789
+                            ${apex.jooq.password}
                         </password>
 
                     </jdbc>

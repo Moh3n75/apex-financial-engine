@@ -1,0 +1,13 @@
+apex:
+  messaging:
+    consumer:
+      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1
+---
+spring:
+  config:
+    activate:
+      on-profile: "three-cell-saga & replay"
+apex:
+  messaging:
+    consumer:
+      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1,${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1},${APEX_INVENTORY_RELEASE_REPLAY_TOPIC:apex.inventory.release-request.replay.v1}

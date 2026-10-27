@@ -40,10 +40,16 @@ public final class ReplayModel {
                     && replayDltTopic.equals(replayTopic + "-dlt"), "INVALID_ROUTE_TOPOLOGY");
             require(eventTypes != null && !eventTypes.isEmpty(), "CONTRACT_ALLOWLIST_REQUIRED");
             eventTypes = eventTypes.stream().sorted().distinct().toList();
-            require(eventTypes.stream().allMatch(type -> List.of("ORDER_PLACED", "INVENTORY_RESERVED",
-                    "INVENTORY_RESERVATION_REJECTED").contains(type)), "UNSUPPORTED_CONTRACT_ALLOWLIST");
-            require(eventTypes.equals(List.of("ORDER_PLACED")) || eventTypes.equals(List.of(
-                    "INVENTORY_RESERVATION_REJECTED", "INVENTORY_RESERVED")), "INVALID_CONTRACT_SET");
+            var families = List.of(
+                    List.of("ORDER_PLACED"),
+                    List.of("INVENTORY_RESERVATION_REJECTED", "INVENTORY_RESERVED"),
+                    List.of("INVENTORY_RELEASED", "INVENTORY_RESERVATION_REJECTED", "INVENTORY_RESERVED"),
+                    List.of("ORDER_READY_FOR_PAYMENT"),
+                    List.of("PAYMENT_AUTHORIZED", "PAYMENT_DECLINED"),
+                    List.of("ORDER_CANCELLATION_REQUESTED"));
+            require(eventTypes.stream().allMatch(type -> families.stream().anyMatch(f -> f.contains(type))),
+                    "UNSUPPORTED_CONTRACT_ALLOWLIST");
+            require(families.contains(eventTypes), "INVALID_CONTRACT_SET");
         }
     }
 

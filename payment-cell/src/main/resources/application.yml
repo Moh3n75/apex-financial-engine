@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: payment-cell
+  main:
+    web-application-type: none
+  datasource:
+    url: ${PAYMENT_DB_URL}
+    username: ${PAYMENT_DB_USERNAME}
+    password: ${PAYMENT_DB_PASSWORD}
+  flyway:
+    locations: classpath:db/migration,classpath:db/platform
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      auto-create: false
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+    consumer:
+      group-id: ${APEX_PAYMENT_CONSUMER_GROUP:payment-cell-authorization-v1}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        allow.auto.create.topics: false
+    listener:
+      ack-mode: manual_immediate
+      auto-startup: false
+apex:
+  cell:
+    id: payment-cell
+  messaging:
+    cell:
+      enabled: true
+    consumer:
+      enabled: true
+      topics: apex.order.payment-requests.v1
+      reliability:
+        enabled: true
+    publisher:
+      topic: apex.payment.events.v1
+    outbox:
+      publisher:
+        enabled: true

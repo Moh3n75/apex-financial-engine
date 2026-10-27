@@ -99,7 +99,7 @@ class ReplayApprovalIntegrationTest {
         assertThat(audit.status(id).status()).isEqualTo("PLANNED");
         assertThat(cli("approve", "--plan-id", id.toString(), "--confirm-digest", digest,
                 "--actor", "approver", "--reason", "explicit approval").code()).isZero();
-        assertThat(cli("status", "--plan-id", id.toString()).output()).contains("APPROVED", "NOT_IMPLEMENTED_ZERO_PUBLICATIONS");
+        assertThat(cli("status", "--plan-id", id.toString()).output()).contains("APPROVED", "NOT_PUBLISHED");
         assertThat(ends()).isEqualTo(endsBefore);
         assertThat(admin.listConsumerGroupOffsets(group).partitionsToOffsetAndMetadata().get(10, TimeUnit.SECONDS)).isEqualTo(offsetsBefore);
         assertThat(admin.listConsumerGroups().all().get(10, TimeUnit.SECONDS)).noneMatch(g -> g.groupId().equals(group));
@@ -149,7 +149,7 @@ class ReplayApprovalIntegrationTest {
     }
 
     @Test void requiredOptInLimitsAndUnsupportedCommandsRefuseWithoutInfrastructure() {
-        assertThat(cli("execute").output()).contains("NOT_IMPLEMENTED");
+        assertThat(cli("execute").output()).contains("REQUIRED_OPTIONS_MISSING");
         assertThat(cli("reconcile").code()).isEqualTo(2);
         assertThat(cli("inspect", "--routes", "missing", "--dlt-topic", "source-dlt", "--partition", "1", "--offset", "0").output())
                 .contains("REQUIRED_OPTIONS_MISSING");
@@ -167,6 +167,15 @@ class ReplayApprovalIntegrationTest {
             assertThatThrownBy(() -> reader.preflight(route)).hasMessage("TOPIC_PREFLIGHT_FAILED");
             admin.createTopics(List.of(new NewTopic(route.replayTopic(), 1, (short) 1),
                     new NewTopic(route.replayDltTopic(), 2, (short) 1))).all().get(10, TimeUnit.SECONDS);
+            // Creation acknowledgement can precede metadata visibility on another Admin connection.
+            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+                var metadata=admin.describeTopics(List.of(route.originTopic(),route.dltTopic(),
+                        route.replayTopic(),route.replayDltTopic())).allTopicNames().get(5,TimeUnit.SECONDS);
+                assertThat(metadata.get(route.replayTopic()).partitions()).hasSize(1);
+                assertThat(metadata.get(route.originTopic()).partitions()).hasSize(2);
+                // Check the reader's own metadata view before asserting the permanent capacity failure.
+                assertThatThrownBy(() -> reader.preflight(route)).hasMessage("INSUFFICIENT_PARTITIONS");
+            });
             assertThatThrownBy(() -> reader.preflight(route)).hasMessage("INSUFFICIENT_PARTITIONS");
         }
     }

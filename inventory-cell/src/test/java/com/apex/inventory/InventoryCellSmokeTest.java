@@ -65,6 +65,65 @@ class InventoryCellSmokeTest {
     private JdbcTemplate jdbc;
     private ReserveInventoryUseCase reserveInventory;
 
+    @Test
+    void multiSkuReleaseRollsBackEveryCounterWhenOneStockRowIsInconsistent() {
+        UUID a=UUID.fromString("11111111-1111-4111-8111-111111111111");
+        UUID b=UUID.fromString("22222222-2222-4222-8222-222222222222");
+        // Unique products for this fixture, retaining deterministic Java UUID ordering.
+        a=new UUID(a.getMostSignificantBits(),UUID.randomUUID().getLeastSignificantBits());
+        b=new UUID(b.getMostSignificantBits(),UUID.randomUUID().getLeastSignificantBits());
+        UUID id=UUID.randomUUID();
+        jdbc.update("INSERT INTO inventory_stock VALUES (?,10,0),(?,10,0)",a,b);
+        reserveInventory.execute(new ReservationRequest(id,List.of(new ReservationItem(a,3),new ReservationItem(b,2))));
+        var release=application.getBean(com.apex.inventory.modules.inventory.application.ReleaseInventoryUseCase.class);
+        jdbc.update("UPDATE inventory_stock SET reserved_quantity=0 WHERE product_id=?",b);
+        assertThatThrownBy(()->release.execute(id)).isInstanceOf(IllegalStateException.class);
+        assertThat(jdbc.queryForObject("SELECT available_quantity FROM inventory_stock WHERE product_id=?",Integer.class,a)).isEqualTo(7);
+        assertThat(jdbc.queryForObject("SELECT reserved_quantity FROM inventory_stock WHERE product_id=?",Integer.class,a)).isEqualTo(3);
+        assertThat(jdbc.queryForObject("SELECT status FROM inventory_reservations WHERE order_id=?",String.class,id)).isEqualTo("RESERVED");
+        jdbc.update("UPDATE inventory_stock SET reserved_quantity=2 WHERE product_id=?",b);
+        assertThat(release.execute(id)).isTrue();assertThat(release.execute(id)).isFalse();
+        assertThat(jdbc.queryForList("SELECT available_quantity FROM inventory_stock WHERE product_id IN (?,?)",Integer.class,a,b)).containsExactly(10,10);
+    }
+
+    @Test
+    void concurrentReleaseAndReserveRestoreOnlyOriginalStock() throws Exception {
+        UUID product=UUID.randomUUID(), first=UUID.randomUUID(), second=UUID.randomUUID();
+        jdbc.update("INSERT INTO inventory_stock VALUES (?,10,0)",product);
+        reserveInventory.execute(new ReservationRequest(first,List.of(new ReservationItem(product,3))));
+        var release=application.getBean(com.apex.inventory.modules.inventory.application.ReleaseInventoryUseCase.class);
+        try(var pool=Executors.newFixedThreadPool(3)) {
+            var gate=new CountDownLatch(1);
+            var a=pool.submit(()->{gate.await();return release.execute(first);});
+            var b=pool.submit(()->{gate.await();return release.execute(first);});
+            var c=pool.submit(()->{gate.await();return reserveInventory.execute(new ReservationRequest(second,List.of(new ReservationItem(product,2))));});
+            gate.countDown();
+            assertThat(List.of(a.get(15,TimeUnit.SECONDS),b.get(15,TimeUnit.SECONDS))).containsExactlyInAnyOrder(true,false);
+            assertThat(c.get(15,TimeUnit.SECONDS).status()).isEqualTo(ReservationStatus.RESERVED);
+        }
+        assertThat(jdbc.queryForObject("SELECT available_quantity FROM inventory_stock WHERE product_id=?",Integer.class,product)).isEqualTo(8);
+        assertThat(jdbc.queryForObject("SELECT reserved_quantity FROM inventory_stock WHERE product_id=?",Integer.class,product)).isEqualTo(2);
+        assertThat(reserveInventory.execute(new ReservationRequest(first,List.of(new ReservationItem(product,3)))).status()).isEqualTo(ReservationStatus.RELEASED);
+    }
+
+    @Test
+    void releaseRollbackAndInvalidReservationsFailClosed() {
+        UUID product=UUID.randomUUID(), id=UUID.randomUUID();
+        jdbc.update("INSERT INTO inventory_stock VALUES (?,10,0)",product);
+        reserveInventory.execute(new ReservationRequest(id,List.of(new ReservationItem(product,3))));
+        var release=application.getBean(com.apex.inventory.modules.inventory.application.ReleaseInventoryUseCase.class);
+        var tx=new TransactionTemplate(application.getBean(PlatformTransactionManager.class));
+        assertThatThrownBy(()->tx.execute(s->{release.execute(id);throw new IllegalStateException("test rollback");})).isInstanceOf(IllegalStateException.class);
+        assertThat(jdbc.queryForObject("SELECT status FROM inventory_reservations WHERE order_id=?",String.class,id)).isEqualTo("RESERVED");
+        assertThat(jdbc.queryForObject("SELECT available_quantity FROM inventory_stock WHERE product_id=?",Integer.class,product)).isEqualTo(7);
+        assertThatThrownBy(()->release.execute(UUID.randomUUID())).isInstanceOf(RuntimeException.class);
+        UUID rejected=UUID.randomUUID(); reserveInventory.execute(new ReservationRequest(rejected,List.of(new ReservationItem(product,100))));
+        assertThatThrownBy(()->release.execute(rejected)).isInstanceOf(IllegalStateException.class);
+        jdbc.update("UPDATE inventory_stock SET reserved_quantity=0 WHERE product_id=?",product);
+        assertThatThrownBy(()->release.execute(id)).isInstanceOf(IllegalStateException.class);
+        assertThat(jdbc.queryForObject("SELECT status FROM inventory_reservations WHERE order_id=?",String.class,id)).isEqualTo("RESERVED");
+    }
+
     @BeforeAll
     void startDisposableRuntime() throws Exception {
         try {

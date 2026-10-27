@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
+@org.springframework.context.annotation.Profile("!three-cell-saga")
 public class InventoryOutcomeHandler {
     private final OrderRepository orders;
 
