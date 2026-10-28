@@ -1,0 +1,30 @@
+syntax = "proto3";
+package apex.cell.rpc.v1;
+option java_package = "com.apex.platform.grpc.internal.wire";
+option java_multiple_files = true;
+// Platform-owned protocol. Java business contracts never generate per-contract stubs.
+service CellGateway {
+ rpc InvokeRequest(Invocation) returns (Reply);
+ rpc InvokeQuery(Invocation) returns (Reply);
+}
+message Invocation {
+ string contract_type = 1;
+ int32 contract_version = 2;
+ string content_type = 3;
+ bytes payload = 4;
+ string request_id = 5;
+ string idempotency_key = 6;
+ string correlation_id = 7;
+ string causation_id = 8;
+ string origin_cell = 9;
+ string target_cell = 10;
+}
+message Reply {
+ string contract_type = 1;
+ int32 contract_version = 2;
+ string content_type = 3;
+ bytes payload = 4;
+ string request_id = 5;
+ string correlation_id = 6;
+ string responder_cell = 7;
+}

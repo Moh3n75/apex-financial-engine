@@ -31,6 +31,11 @@
         <module>apex-platform-context-autoconfigure</module>
         <module>apex-starter-webmvc</module>
         <module>apex-starter-cell-messaging</module>
+        <module>apex-platform-grpc-api</module>
+        <module>apex-platform-grpc</module>
+        <module>apex-starter-grpc-server</module>
+        <module>apex-starter-grpc-client</module>
+        <module>apex-order-contracts</module>
     </modules>
 
     <properties>

@@ -1,0 +1,3 @@
+com.apex.platform.grpc.internal.GrpcCommonAutoConfiguration
+com.apex.platform.grpc.internal.GrpcServerAutoConfiguration
+com.apex.platform.grpc.internal.GrpcClientAutoConfiguration

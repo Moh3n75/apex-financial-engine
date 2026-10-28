@@ -175,7 +175,7 @@ class OrderOperationsIntegrationTest {
                     id, id.toString(), "historical");
             Flyway.configure().dataSource(db.getPostgresDatabase()).locations("classpath:db/migration", "classpath:db/platform").load().migrate();
             assertThat(jdbc.queryForObject("SELECT status_entered_at FROM orders WHERE id=?", OffsetDateTime.class, id)).isNull();
-            assertThat(jdbc.queryForObject("SELECT max(version::integer) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(2001);
+            assertThat(jdbc.queryForObject("SELECT max(version::integer) FROM flyway_schema_history WHERE success", Integer.class)).isEqualTo(2002);
         }
     }
 }

@@ -18,6 +18,8 @@
         <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
     </properties>
     <dependencies>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-starter-grpc-server</artifactId><version>${apex.platform.version}</version></dependency>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-order-contracts</artifactId><version>${apex.platform.version}</version></dependency>
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-starter-webmvc</artifactId>
@@ -66,4 +68,21 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>grpc-acceptance</id>
+            <build><plugins><plugin>
+                <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId>
+                <executions><execution><id>packaged-grpc</id><phase>integration-test</phase><goals><goal>test</goal></goals>
+                    <configuration>
+                        <includes><include>**/GrpcOrderIT.java</include></includes>
+                        <reportsDirectory>${project.build.directory}/grpc-e2e-reports</reportsDirectory>
+                        <systemPropertyVariables>
+                            <grpc.repositoryRoot>${project.basedir}/..</grpc.repositoryRoot>
+                        </systemPropertyVariables>
+                    </configuration>
+                </execution></executions>
+            </plugin></plugins></build>
+        </profile>
+    </profiles>
 </project>
