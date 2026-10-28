@@ -1,3 +1,5 @@
 com.apex.platform.grpc.internal.GrpcCommonAutoConfiguration
 com.apex.platform.grpc.internal.GrpcServerAutoConfiguration
 com.apex.platform.grpc.internal.GrpcClientAutoConfiguration
+com.apex.platform.grpc.internal.GrpcCollectorAutoConfiguration
+com.apex.platform.grpc.internal.GrpcPeerSecurityAutoConfiguration

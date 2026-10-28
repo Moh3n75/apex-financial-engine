@@ -1,5 +1,8 @@
 # Java-first gRPC requests and queries (M31)
 
+For additive bounded read-only fanout and tested certificate authorization, see
+[M32 guide](../m32/README.md). Direct M31 APIs/wire and write idempotency remain supported.
+
 Use Java 21 and the repository's Maven 3.9.x launcher. Business applications write
 records and methods; only `apex-platform-grpc/src/main/proto/cell_gateway.proto`
 is compiled to protobuf/gRPC classes. No business `.proto` or stub import is needed.

@@ -8,6 +8,7 @@
     </parent>
     <artifactId>apex-platform-grpc</artifactId>
     <dependencies>
+        <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-platform-grpc-api</artifactId>

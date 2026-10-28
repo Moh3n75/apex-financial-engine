@@ -14,18 +14,23 @@ public final class RpcDispatcher {
   private final ExecutionContextProvider context;
   private final GrpcProperties properties;
   private final ObjectProvider<TransactionalRequestExecutor> executors;
+  private final ObjectProvider<com.apex.platform.grpc.security.InvocationAuthorizer> authorization;
+  private static final org.slf4j.Logger log =
+      org.slf4j.LoggerFactory.getLogger(RpcDispatcher.class);
 
   RpcDispatcher(
       HandlerRegistry r,
       RpcCodec c,
       ExecutionContextProvider p,
       GrpcProperties settings,
-      ObjectProvider<TransactionalRequestExecutor> e) {
+      ObjectProvider<TransactionalRequestExecutor> e,
+      ObjectProvider<com.apex.platform.grpc.security.InvocationAuthorizer> authorization) {
     registry = r;
     codec = c;
     context = p;
     properties = settings;
     executors = e;
+    this.authorization = authorization;
   }
 
   byte[] invoke(boolean query, Invocation wire) {
@@ -43,11 +48,30 @@ public final class RpcDispatcher {
       throw new GatewayException(GatewayException.Code.UNAUTHENTICATED, false);
     UUID cause =
         wire.getCausationId().isEmpty() ? null : RpcServerAuth.parseId(wire.getCausationId());
+    var authorizer = authorization.getIfAvailable();
+    if (authorizer != null)
+      authorizer.authorize(
+          verified.caller(),
+          properties.getCellId(),
+          query,
+          wire.getContractType(),
+          wire.getContractVersion());
     if ((query && !wire.getIdempotencyKey().isEmpty())
         || (!query && !wire.getIdempotencyKey().matches("[A-Za-z0-9._:-]{1,128}")))
       throw new GatewayException(GatewayException.Code.INVALID_ARGUMENT, false);
     var h = registry.find(query, wire.getContractType(), wire.getContractVersion());
     Object payload = codec.decode(wire.getPayload().toByteArray(), h.contract().payload());
+    log.debug(
+        "RPC dispatch query={} type={} version={} requestId={} correlationId={}"
+            + " parentCausationId={} origin={} target={}",
+        query,
+        wire.getContractType(),
+        wire.getContractVersion(),
+        verified.request(),
+        verified.correlation(),
+        cause,
+        verified.caller().cellId(),
+        properties.getCellId());
     var deadline =
         Instant.now()
             .plusMillis(
@@ -71,10 +95,19 @@ public final class RpcDispatcher {
     var executor = executors.getIfAvailable();
     if (executor == null)
       throw new GatewayException(GatewayException.Code.FAILED_PRECONDITION, false);
-    return executor.execute(
-        meta,
-        codec.fingerprint(payload, h.contract().payload()),
-        () -> invokeHandler(h, payload, meta));
+    byte[] result =
+        executor.execute(
+            meta,
+            codec.fingerprint(payload, h.contract().payload()),
+            () -> invokeHandler(h, payload, meta));
+    // Cached results survive deployment upgrades. Never emit incompatible bytes as a successful
+    // reply.
+    try {
+      codec.decode(result, h.contract().response());
+    } catch (GatewayException incompatible) {
+      throw new GatewayException(GatewayException.Code.FAILED_PRECONDITION, false);
+    }
+    return result;
   }
 
   byte[] invokeHandler(HandlerRegistry.Handler handler, Object payload, RequestContext metadata) {

@@ -206,6 +206,11 @@ class GrpcRuntimeTest {
           .isEqualTo("m31-server");
       var serverProvider = server.getBean(ExecutionContextProvider.class);
       var workers = server.getBean("grpcServerWorkers", ThreadPoolExecutor.class);
+      // Drain real asynchronous RPC callbacks before occupying every worker with the context probe.
+      org.awaitility.Awaitility.await()
+          .atMost(Duration.ofSeconds(5))
+          .until(() -> workers.getActiveCount() == 0 && workers.getQueue().isEmpty());
+      workers.prestartAllCoreThreads();
       var ready = new CountDownLatch(8);
       var release = new CountDownLatch(1);
       var checks = new ArrayList<Future<Boolean>>();
@@ -222,8 +227,11 @@ class GrpcRuntimeTest {
                     return true;
                   }
                 }));
-      assertThat(ready.await(5, TimeUnit.SECONDS)).isTrue();
-      release.countDown();
+      try {
+        assertThat(ready.await(5, TimeUnit.SECONDS)).isTrue();
+      } finally {
+        release.countDown();
+      }
       for (var check : checks) assertThat(check.get(5, TimeUnit.SECONDS)).isTrue();
     }
   }

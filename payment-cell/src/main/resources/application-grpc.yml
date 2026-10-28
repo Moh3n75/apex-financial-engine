@@ -1,0 +1,12 @@
+# Opt-in only; this does not enable a payment simulation decision or a Kafka listener.
+apex:
+  grpc:
+    server:
+      enabled: true
+spring:
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:9093}
+      shutdown:
+        grace-period: 5s

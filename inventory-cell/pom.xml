@@ -18,6 +18,8 @@
         <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
     </properties>
     <dependencies>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-starter-grpc-server</artifactId><version>${apex.platform.version}</version></dependency>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-order-contracts</artifactId><version>${apex.platform.version}</version></dependency>
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-starter-webmvc</artifactId>

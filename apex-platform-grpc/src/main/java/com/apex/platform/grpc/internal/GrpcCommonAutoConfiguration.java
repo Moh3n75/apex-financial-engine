@@ -37,8 +37,9 @@ public class GrpcCommonAutoConfiguration {
       RpcCodec c,
       ExecutionContextProvider p,
       GrpcProperties g,
-      ObjectProvider<TransactionalRequestExecutor> e) {
-    return new RpcDispatcher(r, c, p, g, e);
+      ObjectProvider<TransactionalRequestExecutor> e,
+      ObjectProvider<com.apex.platform.grpc.security.InvocationAuthorizer> authorization) {
+    return new RpcDispatcher(r, c, p, g, e, authorization);
   }
 
   @Bean(destroyMethod = "shutdown")
@@ -55,8 +56,11 @@ public class GrpcCommonAutoConfiguration {
 
   @Bean(destroyMethod = "shutdown")
   ScheduledExecutorService grpcDeadlines() {
-    return Executors.newSingleThreadScheduledExecutor(
-        Thread.ofPlatform().daemon().name("apex-query-deadline-", 0).factory());
+    var scheduler =
+        new ScheduledThreadPoolExecutor(
+            1, Thread.ofPlatform().daemon().name("apex-query-deadline-", 0).factory());
+    scheduler.setRemoveOnCancelPolicy(true);
+    return scheduler;
   }
 
   @Bean
