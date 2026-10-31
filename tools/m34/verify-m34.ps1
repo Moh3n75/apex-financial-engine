@@ -12,8 +12,8 @@ try {
     if($LASTEXITCODE -ne 0 -or $version -notmatch '(?m)^(java|openjdk) 21[\. ]'){throw 'Java 21 required.'}
     $options=@('-B','-ntp');if($Offline){$options+='-o'}
     function Maven([string[]]$goals){ & $MavenCommand @options @goals;if($LASTEXITCODE -ne 0){throw "M34 Maven failure exit $LASTEXITCODE"} }
-    $modules=@('apex-platform-core','apex-platform-context-autoconfigure','apex-platform-events',
-        'apex-platform-messaging','apex-platform-webmvc','apex-platform-grpc-api','apex-platform-grpc',
+    $modules=@('apex-platform-core','apex-spring-boot-starter','apex-platform-events',
+        'apex-platform-messaging','apex-platform-grpc-api','apex-platform-grpc',
         'apex-starter-webmvc','apex-starter-cell-messaging','apex-starter-grpc-client','apex-starter-grpc-server',
         'apex-order-contracts','apex-platform-discovery','apex-discovery-eureka','apex-discovery-kubernetes',
         'apex-discovery-grpc','order-cell','inventory-cell','payment-cell','sample-grpc-client',
@@ -27,8 +27,8 @@ try {
         @(foreach($path in ($paths | Sort-Object -Unique)){[pscustomobject]@{path=$path;sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()}})
     }
     function LegacyFingerprint {
-        $legacyModules=@('apex-platform-core','apex-platform-events','apex-platform-context-autoconfigure',
-            'apex-platform-webmvc','apex-platform-messaging','apex-starter-webmvc','apex-starter-cell-messaging','order-cell')
+        $legacyModules=@('apex-platform-core','apex-platform-events','apex-spring-boot-starter','apex-platform-grpc-api',
+            'apex-platform-messaging','apex-starter-webmvc','apex-starter-cell-messaging','order-cell')
         $paths=[Collections.Generic.List[string]]::new();$paths.Add('pom.xml');$paths.Add('inventory-cell/tools/verify-saga.ps1')
         foreach($module in $legacyModules){$paths.Add("$module/pom.xml");Get-ChildItem "$module/src/main" -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {$paths.Add($_.FullName.Substring($root.Length+1).Replace('\','/'))}}
         $ordered=$paths.ToArray();[Array]::Sort($ordered,[StringComparer]::Ordinal);$text=[Text.StringBuilder]::new()
@@ -59,7 +59,7 @@ try {
         Maven @('-f','order-cell/pom.xml','-Pdiscovery-eureka','clean','verify')
         if((LegacyFingerprint) -ne $legacyBefore){throw 'Verified Order/Platform inputs changed during build.'}
         $receipt=@('schemaVersion=1',"sourceSha256=$legacyBefore",'buildProfile=discovery-eureka')
-        foreach($module in @('apex-platform-core','apex-platform-events','apex-platform-context-autoconfigure','apex-platform-webmvc','apex-platform-messaging','apex-starter-webmvc','apex-starter-cell-messaging','order-cell')) {
+        foreach($module in @('apex-platform-core','apex-platform-events','apex-spring-boot-starter','apex-platform-grpc-api','apex-platform-messaging','apex-starter-webmvc','apex-starter-cell-messaging','order-cell')) {
             $jar=if($module -eq 'order-cell'){'order-cell/target/order-cell.jar'}else{"$module/target/$module-1.0-SNAPSHOT.jar"}
             $receipt+="$module.sha256=$((Get-FileHash -LiteralPath $jar -Algorithm SHA256).Hash.ToLowerInvariant())"
         }

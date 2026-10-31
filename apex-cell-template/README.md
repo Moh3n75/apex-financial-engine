@@ -1,5 +1,12 @@
 # apex-cell-template
 
+Historical M20 scaffolding, retained for its existing bootstrap/i18n tests and local
+configuration. It is not the canonical SDK or required runtime. New consumers should
+start with [the minimal SDK example](../tools/m35-6/external-consumer) and
+[current product roles](../APEX_M35_6_INFRASTRUCTURE_CELL_MATRIX.md). Infrastructure
+applications are first-class Cells too; the historical terminology below is not a
+requirement that every Cell own a DB or business module.
+
 Empty, **runnable** APEX Cell foundation (M20).
 
 ## What this is

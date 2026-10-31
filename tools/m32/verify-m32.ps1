@@ -13,8 +13,8 @@ try {
     $options = @('-B','-ntp'); if ($Offline) { $options += '-o' }
     New-Item -ItemType Directory -Path out -Force | Out-Null
     $started = [DateTimeOffset]::UtcNow.ToString('o')
-    $modules = @('apex-platform-core','apex-platform-context-autoconfigure','apex-platform-events',
-        'apex-platform-messaging','apex-platform-webmvc','apex-platform-grpc-api','apex-platform-grpc',
+    $modules = @('apex-platform-core','apex-spring-boot-starter','apex-platform-events',
+        'apex-platform-messaging','apex-platform-grpc-api','apex-platform-grpc',
         'apex-starter-grpc-client','apex-starter-grpc-server','apex-starter-webmvc','apex-starter-cell-messaging',
         'apex-order-contracts','order-cell','inventory-cell','payment-cell','sample-grpc-client')
     function Source-Hashes {

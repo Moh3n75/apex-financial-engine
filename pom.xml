@@ -27,8 +27,7 @@
         <module>apex-platform-core</module>
         <module>apex-platform-events</module>
         <module>apex-platform-messaging</module>
-        <module>apex-platform-webmvc</module>
-        <module>apex-platform-context-autoconfigure</module>
+        <module>apex-spring-boot-starter</module>
         <module>apex-starter-webmvc</module>
         <module>apex-starter-cell-messaging</module>
         <module>apex-platform-grpc-api</module>

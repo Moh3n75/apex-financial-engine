@@ -6,8 +6,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $evidencePath = Join-Path $repositoryRoot 'out/m22-build-evidence.properties'
-$modules = @('apex-platform-core', 'apex-platform-events', 'apex-platform-context-autoconfigure',
-    'apex-platform-webmvc', 'apex-platform-messaging', 'apex-starter-webmvc',
+$modules = @('apex-platform-core', 'apex-platform-events', 'apex-spring-boot-starter', 'apex-platform-grpc-api',
+     'apex-platform-messaging', 'apex-starter-webmvc',
     'apex-starter-cell-messaging', 'customer-cell')
 
 function Get-SourceFingerprint {

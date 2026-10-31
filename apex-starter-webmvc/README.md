@@ -1,7 +1,9 @@
 # APEX WebMVC Starter
 
 Add `com.apex:apex-starter-webmvc:${apex.platform.version}` to an independently built Spring Boot 4.1.1 / Java 21 HTTP Cell.
-It supplies Boot WebMVC, `apex-platform-webmvc`, Context auto-configuration and Core APIs transitively.
+It supplies Boot WebMVC, the shared HTTP execution-context filter, and the canonical
+`apex-spring-boot-starter` transitively. M35.6 folds the old `apex-platform-webmvc`
+implementation into this module; Java packages and runtime behavior are unchanged.
 It introduces no Kafka, Messaging, Outbox or Inbox dependency.
 
 Set `spring.application.name` and `apex.cell.id` using the application's normal configuration.

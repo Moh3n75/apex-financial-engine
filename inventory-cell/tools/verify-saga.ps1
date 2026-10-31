@@ -5,8 +5,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$modules = @('apex-platform-core', 'apex-platform-events', 'apex-platform-context-autoconfigure',
-    'apex-platform-webmvc', 'apex-platform-messaging', 'apex-starter-webmvc',
+$modules = @('apex-platform-core', 'apex-platform-events', 'apex-spring-boot-starter', 'apex-platform-grpc-api',
+     'apex-platform-messaging', 'apex-starter-webmvc',
     'apex-starter-cell-messaging', 'order-cell')
 
 function Get-SourceFingerprint {

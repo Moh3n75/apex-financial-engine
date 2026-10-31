@@ -14,8 +14,8 @@ import java.util.Properties;
 /** Content-based build receipt, written only by the ordered clean-build script. */
 public final class M22BuildPrerequisite {
     private static final List<String> MODULES = List.of(
-            "apex-platform-core", "apex-platform-events", "apex-platform-context-autoconfigure",
-            "apex-platform-webmvc", "apex-platform-messaging", "apex-starter-webmvc",
+            "apex-platform-core", "apex-platform-events", "apex-spring-boot-starter", "apex-platform-grpc-api",
+             "apex-platform-messaging", "apex-starter-webmvc",
             "apex-starter-cell-messaging", "customer-cell");
 
     private M22BuildPrerequisite() {}
@@ -45,7 +45,7 @@ public final class M22BuildPrerequisite {
             Path loaded = Path.of(type.getProtectionDomain().getCodeSource().getLocation().toURI());
             String module = type.getPackageName().startsWith("com.apex.platform.core") ? "apex-platform-core"
                     : type.getPackageName().startsWith("com.apex.platform.events") ? "apex-platform-events"
-                    : type.getPackageName().startsWith("com.apex.platform.context") ? "apex-platform-context-autoconfigure"
+                    : type.getPackageName().startsWith("com.apex.platform.context") ? "apex-spring-boot-starter"
                     : "apex-platform-messaging";
             require(Files.isRegularFile(loaded) && sha256(loaded).equals(evidence.getProperty(module + ".sha256")),
                     "Reporting loaded a different Platform artifact: " + module);

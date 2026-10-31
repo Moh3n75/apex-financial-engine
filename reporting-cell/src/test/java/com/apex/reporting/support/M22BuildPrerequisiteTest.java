@@ -45,7 +45,7 @@ class M22BuildPrerequisiteTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"apex-platform-context-autoconfigure", "apex-platform-webmvc"})
+    @ValueSource(strings = {"apex-spring-boot-starter", "apex-starter-webmvc"})
     void rejectsChangedHttpOrContextSource(String module) throws Exception {
         fixture();
         Files.writeString(root.resolve(module + "/src/main/changed.txt"), "changed source");
@@ -58,12 +58,10 @@ class M22BuildPrerequisiteTest {
         Files.writeString(root.resolve("tools/m22/verify-cells.ps1"), "build script");
         Properties evidence = new Properties();
         evidence.setProperty("schemaVersion", "1");
-        for (String module : List.of("apex-platform-core", "apex-platform-events", "apex-platform-context-autoconfigure",
-                "apex-platform-webmvc", "apex-platform-messaging", "apex-starter-webmvc",
+        for (String module : List.of("apex-platform-core", "apex-platform-events", "apex-spring-boot-starter", "apex-platform-grpc-api",
+                 "apex-platform-messaging", "apex-starter-webmvc",
                 "apex-starter-cell-messaging", "customer-cell")) {
-            if (!module.startsWith("apex-starter-")) {
-                Files.createDirectories(root.resolve(module + "/src/main"));
-            }
+            Files.createDirectories(root.resolve(module + "/src/main"));
             Files.createDirectories(root.resolve(module + "/target"));
             Files.writeString(root.resolve(module + "/pom.xml"), module);
             Path jar = root.resolve(module.equals("customer-cell") ? "customer-cell/target/customer-cell.jar"

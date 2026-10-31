@@ -1,4 +1,24 @@
-# Apex Financial Engine — Architecture Handoff & Continuation Guide
+# APEX Platform
+
+APEX is one product: a Java/Spring Boot SDK and independently deployed infrastructure
+Cells (Gateway, Eureka Registry, Identity/SSO/Authorization). Business/demo Cells
+qualify the SDK and illustrate integration; they are not SDK dependencies.
+
+Start with [the default SDK dependency](APEX_M35_6_PUBLIC_SDK_API.md),
+[architecture](APEX_M35_6_PLATFORM_ARCHITECTURE.md), and
+[infrastructure roles and deployment order](APEX_M35_6_INFRASTRUCTURE_CELL_MATRIX.md).
+The default `com.apex:apex-spring-boot-starter:1.0-SNAPSHOT` starts without a DB,
+broker, HTTP/gRPC listener, discovery provider or authorization server.
+
+Full isolated product verification: `tools/m35-6/verify-platform-product.ps1`.
+The legacy Financial runtime remains separately owned; its compilation qualification
+does not certify full Financial runtime integration.
+
+## Historical Financial M18.7 handoff
+
+The notes below describe the original Financial runtime, not the current product
+module/deployment inventory. In particular, `apex-bootstrap` is no longer the only
+APEX executable. Historical reports are retained as evidence, not current release gates.
 
 **Checkpoint:** End of M18.7 — Consumer Framework Complete  
 **Project:** `apex-financial-engine`  

@@ -16,7 +16,7 @@
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-context-autoconfigure</artifactId>
+            <artifactId>apex-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

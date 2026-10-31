@@ -1248,13 +1248,37 @@ class DualDiscoveryReplicaIT {
                       .isEqualTo("UNAVAILABLE"));
       var denied = client.call(command("create"));
       assertThat(denied.path("error").asText()).isEqualTo("UNAVAILABLE");
-      var readiness =
-          http.send(
-              HttpRequest.newBuilder(
-                      URI.create("http://127.0.0.1:" + edgePort + "/actuator/health/readiness"))
-                  .GET()
-                  .build(),
-              HttpResponse.BodyHandlers.ofString());
+      // Registry refreshes are independent in the client and Gateway processes. A stale
+      // client does not prove that the Gateway's last successful fetch has expired yet.
+      long gatewayExpiryStarted = System.nanoTime();
+      var readinessObservations = new ArrayList<Map<String, Object>>();
+      await()
+          .atMost(Duration.ofSeconds(15))
+          .untilAsserted(
+              () -> {
+                var readiness =
+                    http.send(
+                        HttpRequest.newBuilder(
+                                URI.create(
+                                    "http://127.0.0.1:" + edgePort + "/actuator/health/readiness"))
+                            .timeout(Duration.ofSeconds(2))
+                            .GET()
+                            .build(),
+                        HttpResponse.BodyHandlers.ofString());
+                readinessObservations.add(
+                    Map.of(
+                        "status",
+                        readiness.statusCode(),
+                        "elapsedMs",
+                        TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - gatewayExpiryStarted)));
+                assertThat(readiness.statusCode()).isEqualTo(503);
+              });
+      evidence.add(
+          Map.of(
+              "stage",
+              "gateway-independent-registry-expiry",
+              "observations",
+              readinessObservations));
       var liveness =
           http.send(
               HttpRequest.newBuilder(
@@ -1262,7 +1286,6 @@ class DualDiscoveryReplicaIT {
                   .GET()
                   .build(),
               HttpResponse.BodyHandlers.ofString());
-      assertThat(readiness.statusCode()).isEqualTo(503);
       assertThat(liveness.statusCode()).isEqualTo(200);
       assertThat(total(orders, "orders")).isEqualTo(before);
       evidence.add(

@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-webmvc</artifactId>
+            <artifactId>apex-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
