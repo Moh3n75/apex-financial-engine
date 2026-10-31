@@ -36,6 +36,10 @@
         <module>apex-starter-grpc-server</module>
         <module>apex-starter-grpc-client</module>
         <module>apex-order-contracts</module>
+        <module>apex-platform-discovery</module>
+        <module>apex-discovery-eureka</module>
+        <module>apex-discovery-kubernetes</module>
+        <module>apex-discovery-grpc</module>
     </modules>
 
     <properties>

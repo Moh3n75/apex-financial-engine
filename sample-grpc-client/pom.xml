@@ -34,4 +34,8 @@
             </plugin>
         </plugins>
     </build>
+<profiles>
+<profile><id>discovery-eureka</id><dependencyManagement><dependencies><dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId><version>2025.1.3</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement><dependencies><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-eureka</artifactId><version>1.0-SNAPSHOT</version></dependency><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-grpc</artifactId><version>1.0-SNAPSHOT</version></dependency></dependencies></profile>
+<profile><id>discovery-kubernetes</id><dependencyManagement><dependencies><dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId><version>2025.1.3</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement><dependencies><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-kubernetes</artifactId><version>1.0-SNAPSHOT</version></dependency><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-grpc</artifactId><version>1.0-SNAPSHOT</version></dependency></dependencies></profile>
+</profiles>
 </project>

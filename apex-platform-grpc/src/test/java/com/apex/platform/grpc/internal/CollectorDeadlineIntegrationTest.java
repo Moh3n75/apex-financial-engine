@@ -36,6 +36,7 @@ class CollectorDeadlineIntegrationTest {
                 "--apex.grpc.collector.allowed-responders=m31-server")) {
       var gateway = client.getBean(MultiResponderGateway.class);
       for (int i = 0; i < 1000; i++) {
+        long started = System.nanoTime();
         var invocation =
             gateway
                 .collectQueries(
@@ -47,7 +48,15 @@ class CollectorDeadlineIntegrationTest {
         try {
           result = invocation.get(1, TimeUnit.SECONDS);
         } catch (java.util.concurrent.TimeoutException failure) {
-          var dump = new StringBuilder();
+          var dump =
+              new StringBuilder()
+                  .append("iteration=")
+                  .append(i)
+                  .append(" elapsedMs=")
+                  .append(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started))
+                  .append(" invocationDoneAtObservation=")
+                  .append(invocation.isDone())
+                  .append(" configuredCollectionDeadlineMs=25 observationTimeoutMs=1000\n");
           for (var t :
               java.lang.management.ManagementFactory.getThreadMXBean().dumpAllThreads(true, true)) {
             dump.append(t.getThreadName())

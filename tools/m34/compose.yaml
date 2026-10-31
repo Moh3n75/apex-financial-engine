@@ -1,0 +1,54 @@
+# Linux host-network demo only. Nothing starts without an explicit config-directory value.
+# External configs own DB/Kafka/TLS/registry settings; no infrastructure is provisioned here.
+x-cell: &cell
+  network_mode: host
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  volumes:
+    - type: bind
+      source: ${M34_CONFIG_DIR:?Set an operator-owned absolute configuration directory}
+      target: /etc/apex
+      read_only: true
+  restart: "no"
+  environment:
+    SERVER_ADDRESS: 127.0.0.1
+    SPRING_GRPC_SERVER_ADDRESS: 127.0.0.1
+services:
+  registry:
+    <<: *cell
+    image: apex/discovery-server:m34-eureka
+    command: ["--apex.registry.loopback-development=true", "--server.address=127.0.0.1", "--server.port=8761"]
+  gateway:
+    <<: *cell
+    image: apex/api-gateway:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/gateway.properties", "--apex.gateway.mode=loopback-development", "--server.address=127.0.0.1", "--server.port=8080"]
+  order-1:
+    <<: *cell
+    image: apex/order-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/order.properties", "--server.port=8083", "--spring.grpc.server.port=9091", "--apex.discovery.instance-id=order-1"]
+  order-2:
+    <<: *cell
+    image: apex/order-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/order.properties", "--server.port=8183", "--spring.grpc.server.port=9191", "--apex.discovery.instance-id=order-2"]
+  order-3:
+    <<: *cell
+    image: apex/order-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/order.properties", "--server.port=8283", "--spring.grpc.server.port=9291", "--apex.discovery.instance-id=order-3"]
+  inventory-1:
+    <<: *cell
+    image: apex/inventory-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/inventory.properties", "--server.port=8084", "--spring.grpc.server.port=9092", "--apex.discovery.instance-id=inventory-1"]
+  inventory-2:
+    <<: *cell
+    image: apex/inventory-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/inventory.properties", "--server.port=8184", "--spring.grpc.server.port=9192", "--apex.discovery.instance-id=inventory-2"]
+  payment-1:
+    <<: *cell
+    image: apex/payment-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/payment.properties", "--spring.main.web-application-type=servlet", "--server.port=8085", "--spring.grpc.server.port=9093", "--apex.discovery.instance-id=payment-1"]
+  payment-2:
+    <<: *cell
+    image: apex/payment-cell:m34-eureka
+    command: ["--spring.config.additional-location=file:/etc/apex/payment.properties", "--spring.main.web-application-type=servlet", "--server.port=8185", "--spring.grpc.server.port=9193", "--apex.discovery.instance-id=payment-2"]

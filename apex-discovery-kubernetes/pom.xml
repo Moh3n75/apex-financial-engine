@@ -1,0 +1,10 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion>
+<parent><groupId>com.apex</groupId><artifactId>apex-financial-engine</artifactId><version>1.0-SNAPSHOT</version></parent>
+<artifactId>apex-discovery-kubernetes</artifactId>
+<dependencyManagement><dependencies><dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId><version>2025.1.3</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement>
+<dependencies>
+<dependency><groupId>com.apex</groupId><artifactId>apex-platform-discovery</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.fabric8</groupId><artifactId>kubernetes-client</artifactId></dependency>
+<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>
+<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
+</dependencies></project>

@@ -1,0 +1,24 @@
+# Supply as three owner-specific ConfigMaps; substitute each cell ID. No credentials here.
+# No discovery API required in server-only Pods: Service selectors/EndpointSlices register them.
+apex.discovery.provider=none
+apex.grpc.server.enabled=true
+apex.grpc.cell-id=${spring.application.name}
+apex.grpc.security.enabled=true
+apex.grpc.security.tenant=alpha
+apex.grpc.security.peers.primary.uri=spiffe://apex.example/tenant/alpha/cell/operator-client
+apex.grpc.security.peers.primary.contracts=QUERY:GET_ORDER_PERSPECTIVE:1
+# Order only: add QUERY:GET_ORDER:1,REQUEST:CREATE_ORDER:1 when explicitly authorized.
+spring.grpc.server.ssl.enabled=true
+spring.grpc.server.ssl.bundle=cell
+spring.grpc.server.ssl.client-auth=require
+spring.grpc.server.reflection.enabled=false
+spring.ssl.bundle.pem.cell.keystore.certificate=file:/etc/apex-tls/tls.crt
+spring.ssl.bundle.pem.cell.keystore.private-key=file:/etc/apex-tls/tls.key
+spring.ssl.bundle.pem.cell.truststore.certificate=file:/etc/apex-tls/ca.crt
+spring.kafka.admin.auto-create=false
+spring.kafka.consumer.properties.allow.auto.create.topics=false
+spring.kafka.listener.auto-startup=true
+apex.messaging.consumer.reliability.enabled=true
+management.endpoints.web.exposure.include=health
+management.endpoint.health.probes.enabled=true
+management.endpoint.health.group.readiness.include=readinessState,db

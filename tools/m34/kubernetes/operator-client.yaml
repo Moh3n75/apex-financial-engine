@@ -1,0 +1,39 @@
+# Explicit operator fixture only; no automatic RPC, replay, Kafka or DB access.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: m34-operator-client
+  namespace: apex-m34
+spec:
+  restartPolicy: Never
+  serviceAccountName: apex-discovery-reader
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    seccompProfile: {type: RuntimeDefault}
+  containers:
+    - name: client
+      image: apex/sample-grpc-client:m34-kubernetes
+      command: [sleep, infinity]
+      env:
+        - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+          value: file:/etc/apex/application.properties
+      resources:
+        requests: {cpu: 100m, memory: 256Mi}
+        limits: {cpu: "1", memory: 512Mi}
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities: {drop: [ALL]}
+      volumeMounts:
+        - {name: configuration, mountPath: /etc/apex, readOnly: true}
+        - {name: tls, mountPath: /etc/apex-tls, readOnly: true}
+        - {name: temporary, mountPath: /tmp}
+  volumes:
+    - name: configuration
+      configMap: {name: m34-operator-client-configuration}
+    - name: tls
+      secret: {secretName: m34-operator-client-mtls}
+    - name: temporary
+      emptyDir: {}

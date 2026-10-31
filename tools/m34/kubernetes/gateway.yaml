@@ -1,0 +1,60 @@
+# Operator-only loopback listener; deliberately no Service or Ingress.
+# Create apex-gateway-configuration from gateway.properties.example externally.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apex-api-gateway
+  namespace: apex-m34
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apex-api-gateway
+  template:
+    metadata:
+      labels:
+        app: apex-api-gateway
+    spec:
+      serviceAccountName: apex-discovery-reader
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: gateway
+          image: apex/api-gateway:m34-kubernetes
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: file:/etc/apex/application.properties
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: "1", memory: 768Mi}
+          startupProbe:
+            exec:
+              command: [curl, --fail, --silent, --max-time, "2", http://127.0.0.1:8080/actuator/health/liveness]
+            periodSeconds: 5
+            failureThreshold: 36
+          readinessProbe:
+            exec:
+              command: [curl, --fail, --silent, --max-time, "2", http://127.0.0.1:8080/actuator/health/readiness]
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: [curl, --fail, --silent, --max-time, "2", http://127.0.0.1:8080/actuator/health/liveness]
+            periodSeconds: 10
+          volumeMounts:
+            - {name: configuration, mountPath: /etc/apex, readOnly: true}
+            - {name: temporary, mountPath: /tmp}
+      volumes:
+        - name: configuration
+          configMap:
+            name: apex-gateway-configuration
+        - name: temporary
+          emptyDir: {}
