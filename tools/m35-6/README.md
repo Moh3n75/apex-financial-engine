@@ -10,12 +10,18 @@ $env:JAVA_HOME = '<Java 21 JDK>'
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/m35-6/verify-platform-product.ps1 -Offline -MavenCommand '<absolute mvn.cmd>'
 ```
 
-Default is the **full gate**: install the SDK and HTTP capability with tests, run unchanged
+Default is the **full gate**: install the SDK, HTTP, messaging and gRPC server capabilities
+and the demo contract artifact with tests, then run unchanged
 M35 Identity acceptance and the M34 → M32 → M31 → M30/M29/M22 chain (with artifact-owner
 receipt updates), then build/test/boot the external consumer. It includes real packaged
 Gateway/Eureka/3 Order + 2 Inventory + 2 Payment processes, mTLS, retry/DLT/replay,
 Identity two-JVM code/PKCE/refresh/JWKS, Financial isolated schema generation and selected
 tests, and bounded Saga performance regression. No tests are disabled to consolidate modules.
+
+The initial install includes all prerequisites needed before independent Order builds;
+an existing local `com.apex` SNAPSHOT cache is not a prerequisite. Third-party Maven/plugin
+and native test dependencies must still be cached for offline mode. `-Fast` retains the
+smaller SDK/HTTP preparation and does not qualify the complete chain.
 
 `-Fast` runs only SDK/HTTP and minimal external acceptance. **It cannot establish full PASS.**
 It intentionally omits capabilities needing artifacts installed by the full chain.

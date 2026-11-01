@@ -22,7 +22,13 @@ try {
             ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $archive ($module.Name+'-'+$_.Directory.Name+'-'+$_.Name))}
     }
     $options=@('-B','-ntp');if($Offline){$options+='-o'}
-    & $MavenCommand @options -pl apex-spring-boot-starter,apex-starter-webmvc -am clean install
+    $bootstrapModules=@('apex-spring-boot-starter','apex-starter-webmvc')
+    if(-not $Fast){
+        # Independent Cells resolve these before the later M22/M31 installs.
+        # Do not rely on previously installed APEX SNAPSHOTs.
+        $bootstrapModules+=@('apex-starter-cell-messaging','apex-starter-grpc-server','apex-order-contracts')
+    }
+    & $MavenCommand @options -pl ($bootstrapModules -join ',') -am clean install
     if($LASTEXITCODE -ne 0){throw 'SDK build failed.'}
     $arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File','tools/m35/verify-m35.ps1','-MavenCommand',$MavenCommand)
     if($Offline){$arguments+='-Offline'}
