@@ -39,6 +39,10 @@
         <module>apex-discovery-eureka</module>
         <module>apex-discovery-kubernetes</module>
         <module>apex-discovery-grpc</module>
+        <module>apex-starter-observability</module>
+        <module>apex-operations-contracts</module>
+        <module>apex-operations-owner-jdbc</module>
+        <module>apex-operations-console</module>
     </modules>
 
     <properties>

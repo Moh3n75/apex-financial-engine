@@ -7,6 +7,8 @@ import io.grpc.stub.StreamObserver;
 final class GenericGrpcService extends CellGatewayGrpc.CellGatewayImplBase {
   private final RpcDispatcher dispatcher;
   private final GrpcProperties properties;
+  private RpcObservation observations=RpcObservation.NONE;
+  GenericGrpcService withObservations(RpcObservation value){observations=value;return this;}
 
   GenericGrpcService(RpcDispatcher d, GrpcProperties p) {
     dispatcher = d;
@@ -24,10 +26,11 @@ final class GenericGrpcService extends CellGatewayGrpc.CellGatewayImplBase {
   }
 
   private void invoke(boolean query, Invocation request, StreamObserver<Reply> observer) {
+    var attempt=observations.start("rpc.server");
     try {
       byte[] payload = dispatcher.invoke(query, request);
       // A receipt/result is returned only after the owning executor has committed.
-      if (io.grpc.Context.current().isCancelled()) return;
+      if (io.grpc.Context.current().isCancelled()){attempt.finish("CANCELLED");return;}
       observer.onNext(
           Reply.newBuilder()
               .setContractType(request.getContractType())
@@ -39,8 +42,12 @@ final class GenericGrpcService extends CellGatewayGrpc.CellGatewayImplBase {
               .setResponderCell(properties.getCellId())
               .build());
       observer.onCompleted();
+      attempt.finish("SUCCEEDED"); // Server response completion, not universal owner commit.
     } catch (Throwable failure) {
+      attempt.finish(RpcObservation.outcome(failure));
       observer.onError(RpcErrors.wire(failure));
+    } finally {
+      attempt.finish("UNKNOWN");
     }
   }
 }

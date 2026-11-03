@@ -5,6 +5,8 @@
 <groupId>com.apex</groupId><artifactId>payment-cell</artifactId><version>0.1.0-SNAPSHOT</version>
 <properties><java.version>21</java.version></properties>
 <dependencies>
+<dependency><groupId>com.apex</groupId><artifactId>apex-operations-owner-jdbc</artifactId><version>1.0-SNAPSHOT</version></dependency>
+<dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency>
 <dependency><groupId>com.apex</groupId><artifactId>apex-starter-grpc-server</artifactId><version>1.0-SNAPSHOT</version></dependency>
 <dependency><groupId>com.apex</groupId><artifactId>apex-order-contracts</artifactId><version>1.0-SNAPSHOT</version></dependency>
 <dependency><groupId>com.apex</groupId><artifactId>apex-starter-cell-messaging</artifactId><version>1.0-SNAPSHOT</version></dependency>
@@ -15,7 +17,12 @@
 <dependency><groupId>io.zonky.test</groupId><artifactId>embedded-postgres</artifactId><version>2.1.0</version><scope>test</scope></dependency>
 </dependencies>
 <build><finalName>payment-cell</finalName><plugins><plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin></plugins></build>
-<profiles>
+    <profiles>
+        <!-- Test-owned exporter fixture; never selected by default deployment builds. -->
+        <profile><id>ops02-acceptance</id><dependencies>
+            <dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency>
+            <dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version><type>test-jar</type><scope>runtime</scope></dependency>
+        </dependencies></profile>
 <profile><id>discovery-eureka</id><dependencyManagement><dependencies><dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId><version>2025.1.3</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement><dependencies><dependency><groupId>com.apex</groupId><artifactId>apex-starter-webmvc</artifactId><version>1.0-SNAPSHOT</version></dependency><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-eureka</artifactId><version>1.0-SNAPSHOT</version></dependency></dependencies></profile>
 <profile><id>discovery-kubernetes</id><dependencyManagement><dependencies><dependency><groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId><version>2025.1.3</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement><dependencies><dependency><groupId>com.apex</groupId><artifactId>apex-starter-webmvc</artifactId><version>1.0-SNAPSHOT</version></dependency><dependency><groupId>com.apex</groupId><artifactId>apex-discovery-kubernetes</artifactId><version>1.0-SNAPSHOT</version></dependency></dependencies></profile>
 </profiles>

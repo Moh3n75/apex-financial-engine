@@ -15,6 +15,8 @@ final class DefaultQueryGateway implements QueryGateway {
   private final ObjectProvider<GrpcInvocationClient> remote;
   private final ExecutorService workers;
   private final ScheduledExecutorService timer;
+  private RpcObservation observations=RpcObservation.NONE;
+  DefaultQueryGateway withObservations(RpcObservation value){observations=value;return this;}
 
   DefaultQueryGateway(
       GrpcProperties p,
@@ -86,16 +88,24 @@ final class DefaultQueryGateway implements QueryGateway {
               "local:" + properties.getCellId(),
               Instant.now().plus(options.deadline()));
       var future = new RpcFuture<R>(false);
-      var task =
-          workers.submit(
+      var queued=observations.start("query.queue");
+      java.util.concurrent.Future<?> task;
+      try {task=workers.submit(
               () -> {
+                queued.finish("OBSERVED");
+                var execution=observations.start("query.execution");
                 try {
                   future.complete(
                       codec.decode(dispatcher.invokeHandler(handler, safe, ctx), response));
+                  execution.finish("SUCCEEDED");
                 } catch (Throwable failure) {
+                  execution.finish(RpcObservation.outcome(failure));
                   future.completeExceptionally(RpcErrors.failure(failure, false));
+                } finally {
+                  execution.finish("UNKNOWN");
                 }
-              });
+              });}catch(RejectedExecutionException full){queued.finish("FAILED");throw full;}
+      future.whenComplete((answer,failure)->queued.finish(RpcObservation.outcome(failure)));
       future.cancellation = () -> task.cancel(true);
       var timeout =
           timer.schedule(

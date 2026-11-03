@@ -20,6 +20,13 @@ public class SimpleTransactionalEventHandlerExecutor
     private final ExecutionContextProvider contextProvider;
     private final String sourceService;
     private final String cellId;
+    private com.apex.platform.messaging.observation.MessagingObservation observations =
+        com.apex.platform.messaging.observation.MessagingObservation.NONE;
+
+    public SimpleTransactionalEventHandlerExecutor withObservations(
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
+        this.observations=Objects.requireNonNull(observations);return this;
+    }
 
     public SimpleTransactionalEventHandlerExecutor(
             ProcessedEventStore processedEventStore,
@@ -44,14 +51,18 @@ public class SimpleTransactionalEventHandlerExecutor
             EventEnvelope<T> event,
             ConsumerContext context
     ) {
+        var committedOutcome=new java.util.concurrent.atomic.AtomicReference<>("UNKNOWN");
+        observations.afterTransaction("inbox.transaction",committedOutcome::get);
         boolean firstProcessing = processedEventStore.registerIfAbsent(
                 event.metadata(),
                 context
         );
 
         if (!firstProcessing) {
+            committedOutcome.set("DUPLICATE");
             return DispatchResult.DUPLICATE;
         }
+        committedOutcome.set("COMMITTED");
 
         ExecutionContext executionContext = new ExecutionContext(
                 event.metadata().correlationId(),

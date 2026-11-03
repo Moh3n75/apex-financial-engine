@@ -52,6 +52,7 @@ import static org.awaitility.Awaitility.await;
 @Tag("integration")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReliableConsumerIntegrationTest {
+    private static final java.util.Queue<String> OBSERVATIONS=new java.util.concurrent.ConcurrentLinkedQueue<>();
     private EmbeddedPostgres database;
     private EmbeddedKafkaKraftBroker broker;
     private ConfigurableApplicationContext application;
@@ -212,6 +213,20 @@ class ReliableConsumerIntegrationTest {
         assertThat(count("processed_event", "event_id", id)).isEqualTo(1);
         assertThat(count("outbox_event", "aggregate_id", id)).isEqualTo(1);
         assertThat(dlt.poll(Duration.ofMillis(300))).isEmpty();
+    }
+
+    @Test
+    void observedRetryCommitDuplicateAndQuarantineRemainDistinct() throws Exception {
+        OBSERVATIONS.clear();start(true,"--apex.observability.enabled=true");
+        UUID id=UUID.randomUUID();var sent=send(id,"TRANSIENT","PROBE",1);committed(sent.partition(),sent.offset());
+        assertThat(OBSERVATIONS).contains("apex.inbox.transaction:ROLLED_BACK","apex.inbox.transaction:COMMITTED","apex.ack.invocation:OBSERVED");
+        assertThat(count("reliability_probe","id",id)).isEqualTo(1);
+        var duplicate=send(id,"TRANSIENT","PROBE",1);committed(duplicate.partition(),duplicate.offset());
+        assertThat(OBSERVATIONS).contains("apex.inbox.transaction:DUPLICATE");
+        OBSERVATIONS.clear();UUID failed=UUID.randomUUID();var bad=send(failed,"PERMANENT","PROBE",1);
+        committed(bad.partition(),bad.offset());quarantine(failed.toString());rolledBack(failed);
+        assertThat(OBSERVATIONS).contains("apex.quarantine:SUCCEEDED","apex.inbox.transaction:ROLLED_BACK")
+            .doesNotContain("apex.inbox.transaction:COMMITTED");
     }
 
     @ParameterizedTest
@@ -470,6 +485,15 @@ class ReliableConsumerIntegrationTest {
     @EnableAutoConfiguration
     @Import(ProbeHandler.class)
     static class TestApplication {
+        @org.springframework.context.annotation.Bean
+        io.micrometer.observation.ObservationRegistry operationalRegistry(){
+            var registry=io.micrometer.observation.ObservationRegistry.create();
+            registry.observationConfig().observationHandler(new io.micrometer.observation.ObservationHandler<io.micrometer.observation.Observation.Context>(){
+                public boolean supportsContext(io.micrometer.observation.Observation.Context c){return c.getName().startsWith("apex.");}
+                public void onStop(io.micrometer.observation.Observation.Context c){var outcome=c.getLowCardinalityKeyValue("apex.outcome");
+                    if(outcome!=null)OBSERVATIONS.add(c.getName()+":"+outcome.getValue());}
+            });return registry;
+        }
         @org.springframework.context.annotation.Bean
         org.springframework.kafka.listener.adapter.RecordFilterStrategy<Object, Object> unrelatedGlobalDiscardFilter() {
             // This belongs to unrelated default-factory listeners, never the reliable APEX factory.

@@ -20,12 +20,18 @@ public class JdbcOutboxStore implements OutboxStore {
 
     private final JdbcTemplate jdbcTemplate;
     private final Clock clock;
+    private final com.apex.platform.messaging.observation.MessagingObservation observations;
 
     private final RowMapper<OutboxRecord> rowMapper = (rs, rowNum) -> mapRow(rs);
 
     public JdbcOutboxStore(JdbcTemplate jdbcTemplate, Clock clock) {
+        this(jdbcTemplate,clock,com.apex.platform.messaging.observation.MessagingObservation.NONE);
+    }
+    public JdbcOutboxStore(JdbcTemplate jdbcTemplate, Clock clock,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
         this.jdbcTemplate = jdbcTemplate;
         this.clock = clock;
+        this.observations = observations;
     }
 
     @Override
@@ -52,6 +58,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public List<OutboxRecord> claimBatch(int size, String publisherInstanceId, Duration leaseDuration) {
+        observations.afterTransaction("outbox.claim","COMMITTED");
         OffsetDateTime now = OffsetDateTime.now(clock);
         OffsetDateTime claimedUntil = now.plus(leaseDuration);
         UUID claimToken = UUID.randomUUID();
@@ -102,7 +109,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public boolean markPublished(Long id, UUID claimToken) {
-        return jdbcTemplate.update(
+        boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
                 SET published = true,
@@ -116,12 +123,15 @@ public class JdbcOutboxStore implements OutboxStore {
                 id,
                 claimToken
         ) == 1;
+        if(updated)observations.afterTransaction("outbox.mark","COMMITTED");
+        else observations.point("outbox.mark","UNKNOWN");
+        return updated;
     }
 
     @Override
     @Transactional
     public boolean markFailed(Long id, UUID claimToken, String error, Instant nextRetryAt) {
-        return jdbcTemplate.update(
+        boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
                 SET retry_count = retry_count + 1,
@@ -137,12 +147,14 @@ public class JdbcOutboxStore implements OutboxStore {
                 id,
                 claimToken
         ) == 1;
+        if(updated)observations.afterTransaction("outbox.retry","COMMITTED");
+        return updated;
     }
 
     @Override
     @Transactional
     public boolean moveToDeadLetter(Long id, UUID claimToken, String error) {
-        return jdbcTemplate.update(
+        boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
                 SET dead_letter = true,
@@ -158,6 +170,8 @@ public class JdbcOutboxStore implements OutboxStore {
                 id,
                 claimToken
         ) == 1;
+        if(updated)observations.afterTransaction("outbox.dead","COMMITTED");
+        return updated;
     }
 
     private static OutboxRecord mapRow(ResultSet rs) throws SQLException {

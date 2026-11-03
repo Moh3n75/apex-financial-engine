@@ -8,6 +8,7 @@
     </parent>
     <artifactId>apex-platform-grpc</artifactId>
     <dependencies>
+        <dependency><groupId>io.micrometer</groupId><artifactId>micrometer-observation</artifactId></dependency>
         <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
         <dependency>
             <groupId>com.apex</groupId>

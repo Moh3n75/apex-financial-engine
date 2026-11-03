@@ -168,7 +168,10 @@ class ReplayApprovalIntegrationTest {
             admin.createTopics(List.of(new NewTopic(route.replayTopic(), 1, (short) 1),
                     new NewTopic(route.replayDltTopic(), 2, (short) 1))).all().get(10, TimeUnit.SECONDS);
             // Creation acknowledgement can precede metadata visibility on another Admin connection.
-            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10))
+                    .ignoreExceptionsMatching(error -> error instanceof java.util.concurrent.ExecutionException
+                            && error.getCause() instanceof org.apache.kafka.common.errors.UnknownTopicOrPartitionException)
+                    .untilAsserted(() -> {
                 var metadata=admin.describeTopics(List.of(route.originTopic(),route.dltTopic(),
                         route.replayTopic(),route.replayDltTopic())).allTopicNames().get(5,TimeUnit.SECONDS);
                 assertThat(metadata.get(route.replayTopic()).partitions()).hasSize(1);

@@ -19,7 +19,7 @@ public class GrpcClientAutoConfiguration {
       RpcCodec codec,
       ExecutionContextProvider ctx,
       GrpcChannelFactory factory,
-      GrpcClientProperties boot) {
+      GrpcClientProperties boot,RpcObservation observations) {
     p.getDestinations()
         .forEach(
             (logical, d) -> {
@@ -47,7 +47,7 @@ public class GrpcClientAutoConfiguration {
                       "Explicit gRPC TLS required outside explicitly enabled loopback tests");
               }
             });
-    return new GrpcInvocationClient(p, codec, ctx, factory);
+    return new GrpcInvocationClient(p, codec, ctx, factory).withObservations(observations);
   }
 
   @Bean

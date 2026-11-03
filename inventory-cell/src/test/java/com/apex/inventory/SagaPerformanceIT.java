@@ -120,6 +120,32 @@ class SagaPerformanceIT {
                 evidence.put("metricsUnavailable", List.of("Hikari pool utilization/wait: no exposed pool instrumentation",
                         "Production TLS/ACL/multi-broker behavior", "Broker process outage (consumer JVM outage tested)"));
                 evidence.put("final", snapshot());
+                String observationMode=System.getProperty("ops02.mode");
+                if(observationMode!=null){
+                    evidence.put("observationMode",observationMode);
+                    if(!observationMode.equals("disabled")){
+                        var activePids=Set.of(order.pid(),inventory.pid(),payment.pid());
+                        var observationReceipts=new ArrayList<Map<String,String>>();
+                        await().atMost(Duration.ofSeconds(5)).untilAsserted(()->{
+                            observationReceipts.clear();
+                            try(var files=Files.list(output)){
+                                for(var file:files.filter(p->p.getFileName().toString().endsWith(".ops02.properties")).toList()){
+                                    var values=new Properties();try(var in=Files.newInputStream(file)){values.load(in);}
+                                    if(!activePids.contains(Long.parseLong(values.getProperty("pid","0"))))continue;
+                                    assertThat(values.getProperty("mode")).isEqualTo(observationMode);
+                                    assertThat(Long.parseLong(values.getProperty("admitted"))).isPositive();
+                                    assertThat(Integer.parseInt(values.getProperty("maxRecords"))).isLessThanOrEqualTo(1024);
+                                    assertThat(Integer.parseInt(values.getProperty("maxAccountedBytes"))).isLessThanOrEqualTo(1048576);
+                                    if(observationMode.equals("failing"))assertThat(Long.parseLong(values.getProperty("exportFailures"))).isPositive();
+                                    var safe=new TreeMap<String,String>();values.forEach((key,value)->safe.put(key.toString(),value.toString()));
+                                    observationReceipts.add(safe);
+                                }
+                            }
+                            assertThat(observationReceipts).hasSize(3);
+                        });
+                        evidence.put("observationReceipts",observationReceipts);
+                    }
+                }
                 evidence.put("invariants", "PASS: owner SQL, zero DLT/dead, source-to-Inbox commits, duplicate effects, stock conservation");
                 Files.writeString(output.resolve("m30-performance-evidence.json"), JSON.writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
             } finally {

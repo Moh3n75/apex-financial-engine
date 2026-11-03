@@ -1,0 +1,674 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "APEX OPS-03D opt-in loopback search",
+    "version": "1",
+    "description": "Only implemented search routes. Existing fixed-ID snapshot v1 routes remain separate and unchanged. No production or complete-history claim."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:9190"
+    }
+  ],
+  "paths": {
+    "/ops/v1/recent/events": {
+      "get": {
+        "operationId": "listEvents",
+        "summary": "Bounded current OUTBOX_EVENT metadata; partial, not history",
+        "description": "Explicit configured deployment service-account grant. UTC Z timestamps, at most one hour and last hour only. Indexed time restriction precedes LIMIT; limit bounds recent candidates before state filtering; empty items may have nextCursor. Restart from first page to reconcile late commits. Requests require an independent owner client-scoped grant. No public ingress or M36 authorization.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 40,
+              "default": "ANY"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16,
+              "default": 16
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current source sample or explicit missing/stale/degraded result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/View"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounds, cursor, duplicate or unsupported parameter"
+          },
+          "403": {
+            "description": "Environment/owner/kind/scope not configured"
+          },
+          "405": {
+            "description": "Mutation denied"
+          }
+        }
+      }
+    },
+    "/ops/v1/recent/inbox": {
+      "get": {
+        "operationId": "listInbox",
+        "summary": "Bounded current KNOWN_GROUP_INBOX metadata; partial, not history",
+        "description": "Explicit configured deployment service-account grant. UTC Z timestamps, at most one hour and last hour only. Indexed time restriction precedes LIMIT; limit bounds recent candidates before state filtering; empty items may have nextCursor. Restart from first page to reconcile late commits. Requests require an independent owner client-scoped grant. No public ingress or M36 authorization.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 40,
+              "default": "ANY"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16,
+              "default": 16
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current source sample or explicit missing/stale/degraded result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/View"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounds, cursor, duplicate or unsupported parameter"
+          },
+          "403": {
+            "description": "Environment/owner/kind/scope not configured"
+          },
+          "405": {
+            "description": "Mutation denied"
+          }
+        }
+      }
+    },
+    "/ops/v1/recent/requests": {
+      "get": {
+        "operationId": "listRequests",
+        "summary": "Bounded current REQUEST_RECEIPT metadata; partial, not history",
+        "description": "Explicit configured deployment service-account grant. UTC Z timestamps, at most one hour and last hour only. Indexed time restriction precedes LIMIT; limit bounds recent candidates before state filtering; empty items may have nextCursor. Restart from first page to reconcile late commits. Requests require an independent owner client-scoped grant. No public ingress or M36 authorization.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 40,
+              "default": "ANY"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16,
+              "default": 16
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current source sample or explicit missing/stale/degraded result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/View"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounds, cursor, duplicate or unsupported parameter"
+          },
+          "403": {
+            "description": "Environment/owner/kind/scope not configured"
+          },
+          "405": {
+            "description": "Mutation denied"
+          }
+        }
+      }
+    },
+    "/ops/v1/recent/workflows": {
+      "get": {
+        "operationId": "listWorkflows",
+        "summary": "Bounded current WORKFLOW metadata; partial, not history",
+        "description": "Explicit configured deployment service-account grant. UTC Z timestamps, at most one hour and last hour only. Indexed time restriction precedes LIMIT; limit bounds recent candidates before state filtering; empty items may have nextCursor. Restart from first page to reconcile late commits. Requests require an independent owner client-scoped grant. No public ingress or M36 authorization.",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 40,
+              "default": "ANY"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16,
+              "default": 16
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current source sample or explicit missing/stale/degraded result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/View"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounds, cursor, duplicate or unsupported parameter"
+          },
+          "403": {
+            "description": "Environment/owner/kind/scope not configured"
+          },
+          "405": {
+            "description": "Mutation denied"
+          }
+        }
+      }
+    },
+    "/ops/v1/recent/search/sources": {
+      "get": {
+        "operationId": "searchSources",
+        "responses": {
+          "200": {
+            "description": "Configured grants, never proof of live membership",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "environment": {
+                        "type": "string"
+                      },
+                      "owner": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ops/v1/recent/search/openapi": {
+      "get": {
+        "operationId": "searchOpenApi",
+        "responses": {
+          "200": {
+            "description": "This implemented search-only OpenAPI document"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "sourceAssignedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidenceKey": {
+            "type": "string"
+          },
+          "evidenceClass": {
+            "const": "OWNER_COMMITTED_ROW"
+          },
+          "certainty": {
+            "enum": [
+              "VERIFIED_WITHIN_SCOPE",
+              "UNKNOWN"
+            ]
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "environment": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string"
+          },
+          "fromInclusive": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toExclusive": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scanStartedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scanCompletedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "schemaVersion": {
+            "const": 1
+          },
+          "epoch": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maxAgeMillis": {
+            "const": 10000
+          },
+          "candidatesExamined": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 16
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "PARTIAL_CURRENT_STATE",
+                "RETENTION_UNQUALIFIED",
+                "RECONCILE_FROM_START",
+                "CANDIDATE_PAGE_LIMIT",
+                "WALK_LIMIT",
+                "CLOCK_UNCERTAIN",
+                "INDEXED_RECENT_RANGE",
+                "STATE_POST_FILTERED",
+                "LATE_COMMIT_GAP",
+                "RESTART_WALK_REQUIRED"
+              ]
+            }
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          }
+        }
+      },
+      "View": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "enum": [
+              "FRESH",
+              "STALE",
+              "MISSING",
+              "UNKNOWN",
+              "CLOCK_UNCERTAIN"
+            ]
+          },
+          "availability": {
+            "enum": [
+              "AVAILABLE",
+              "SHED",
+              "BACKOFF",
+              "SOURCE_UNAVAILABLE",
+              "PERMISSION_GAP",
+              "RESTART_WALK_REQUIRED"
+            ]
+          },
+          "coverage": {
+            "type": "string"
+          },
+          "page": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Page"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "brokerAck": {
+            "const": "UNKNOWN_NO_VERIFIED_RECEIPT"
+          },
+          "quarantine": {
+            "const": "UNKNOWN_NOT_INSPECTED"
+          },
+          "uncertainty": {
+            "enum": [
+              "UNKNOWN",
+              "PARTIAL_NO_OWNER_REVISION",
+              "CONFLICTING"
+            ]
+          },
+          "priorConflicts": {
+            "type": "array",
+            "maxItems": 2,
+            "description": "Bounded prior observations for this exact authorized query, not authoritative history",
+            "items": {
+              "$ref": "#/components/schemas/Page"
+            }
+          },
+          "sourceMode": {
+            "const": "OWNER_DIRECT"
+          }
+        }
+      }
+    }
+  }
+}

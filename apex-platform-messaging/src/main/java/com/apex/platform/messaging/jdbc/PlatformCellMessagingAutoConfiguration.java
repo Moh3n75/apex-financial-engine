@@ -35,6 +35,15 @@ import java.util.UUID;
         havingValue = "true"
 )
 public class PlatformCellMessagingAutoConfiguration {
+    @Bean
+    com.apex.platform.messaging.observation.MessagingObservation apexMessagingObservation(
+            org.springframework.beans.factory.ObjectProvider<io.micrometer.observation.ObservationRegistry> registries,
+            org.springframework.core.env.Environment environment) {
+        return new com.apex.platform.messaging.observation.MessagingObservation(
+            environment.getProperty("apex.observability.enabled",Boolean.class,false)
+                ?registries.getIfAvailable(()->io.micrometer.observation.ObservationRegistry.NOOP)
+                :io.micrometer.observation.ObservationRegistry.NOOP);
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -64,22 +73,25 @@ public class PlatformCellMessagingAutoConfiguration {
             matchIfMissing = true
     )
     KafkaMessagePublisher kafkaMessagePublisher(
-            KafkaTemplate<String, String> kafkaTemplate
+            KafkaTemplate<String, String> kafkaTemplate,
+            com.apex.platform.messaging.observation.MessagingObservation observations
     ) {
-        return new SpringKafkaMessagePublisher(kafkaTemplate);
+        return new SpringKafkaMessagePublisher(kafkaTemplate,observations);
     }
 
 
     @Bean
     @ConditionalOnMissingBean
-    OutboxAppender outboxAppender(JdbcTemplate jdbcTemplate, JsonMapper jsonMapper) {
-        return new JdbcOutboxAppender(jdbcTemplate, jsonMapper);
+    OutboxAppender outboxAppender(JdbcTemplate jdbcTemplate, JsonMapper jsonMapper,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
+        return new JdbcOutboxAppender(jdbcTemplate, jsonMapper,observations);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    OutboxStore outboxStore(JdbcTemplate jdbcTemplate, Clock clock) {
-        return new JdbcOutboxStore(jdbcTemplate, clock);
+    OutboxStore outboxStore(JdbcTemplate jdbcTemplate, Clock clock,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
+        return new JdbcOutboxStore(jdbcTemplate, clock,observations);
     }
 
     @Bean
@@ -116,7 +128,8 @@ public class PlatformCellMessagingAutoConfiguration {
             RetryPolicy retryPolicy,
             String outboxPublisherInstanceId,
             @Value("${apex.messaging.publisher.topic}") String topic,
-            PublisherRouting routing
+            PublisherRouting routing,
+            com.apex.platform.messaging.observation.MessagingObservation observations
     ) {
         return new ConfigurableOutboxPublisher(
                 outboxStore,
@@ -125,7 +138,7 @@ public class PlatformCellMessagingAutoConfiguration {
                 outboxEventMapper,
                 retryPolicy,
                 outboxPublisherInstanceId,
-                topic, routing
+                topic, routing, observations
         );
     }
 
@@ -166,14 +179,15 @@ public class PlatformCellMessagingAutoConfiguration {
             ProcessedEventStore processedEventStore,
             ExecutionContextProvider executionContextProvider,
             @Value("${spring.application.name}") String sourceService,
-            @Value("${apex.cell.id}") String cellId
+            @Value("${apex.cell.id}") String cellId,
+            com.apex.platform.messaging.observation.MessagingObservation observations
     ) {
         return new SimpleTransactionalEventHandlerExecutor(
                 processedEventStore,
                 executionContextProvider,
                 sourceService,
                 cellId
-        );
+        ).withObservations(observations);
     }
 
     @Bean
@@ -201,9 +215,10 @@ public class PlatformCellMessagingAutoConfiguration {
             Clock clock,
             @Value("${spring.kafka.consumer.group-id}") String consumerGroup,
             @Value("${apex.messaging.consumer.reliability.enabled:false}") boolean reliable,
-            JsonMapper jsonMapper
+            JsonMapper jsonMapper,
+            com.apex.platform.messaging.observation.MessagingObservation observations
     ) {
-        return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup, reliable, jsonMapper);
+        return new ConfigurableKafkaEventConsumer(dispatcher, clock, consumerGroup, reliable, jsonMapper).withObservations(observations);
     }
     
 

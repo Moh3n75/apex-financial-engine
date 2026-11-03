@@ -27,6 +27,9 @@ public class ConfigurableKafkaEventConsumer {
     private final String consumerGroup;
     private final boolean reliable;
     private final JsonMapper jsonMapper;
+    private com.apex.platform.messaging.observation.MessagingObservation observations=
+        com.apex.platform.messaging.observation.MessagingObservation.NONE;
+    public ConfigurableKafkaEventConsumer withObservations(com.apex.platform.messaging.observation.MessagingObservation value){observations=value;return this;}
 
     public ConfigurableKafkaEventConsumer(
             EventMessageDispatcher dispatcher,
@@ -65,7 +68,10 @@ public class ConfigurableKafkaEventConsumer {
                 Instant.now(clock)
         );
 
-        DispatchResult result = dispatcher.dispatch(record.value(), context);
+        var attempt=observations.start("consumer.attempt");
+        DispatchResult result;
+        try {result=dispatcher.dispatch(record.value(), context);}
+        catch(RuntimeException failure){attempt.finish("FAILED");throw failure;}
 
         if (result == DispatchResult.DUPLICATE) {
             log.debug(
@@ -78,6 +84,7 @@ public class ConfigurableKafkaEventConsumer {
 
         if (result == DispatchResult.IGNORED) {
             if (reliable) {
+                attempt.finish("FAILED");
                 // Also guard custom dispatchers that still return IGNORED.
                 String type = null;
                 Integer version = null;
@@ -102,6 +109,10 @@ public class ConfigurableKafkaEventConsumer {
             );
         }
 
-        acknowledgment.acknowledge();
+        attempt.finish(result==DispatchResult.DUPLICATE?"DUPLICATE":result==DispatchResult.HANDLED?"SUCCEEDED":"UNKNOWN");
+        observations.point("ack.invocation","OBSERVED");
+        // Invocation/return are not an independent observation of Kafka group-offset commit.
+        try {acknowledgment.acknowledge();observations.point("ack.invocation","SUCCEEDED");}
+        catch(RuntimeException failure){observations.point("ack.invocation","UNKNOWN");throw failure;}
     }
 }

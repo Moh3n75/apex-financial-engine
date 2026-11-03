@@ -37,6 +37,9 @@ public final class ReliableKafkaConsumerRuntime implements SmartLifecycle, AutoC
     private final List<String> topics;
     private final ObjectProvider<ConfigurableKafkaEventConsumer> consumer;
     private boolean running;
+    private com.apex.platform.messaging.observation.MessagingObservation observations=
+        com.apex.platform.messaging.observation.MessagingObservation.NONE;
+    public ReliableKafkaConsumerRuntime withObservations(com.apex.platform.messaging.observation.MessagingObservation value){observations=value;return this;}
 
     @SuppressWarnings("unchecked")
     public ReliableKafkaConsumerRuntime(ProducerFactory<?, ?> bootProducerFactory, Map<String, Object> adminProperties,
@@ -97,9 +100,12 @@ public final class ReliableKafkaConsumerRuntime implements SmartLifecycle, AutoC
             headers.add(KafkaHeaders.DLT_EXCEPTION_MESSAGE, bytes(message));
         });
         ConsumerAwareRecordRecoverer confirmedRecovery = (record, kafkaConsumer, failure) -> {
+            var attempt=observations.start("quarantine");
             try {
                 recoverer.accept(record, kafkaConsumer, failure);
+                attempt.finish("SUCCEEDED"); // Confirmed DLT storage only, never business processing.
             } catch (RuntimeException sendFailure) {
+                attempt.finish("UNKNOWN");
                 // Includes permanent-contract recovery failures; prevent a tight authorization-error loop.
                 new DefaultBackOffHandler().onNextBackOff(null, sendFailure, properties.retryDelay().toMillis());
                 throw sendFailure;

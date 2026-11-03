@@ -12,6 +12,7 @@
     <artifactId>apex-platform-messaging</artifactId>
 
     <dependencies>
+        <dependency><groupId>io.micrometer</groupId><artifactId>micrometer-observation</artifactId></dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apex-platform-events</artifactId>

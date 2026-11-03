@@ -16,14 +16,21 @@ public class JdbcOutboxAppender implements OutboxAppender {
 
     private final JdbcTemplate jdbcTemplate;
     private final JsonMapper jsonMapper;
+    private final com.apex.platform.messaging.observation.MessagingObservation observations;
 
     public JdbcOutboxAppender(JdbcTemplate jdbcTemplate, JsonMapper jsonMapper) {
+        this(jdbcTemplate,jsonMapper,com.apex.platform.messaging.observation.MessagingObservation.NONE);
+    }
+    public JdbcOutboxAppender(JdbcTemplate jdbcTemplate, JsonMapper jsonMapper,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
         this.jdbcTemplate = jdbcTemplate;
         this.jsonMapper = jsonMapper;
+        this.observations = observations;
     }
 
     @Override
     public void append(EventEnvelope<? extends IntegrationEvent> event) {
+        observations.point("outbox.intent","OBSERVED");
         var metadata = event.metadata();
         UUID aggregateId = UUID.fromString(metadata.aggregateId());
 
@@ -56,5 +63,6 @@ public class JdbcOutboxAppender implements OutboxAppender {
                 OffsetDateTime.ofInstant(metadata.occurredAt(), ZoneOffset.UTC),
                 payloadJson
         );
+        observations.afterTransaction("outbox.intent","COMMITTED");
     }
 }

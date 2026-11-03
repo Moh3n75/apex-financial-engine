@@ -33,8 +33,13 @@ public class GrpcCollectorAutoConfiguration {
       CollectorProperties limits,
       RpcCodec codec,
       ThreadPoolExecutor grpcCollectorWorkers,
-      ScheduledExecutorService grpcDeadlines) {
-    return new DefaultMultiResponderGateway(
+      ScheduledExecutorService grpcDeadlines,RpcObservation observations) {
+    var delegate=new DefaultMultiResponderGateway(
         q, c, p, limits, codec, grpcCollectorWorkers, grpcDeadlines);
+    return new MultiResponderGateway(){
+      public <R> java.util.concurrent.CompletionStage<CollectionResult<R>> collectQueries(Object query,Class<R> type,CollectionOptions options){
+        return observations.watch("collection",()->delegate.collectQueries(query,type,options));
+      }
+    };
   }
 }

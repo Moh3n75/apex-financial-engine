@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "productionSla": "INCONCLUSIVE_NO_OWNER_APPROVED_BUDGET",
+  "contract": "OPS_OWNER_RECENT_SEARCH:1",
+  "rollout": "OFF_BY_DEFAULT_MANUAL_OWNER_INDEX_SCRIPTS_NOT_FLYWAY",
+  "bounds": {"rowsPerPage":16,"pagesPerWalk":8,"cursorSeconds":30,"lookbackSeconds":3600,"windowSeconds":3600,"concurrentPerOwner":1,"minReadIntervalMillis":1000,"statementMillis":250,"lockMillis":100,"poolAcquisitionMillis":300,"serverReturnMillis":750,"rpcMillis":1000,"canonicalRequestBytes":1024,"pageBytes":16384,"httpBytes":65536,"cacheEntries":16,"priorPages":2},
+  "native": {"retainedRows":[10000,100000,250000],"recentRows":40,"skew":"old source times 2 days earlier; new rows at tail; timestamp ties","warmups":20,"samplesPerDistribution":100,"nonindexedControl":true,"bloatControl":"delete 10000 old rows without VACUUM before final plan"},
+  "comparativeWindows":{"sequence":["disabled","enabled","console-unavailable","disabled","disabled","enabled","permission-revoked","disabled"],"secondsPerWindow":10,"offeredRps":3,"requestsPerWindow":30,"terminalDrainSeconds":30,"maxOwnerPagesPerSecond":1,"ownerCount":3,"prefillOldRowsPerOwnerWorkflow":100000,"fullPageWalkPolling":false},
+  "experimentalGates":{"nativeP95Millis":150,"nativeP99Millis":250,"unexpectedDeadlineOverruns":0,"httpP95Ratio":2.0,"httpP99Ratio":2.0,"sagaP95Ratio":2.0,"sagaP99Ratio":2.0,"businessCpuRatio":2.0,"pairedDbCpuRatio":2.0,"dbBlocksReadIncreasePerWindow":1000,"sampledBlockedBusinessStatements":0,"admittedRatePerOwnerPerSecond":1,"serverConnectionsPerOwner":1,"businessEffectsDuplicated":0,"httpFailures":0,"terminalIncomplete":0,"allOwnedChildrenStopped":true},
+  "requiredBeforeEnabledProjection":["all selected source cost gates measured and satisfied","indexed late commit and coverage tests","reconciliation rescan source and projection write costs measured","effective roles and restart recovery tests"],
+  "unmeasuredMeans":"LIMITED_OR_BLOCKED_NEVER_PRODUCTION_PASS",
+  "reconciliationCandidate":{"mode":"on-demand restart walks only until comparative gates pass","lookbackSeconds":3600,"cycleSecondsProposed":30,"lateCommitSecondsTested":120,"maxMatchingCandidatesPerWindow":128,"guarantee":"conditional visibility only if timestamp retained and row remains within first 128 recent candidates; no deletion or clock jump; no lossless guarantee"}
+}

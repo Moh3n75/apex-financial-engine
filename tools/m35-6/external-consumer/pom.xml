@@ -26,6 +26,11 @@
     </dependencies>
     <profiles>
         <profile>
+            <id>observability</id>
+            <dependencies><dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency></dependencies>
+            <properties><external.test.source>src/observability-test/java</external.test.source></properties>
+        </profile>
+        <profile>
             <id>capabilities</id>
             <dependencyManagement><dependencies><dependency>
                 <groupId>org.springframework.cloud</groupId><artifactId>spring-cloud-dependencies</artifactId>

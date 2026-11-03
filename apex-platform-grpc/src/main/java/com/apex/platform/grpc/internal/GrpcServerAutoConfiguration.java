@@ -35,7 +35,7 @@ public class GrpcServerAutoConfiguration {
       RpcDispatcher dispatcher,
       GrpcProperties p,
       Environment env,
-      ObjectProvider<PeerIdentityVerifier> verifiers) {
+      ObjectProvider<PeerIdentityVerifier> verifiers,RpcObservation observations) {
     var verifier = verifiers.getIfAvailable();
     if (p.isInsecureLoopbackTestOnly()) {
       String address = env.getProperty("spring.grpc.server.address", "");
@@ -50,7 +50,7 @@ public class GrpcServerAutoConfiguration {
           "Production gRPC requires a trusted PeerIdentityVerifier and an mTLS SSL"
               + " bundle/client-auth=require");
     }
-    var service = new GenericGrpcService(dispatcher, p);
+    var service = new GenericGrpcService(dispatcher, p).withObservations(observations);
     var auth = new RpcServerAuth(p, verifier);
     return () -> ServerInterceptors.intercept(service, auth);
   }

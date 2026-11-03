@@ -17,6 +17,11 @@ import org.springframework.core.env.Environment;
 @EnableConfigurationProperties(GrpcProperties.class)
 public class GrpcCommonAutoConfiguration {
   @Bean
+  RpcObservation apexRpcObservation(ObjectProvider<io.micrometer.observation.ObservationRegistry> registries,Environment environment){
+    return new RpcObservation(environment.getProperty("apex.observability.enabled",Boolean.class,false)
+        ?registries.getIfAvailable(()->io.micrometer.observation.ObservationRegistry.NOOP):io.micrometer.observation.ObservationRegistry.NOOP);
+  }
+  @Bean
   RpcCodec rpcCodec(GrpcProperties p, Environment environment) {
     if (p.getCellId() == null)
       p.setCellId(
@@ -73,7 +78,8 @@ public class GrpcCommonAutoConfiguration {
       ExecutionContextProvider ctx,
       ObjectProvider<GrpcInvocationClient> remote,
       ThreadPoolExecutor grpcQueryWorkers,
-      ScheduledExecutorService grpcDeadlines) {
-    return new DefaultQueryGateway(p, r, d, c, ctx, remote, grpcQueryWorkers, grpcDeadlines);
+      ScheduledExecutorService grpcDeadlines,RpcObservation observations) {
+    var delegate=new DefaultQueryGateway(p,r,d,c,ctx,remote,grpcQueryWorkers,grpcDeadlines).withObservations(observations);
+    return new ObservedQueryGateway(delegate,observations);
   }
 }

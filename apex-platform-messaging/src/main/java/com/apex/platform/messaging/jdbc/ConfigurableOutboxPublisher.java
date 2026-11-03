@@ -29,6 +29,7 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
     private final String publisherInstanceId;
     private final String topic;
     private final PublisherRouting routing;
+    private final com.apex.platform.messaging.observation.MessagingObservation observations;
     private final Duration leaseDuration = Duration.ofMinutes(5);
 
     public ConfigurableOutboxPublisher(
@@ -47,6 +48,13 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
     public ConfigurableOutboxPublisher(OutboxStore outboxStore, KafkaMessagePublisher kafkaPublisher,
             JsonMapper jsonMapper, OutboxEventMapper outboxEventMapper, RetryPolicy retryPolicy,
             String publisherInstanceId, String topic, PublisherRouting routing) {
+        this(outboxStore,kafkaPublisher,jsonMapper,outboxEventMapper,retryPolicy,publisherInstanceId,topic,routing,
+            com.apex.platform.messaging.observation.MessagingObservation.NONE);
+    }
+    public ConfigurableOutboxPublisher(OutboxStore outboxStore, KafkaMessagePublisher kafkaPublisher,
+            JsonMapper jsonMapper, OutboxEventMapper outboxEventMapper, RetryPolicy retryPolicy,
+            String publisherInstanceId, String topic, PublisherRouting routing,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
         this.outboxStore = outboxStore;
         this.kafkaPublisher = kafkaPublisher;
         this.jsonMapper = jsonMapper;
@@ -55,17 +63,22 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
         this.publisherInstanceId = publisherInstanceId;
         this.topic = topic;
         this.routing = routing;
+        this.observations = observations;
     }
 
     @Override
     public void publishBatch() {
-        var events = outboxStore.claimBatch(100, publisherInstanceId, leaseDuration);
+        var claim=observations.start("outbox.claim.attempt");
+        java.util.List<com.apex.platform.messaging.outbox.OutboxRecord> events;
+        try {events=outboxStore.claimBatch(100,publisherInstanceId,leaseDuration);claim.finish("OBSERVED");}
+        catch(RuntimeException failure){claim.finish("FAILED");throw failure;}
         if (events.isEmpty()) {
             return;
         }
 
         for (OutboxRecord event : events) {
             String destination = topic;
+            var attempt=observations.start("outbox.send");
             try {
                 var envelope = outboxEventMapper.map(event);
                 String message = jsonMapper.writeValueAsString(envelope);
@@ -75,9 +88,13 @@ public class ConfigurableOutboxPublisher implements OutboxPublisher {
                 kafkaPublisher.publish(destination, key, message)
                         .toCompletableFuture()
                         .join();
+                attempt.finish("SUCCEEDED"); // Transport completion, NOT owner mark or consumer success.
 
-                outboxStore.markPublished(event.id(), event.claimToken());
+                var mark=observations.start("outbox.mark.attempt");
+                try {mark.finish(outboxStore.markPublished(event.id(),event.claimToken())?"OBSERVED":"UNKNOWN");}
+                catch(RuntimeException failure){mark.finish("UNKNOWN");throw failure;}
             } catch (Exception exception) {
+                attempt.finish("FAILED");
                 String diagnostic = failureDiagnostic(exception);
                 // Do not log the producer record or payload: KafkaProducerException carries it.
                 log.warn("Outbox publication failed eventId={} correlationId={} topic={} failure={}",

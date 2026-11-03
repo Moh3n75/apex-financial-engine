@@ -1,0 +1,7 @@
+# OPS-03B reproducible gates
+
+Use Java 21 and explicit Maven 3.9.x path. `verify-ops03b.ps1 -Offline -Phase Full -MavenCommand <mvn.cmd>` is the full gate; Focused only qualifies owner/Console/packaged fixtures. Each run creates out/b-<id> source and out/c-<id> APEX-empty cache, copies third-party dependencies, excludes private/generated directories, records source hashes and all exits. It does not mutate the original Git index or stop shared services. Retained source/cache directories are owned evidence and are not automatically deleted.
+
+Full includes current source prerequisite install, original finite v1 tests, two new native PostgreSQL owner suites, actual packaged Kafka + multi-owner mTLS + Console, then the unchanged supported platform product and out-of-repo consumer chain. Final report distinguishes wrapper failures/composed qualification; no Fast run, historic XML, production readiness or history claim. The JUnit ledger tool from tools/ops03 can count only fresh run source trees; it preserves any failure and deduplicates classname#case.
+
+Per-owner known groups are explicitly set in each owner process. Owner-enabled requires the existing workload mTLS/contract ACL; no extra port is opened by default. Console has explicit owner/UUID inventory and TLS clients only, no business DB/Kafka credentials. Types: Order order; Inventory reservation; Payment authorization-simulation. These are configured current-ID lookups, not general search. Search/persistence decision and precise remaining gates are in the root OPS-03B reports.

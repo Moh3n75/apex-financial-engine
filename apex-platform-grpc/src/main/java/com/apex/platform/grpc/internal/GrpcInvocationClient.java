@@ -17,6 +17,8 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
   private final RpcCodec codec;
   private final ExecutionContextProvider contexts;
   private final Map<String, ManagedChannel> channels = new HashMap<>();
+  private RpcObservation observations=RpcObservation.NONE;
+  GrpcInvocationClient withObservations(RpcObservation value){observations=value;return this;}
 
   GrpcInvocationClient(
       GrpcProperties p, RpcCodec c, ExecutionContextProvider ctx, GrpcChannelFactory factory) {
@@ -37,19 +39,19 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
   @Override
   public <R> CompletionStage<R> requestAsync(
       String destination, Object request, Class<R> type, RequestOptions options) {
-    return invoke(
+    return observations.watch("rpc.client",()->invoke(
         false,
         destination,
         request,
         type,
         options.requestId(),
         options.idempotencyKey(),
-        options.deadline());
+        options.deadline()));
   }
 
   <R> CompletionStage<R> query(
       String destination, Object query, Class<R> type, QueryOptions options) {
-    return invoke(true, destination, query, type, options.requestId(), "", options.deadline());
+    return observations.watch("rpc.client",()->invoke(true, destination, query, type, options.requestId(), "", options.deadline()));
   }
 
   private <R> CompletionStage<R> invoke(

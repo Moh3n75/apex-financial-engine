@@ -8,11 +8,17 @@ public final class SpringKafkaMessagePublisher
         implements KafkaMessagePublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final com.apex.platform.messaging.observation.MessagingObservation observations;
 
     public SpringKafkaMessagePublisher(
             KafkaTemplate<String, String> kafkaTemplate
     ) {
+        this(kafkaTemplate,com.apex.platform.messaging.observation.MessagingObservation.NONE);
+    }
+    public SpringKafkaMessagePublisher(KafkaTemplate<String,String> kafkaTemplate,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
         this.kafkaTemplate = kafkaTemplate;
+        this.observations = observations;
     }
 
     @Override
@@ -21,8 +27,10 @@ public final class SpringKafkaMessagePublisher
             String key,
             String message
     ) {
-        return kafkaTemplate
-                .send(topic, key, message)
-                .thenApply(result -> null);
+        var attempt=observations.start("outbox.ack");
+        try {
+            return kafkaTemplate.send(topic,key,message).whenComplete((receipt,failure)->
+                attempt.finish(failure==null?"OBSERVED":"UNKNOWN")).thenApply(result->null);
+        } catch(RuntimeException failure){attempt.finish("UNKNOWN");throw failure;}
     }
 }

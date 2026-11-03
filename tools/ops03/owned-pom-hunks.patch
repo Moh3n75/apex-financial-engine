@@ -1,0 +1,31 @@
+--- a/pom.xml
++++ b/pom.xml
+@@ -40,6 +40,9 @@
+         <module>apex-discovery-kubernetes</module>
+         <module>apex-discovery-grpc</module>
+         <module>apex-starter-observability</module>
++        <module>apex-operations-contracts</module>
++        <module>apex-operations-owner-jdbc</module>
++        <module>apex-operations-console</module>
+     </modules>
+ 
+     <properties>
+--- a/order-cell/pom.xml
++++ b/order-cell/pom.xml
+@@ -18,6 +18,8 @@
+         <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
+     </properties>
+     <dependencies>
++<dependency><groupId>com.apex</groupId><artifactId>apex-operations-owner-jdbc</artifactId><version>${apex.platform.version}</version></dependency>
++<dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>${apex.platform.version}</version></dependency>
+         <dependency><groupId>com.apex</groupId><artifactId>apex-starter-grpc-server</artifactId><version>${apex.platform.version}</version></dependency>
+         <dependency><groupId>com.apex</groupId><artifactId>apex-order-contracts</artifactId><version>${apex.platform.version}</version></dependency>
+         <dependency>
+@@ -69,6 +71,7 @@
+         </plugins>
+     </build>
+     <profiles>
++        <profile><id>ops03</id><build><directory>${project.basedir}/target/ops03-build</directory></build></profile>
+         <!-- Test-owned exporter fixture; never selected by default deployment builds. -->
+         <profile><id>ops02-acceptance</id><dependencies>
+             <dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency>

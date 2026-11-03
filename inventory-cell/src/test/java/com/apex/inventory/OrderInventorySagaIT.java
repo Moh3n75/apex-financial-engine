@@ -633,6 +633,16 @@ class OrderInventorySagaIT {
             String name = override.substring(0, override.indexOf('=') + 1);
             command.removeIf(arg -> arg.startsWith(name)); command.add(override);
         }
+        // Explicit acceptance-only Maven profile supplies the fixture test JAR.
+        // Default and historical acceptance invocations do not set this property.
+        String observationMode=System.getProperty("ops02.mode");
+        if(observationMode!=null){
+            if(!Set.of("disabled","healthy","failing").contains(observationMode))throw new IllegalArgumentException("Invalid observation experiment mode");
+            command.add("--apex.observability.enabled="+!observationMode.equals("disabled"));
+            if(!observationMode.equals("disabled"))command.addAll(List.of("--apex.observability.active-enabled=true",
+                "--apex.observability.export-enabled=true","--ops02.fixture.enabled=true",
+                "--ops02.fixture.mode="+observationMode,"--ops02.fixture.receipt="+log.toAbsolutePath()+".ops02.properties"));
+        }
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.environment().keySet().removeIf(key -> key.matches(
                 "(?i)(SPRING_.*|APEX_.*|CELL_.*|ORDER_.*|INVENTORY_.*|PAYMENT_.*|KAFKA_.*|SERVER_.*|JAVA_TOOL_OPTIONS|JDK_JAVA_OPTIONS|_JAVA_OPTIONS)"));

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "productionSla": "INCONCLUSIVE_NO_OWNER_APPROVED_BUDGET",
+  "policy": "ON_DEMAND_PRIMARY_KEY_CANDIDATES_ONLY_NO_AUTOMATIC_BROAD_POLLING",
+  "maxCandidatesPerPage": 16,
+  "maxRowsPerPage": 16,
+  "maxPagesPerWalk": 8,
+  "cursorLifetimeSeconds": 30,
+  "maxWindowSeconds": 3600,
+  "maxLookbackSeconds": 3600,
+  "minOwnerReadIntervalMillis": 1000,
+  "ownerConcurrentSearches": 1,
+  "statementTimeoutMillis": 250,
+  "lockTimeoutMillis": 100,
+  "maxRequestBytes": 1024,
+  "maxResponseBytes": 16384,
+  "rawTransportPayloadCapBytes": 65536,
+  "httpResponseCapBytes": 65536,
+  "cacheEntries": 16,
+  "priorPagesPerEntry": 2,
+  "requestByteMeaning": "Canonical bounded DTO; raw transport separately capped by existing RPC codec",
+  "comparativeWindows": {
+    "sequence": ["disabled", "enabled", "console-unavailable", "disabled", "disabled", "enabled", "console-unavailable", "disabled"],
+    "secondsPerWindow": 10,
+    "offeredRps": 3,
+    "requestsPerWindow": 30,
+    "terminalDrainSeconds": 30,
+    "maxOwnerPagesPerSecond": 1,
+    "ownerCount": 3,
+    "fullPageWalkPolling": false
+  },
+  "experimentalGates": {
+    "nativePageP99Millis": 250,
+    "deadlineOverruns": 0,
+    "businessEffectDuplicates": 0,
+    "httpFailureCount": 0,
+    "terminalIncompleteAfterDrain": 0,
+    "matchedHttpP99Ratio": 2.0,
+    "matchedSagaP99Ratio": 2.0
+  },
+  "unapprovedAndRequiredBeforeProjection": [
+    "representative maximum retained cardinality and reconciliation coverage",
+    "controlled repeated disabled/enabled/failing business windows",
+    "DB CPU IO lock and process allocation budgets",
+    "full source outage and cancellation qualification"
+  ]
+}

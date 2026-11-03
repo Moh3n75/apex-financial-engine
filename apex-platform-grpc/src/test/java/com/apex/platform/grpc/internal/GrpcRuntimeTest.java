@@ -47,6 +47,7 @@ class GrpcRuntimeTest {
   @EnableAutoConfiguration
   @Import(Queries.class)
   static class App {
+    @Bean io.micrometer.observation.ObservationRegistry observationRegistry(){return observationRegistryForTest();}
     static final java.util.concurrent.atomic.AtomicInteger PORT =
         new java.util.concurrent.atomic.AtomicInteger();
 
@@ -55,6 +56,41 @@ class GrpcRuntimeTest {
       return event -> PORT.set(event.getPort());
     }
   }
+
+  static final java.util.concurrent.ConcurrentLinkedQueue<String> OBSERVED=new java.util.concurrent.ConcurrentLinkedQueue<>();
+  static io.micrometer.observation.ObservationRegistry observationRegistryForTest(){
+    var registry=io.micrometer.observation.ObservationRegistry.create();
+    registry.observationConfig().observationHandler(new io.micrometer.observation.ObservationHandler<io.micrometer.observation.Observation.Context>(){
+      public boolean supportsContext(io.micrometer.observation.Observation.Context c){return c.getName().startsWith("apex.");}
+      public void onStop(io.micrometer.observation.Observation.Context c){OBSERVED.add(c.getName()+":"+c.getLowCardinalityKeyValue("apex.outcome").getValue());}
+    });return registry;
+  }
+
+  @Test void enabledObservationsPreserveRealSocketLocalAndDeadlineSemantics(){
+    OBSERVED.clear();
+    try(var server=boot(App.class,"--apex.observability.enabled=true","--apex.grpc.server.enabled=true",
+        "--apex.grpc.cell-id=observed-server","--apex.grpc.destinations.observed-server.local=true",
+        "--apex.grpc.insecure-loopback-test-only=true","--apex.grpc.test-clients[0]=observed-client",
+        "--spring.grpc.server.address=127.0.0.1","--spring.grpc.server.port=0","--spring.grpc.server.ssl.enabled=false");
+        var client=boot(ObservedClient.class,"--apex.observability.enabled=true","--apex.grpc.client.enabled=true",
+        "--apex.grpc.cell-id=observed-client","--apex.grpc.insecure-loopback-test-only=true",
+        "--apex.grpc.destinations.observed-server.channel=server",
+        "--spring.grpc.client.channel.server.target=static://127.0.0.1:"+App.PORT.get(),
+        "--spring.grpc.client.channel.server.ssl.enabled=false")){
+      var gateway=client.getBean(QueryGateway.class);
+      assertThat(gateway.query("observed-server",new ProbeQuery("safe",0),ProbeReply.class).value()).isEqualTo("safe");
+      assertThat(server.getBean(QueryGateway.class).queryLocal(new ProbeQuery("local",0),ProbeReply.class,QueryOptions.defaults()).value()).isEqualTo("local");
+      assertThatThrownBy(()->gateway.query("observed-server",new ProbeQuery("slow",200),ProbeReply.class,
+          new QueryOptions(UUID.randomUUID(),Duration.ofMillis(40)))).isInstanceOfSatisfying(GatewayException.class,
+          e->assertThat(e.code()).isEqualTo(GatewayException.Code.DEADLINE_EXCEEDED));
+      org.awaitility.Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(()->assertThat(OBSERVED)
+          .contains("apex.rpc.client:SUCCEEDED","apex.rpc.server:SUCCEEDED","apex.query.execution:SUCCEEDED",
+              "apex.query.queue:OBSERVED","apex.query:DEADLINE_EXCEEDED"));
+      assertThat(OBSERVED.toString()).doesNotContain("safe","slow","local:");
+    }
+  }
+  @Configuration(proxyBeanMethods=false) @EnableAutoConfiguration
+  static class ObservedClient { @Bean io.micrometer.observation.ObservationRegistry observationRegistry(){return observationRegistryForTest();} }
 
   static ConfigurableApplicationContext boot(Class<?> app, String... arguments) {
     var env = new StandardEnvironment();

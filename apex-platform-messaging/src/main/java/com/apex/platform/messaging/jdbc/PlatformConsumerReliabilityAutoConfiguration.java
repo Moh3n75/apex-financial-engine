@@ -29,10 +29,11 @@ public class PlatformConsumerReliabilityAutoConfiguration {
             ProducerFactory<?, ?> producerFactory, ConsumerFactory<?, ?> consumerFactory, KafkaAdmin kafkaAdmin,
             KafkaProperties kafkaProperties, ConsumerReliabilityProperties properties,
             @Value("${apex.messaging.consumer.topics}") String topics,
-            ObjectProvider<ConfigurableKafkaEventConsumer> consumer) {
+            ObjectProvider<ConfigurableKafkaEventConsumer> consumer,
+            com.apex.platform.messaging.observation.MessagingObservation observations) {
         return new ReliableKafkaConsumerRuntime(producerFactory, kafkaAdmin.getConfigurationProperties(),
                 consumerFactory.getConfigurationProperties().get(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG),
-                properties, topics, consumer, kafkaProperties.getTemplate().isObservationEnabled());
+                properties, topics, consumer, kafkaProperties.getTemplate().isObservationEnabled()).withObservations(observations);
     }
 
     @Bean

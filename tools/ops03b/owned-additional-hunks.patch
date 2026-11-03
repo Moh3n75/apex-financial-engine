@@ -1,0 +1,25 @@
+--- a/apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
++++ b/apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
+@@ -6,7 +6,7 @@
+  @Override public void doFilter(ServletRequest req,ServletResponse res,FilterChain chain)throws IOException,ServletException {
+  var r=(HttpServletRequest)req;var s=(HttpServletResponse)res;s.setHeader("Cache-Control","no-store");
+  if(!r.getMethod().equals("GET")){s.setStatus(405);return;}
+- if(r.getRequestURI().length()>256||(r.getQueryString()!=null&&r.getQueryString().length()>128)||r.getContentLengthLong()>0){s.setStatus(400);return;}
++ if(r.getRequestURI().length()>256||(r.getQueryString()!=null&&r.getQueryString().length()>128)||(r.getContentLengthLong()>0||r.getHeader("Transfer-Encoding")!=null)){s.setStatus(400);return;}
+  chain.doFilter(req,res);
+  }
+ }
+--- a/apex-replay-tool/src/test/java/com/apex/replay/ReplayApprovalIntegrationTest.java
++++ b/apex-replay-tool/src/test/java/com/apex/replay/ReplayApprovalIntegrationTest.java
+@@ -168,7 +168,10 @@
+             admin.createTopics(List.of(new NewTopic(route.replayTopic(), 1, (short) 1),
+                     new NewTopic(route.replayDltTopic(), 2, (short) 1))).all().get(10, TimeUnit.SECONDS);
+             // Creation acknowledgement can precede metadata visibility on another Admin connection.
+-            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
++            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10))
++                    .ignoreExceptionsMatching(error -> error instanceof java.util.concurrent.ExecutionException
++                            && error.getCause() instanceof org.apache.kafka.common.errors.UnknownTopicOrPartitionException)
++                    .untilAsserted(() -> {
+                 var metadata=admin.describeTopics(List.of(route.originTopic(),route.dltTopic(),
+                         route.replayTopic(),route.replayDltTopic())).allTopicNames().get(5,TimeUnit.SECONDS);
+                 assertThat(metadata.get(route.replayTopic()).partitions()).hasSize(1);

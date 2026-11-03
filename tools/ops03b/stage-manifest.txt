@@ -1,0 +1,54 @@
+OPS-03B owner-review-only selective staging guide
+No paths have been staged. Do not use git add . or stage whole dirty files.
+Entry HEAD: 09ebb789fcd5fbff175c1762f8f15c1fe85d958f
+Entry branch: credit-engine-event-sourcing
+Entry hashes/index/status: out/ops03b/baseline.json
+Final preservation evidence: out/ops03b/preservation.json
+
+NEW OPS-03B FILES (review these exact paths individually)
+APEX_OPS_03B_IMPLEMENTATION_AND_OWNER_COVERAGE.md
+APEX_OPS_03B_KAFKA_LIFECYCLE_AND_EVIDENCE.md
+APEX_OPS_03B_SEARCH_AND_PERSISTENCE_DECISION.md
+APEX_OPS_03B_SECURITY_AND_PERFORMANCE.md
+APEX_OPS_03B_FINAL_ACCEPTANCE.md
+inventory-cell/src/main/java/com/apex/inventory/operations/InventoryEvidenceDataSource.java
+inventory-cell/src/main/java/com/apex/inventory/operations/InventoryEvidenceHandler.java
+inventory-cell/src/test/java/com/apex/inventory/operations/InventoryEvidenceTest.java
+inventory-cell/src/test/java/com/apex/inventory/Ops03bKafkaEvidenceIT.java
+inventory-cell/src/test/java/com/apex/inventory/Ops03bCertificates.java
+payment-cell/src/main/java/com/apex/payment/operations/PaymentEvidenceDataSource.java
+payment-cell/src/main/java/com/apex/payment/operations/PaymentEvidenceHandler.java
+payment-cell/src/test/java/com/apex/payment/operations/PaymentEvidenceTest.java
+apex-operations-console/src/test/java/com/apex/operations/console/Ops03bInputBoundsTest.java
+tools/ops03b/verify-ops03b.ps1
+tools/ops03b/junit-ledger.py
+tools/ops03b/README.md
+tools/ops03b/owned-existing-hunks.patch
+tools/ops03b/owned-additional-hunks.patch
+tools/ops03b/stage-manifest.txt
+
+ONLY OPS-03B HUNKS IN THESE FIVE PRE-EXISTING PATHS
+inventory-cell/pom.xml
+payment-cell/pom.xml
+apex-operations-console/src/main/java/com/apex/operations/console/ReadApi.java
+apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
+apex-replay-tool/src/test/java/com/apex/replay/ReplayApprovalIntegrationTest.java
+
+owned-existing-hunks.patch is the first three entry-to-final deltas.
+owned-additional-hunks.patch is the last two entry-to-final deltas.
+Both are review artifacts, not instructions to apply them again to the worktree.
+The latter, the archive-aware ledger and this manifest were generated after source
+freeze; none is runtime or executable test input. The ledger was executed against
+only the final fresh tree. Exact pre-change bytes match entry hashes.
+Recount: python tools/ops03b/junit-ledger.py out/b-546b15 out/ops03b/final-archive-ledger
+
+Use git diff and interactive hunk selection only after owner review. Existing
+untracked OPS-03 Console source cannot be staged as an isolated OPS-03B delta
+against HEAD. The owner must first establish/review the accepted OPS-03 base, then
+select these delta hunks. Do not stage whole POMs or all untracked source to bypass
+that prerequisite. This guide does not authorize or perform any Git mutation.
+
+EXCLUDE all protected YAMLs, Eureka changes, Financial POM, root pom.xml,
+order-cell/pom.xml, all old reports and pre-existing OPS-02/OPS-03 hunks/files,
+out/, target/, certificates/private keys, logs, caches and unrelated owner changes.
+Historical reports remain unchanged; OPS-03B acceptance does not recreate them.

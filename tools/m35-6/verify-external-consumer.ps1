@@ -14,7 +14,7 @@ try {
     if(-not $env:JAVA_HOME){throw 'Set JAVA_HOME to Java 21.'}
     $options=@('-B','-ntp');if($Offline){$options+='-o'}
     $receipts=@()
-    $modes=@('default','http');if(-not $Minimal){$modes+='capabilities'}
+    $modes=@('default','http');if(-not $Minimal){$modes+=@('capabilities','observability')}
     foreach($mode in $modes) {
         $profileArgs=@();if($mode -ne 'default'){$profileArgs+= "-P$mode"}
         if($mode -eq 'capabilities'){$profileArgs+="-Dexternal.registry.jar=$root/out/m34-artifacts/apex-discovery-server.jar"}
@@ -32,7 +32,8 @@ try {
             continue
         }
         $args=@('-jar','target/sdk-consumer.jar','--spring.config.location=optional:classpath:/absent.properties','--spring.main.banner-mode=off','--spring.application.name=external-consumer','--apex.cell.id=external-consumer')
-        if($mode -eq 'default'){$args+='--spring.main.web-application-type=none'}else{$args+=@('--server.address=127.0.0.1','--server.port=0')}
+        if($mode -in @('default','observability')){$args+='--spring.main.web-application-type=none'}else{$args+=@('--server.address=127.0.0.1','--server.port=0')}
+        if($mode -eq 'observability'){$args+='--apex.observability.enabled=true'}
         & (Join-Path $env:JAVA_HOME 'bin/java') @args *> (Join-Path $evidence "$mode-boot.log")
         if($LASTEXITCODE -ne 0 -or -not (Select-String -LiteralPath (Join-Path $evidence "$mode-boot.log") -Pattern 'SDK_CONSUMER_ACCEPTED')){throw "External $mode packaged boot failed."}
         $receipts+=[ordered]@{mode=$mode;jarSha256=(Get-FileHash target/sdk-consumer.jar -Algorithm SHA256).Hash;bootExit=0;testExit=0}

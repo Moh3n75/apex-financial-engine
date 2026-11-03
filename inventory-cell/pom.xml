@@ -18,6 +18,8 @@
         <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
     </properties>
     <dependencies>
+<dependency><groupId>com.apex</groupId><artifactId>apex-operations-owner-jdbc</artifactId><version>1.0-SNAPSHOT</version></dependency>
+<dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-starter-grpc-server</artifactId><version>${apex.platform.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-order-contracts</artifactId><version>${apex.platform.version}</version></dependency>
         <dependency>
@@ -85,6 +87,11 @@
         </plugins>
     </build>
     <profiles>
+        <!-- Test-owned exporter fixture; never selected by default deployment builds. -->
+        <profile><id>ops02-acceptance</id><dependencies>
+            <dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version></dependency>
+            <dependency><groupId>com.apex</groupId><artifactId>apex-starter-observability</artifactId><version>1.0-SNAPSHOT</version><type>test-jar</type><scope>runtime</scope></dependency>
+        </dependencies></profile>
         <profile>
             <id>m30</id>
             <build><plugins><plugin>

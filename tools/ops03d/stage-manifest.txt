@@ -1,0 +1,50 @@
+REVIEW ONLY ? do not stage automatically.
+Entry HEAD 09ebb789fcd5fbff175c1762f8f15c1fe85d958f; branch credit-engine-event-sourcing.
+All pre-existing uncommitted OPS-02/03/03B/03C owner changes remain separate.
+Only existing file delta owned here (review against out/ops03d/entry, NOT HEAD):
+apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
+The filter was already untracked at entry. Owner must establish/review accepted prior OPS baseline before selective staging of this one route-list hunk.
+Never stage an entire previously untracked Console directory or old POM/YAML diff as OPS-03D.
+
+Exact NEW paths for individual owner review:
+APEX_OPS_03D_FINAL_ACCEPTANCE.md
+APEX_OPS_03D_LATE_COMMIT_AND_RECONCILIATION.md
+APEX_OPS_03D_OPS04_API_HANDOFF.md
+APEX_OPS_03D_OWNER_INDEX_AND_QUERY_PLAN.md
+APEX_OPS_03D_PERFORMANCE_AND_SOURCE_BUDGET.md
+APEX_OPS_03D_PROJECTION_STORAGE_AND_RECOVERY.md
+APEX_OPS_03D_SECURITY_AND_FAILURE.md
+apex-operations-console/src/main/java/com/apex/operations/console/OwnerRecentSearchClient.java
+apex-operations-console/src/main/java/com/apex/operations/console/RecentSearchApi.java
+apex-operations-console/src/main/resources/ops03d-openapi.json
+apex-operations-console/src/test/java/com/apex/operations/console/OwnerRecentSearchClientTest.java
+apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerRecentSearch.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/BoundedRecentSearch.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingRecentSource.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/RecentCursor.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/RecentIndex.java
+apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/OwnerRecentSearchTest.java
+inventory-cell/src/main/java/com/apex/inventory/operations/InventoryRecentSearchHandler.java
+inventory-cell/src/main/resources/db/ops03d/recent-indexes.sql
+inventory-cell/src/test/java/com/apex/inventory/Ops03dRecentDiscoveryIT.java
+inventory-cell/src/test/java/com/apex/inventory/Ops03dRecentLoadIT.java
+inventory-cell/src/test/java/com/apex/inventory/operations/InventoryRecentSearchTest.java
+order-cell/src/main/java/com/apex/order/modules/order/operations/OrderRecentSearchHandler.java
+order-cell/src/main/resources/db/ops03d/recent-indexes.sql
+order-cell/src/test/java/com/apex/order/modules/order/operations/OrderRecentSearchTest.java
+payment-cell/src/main/java/com/apex/payment/operations/PaymentRecentSearchHandler.java
+payment-cell/src/main/resources/db/ops03d/recent-indexes.sql
+payment-cell/src/test/java/com/apex/payment/operations/PaymentRecentSearchTest.java
+tools/ops03d/README.md
+tools/ops03d/audit.py
+tools/ops03d/experimental-policy.json
+tools/ops03d/owned-existing-hunks.patch
+tools/ops03d/qualify-policy.py
+tools/ops03d/smoke-read-only.ps1
+tools/ops03d/stage-manifest.txt
+tools/ops03d/verify-ops03d.ps1
+
+Manual owner index scripts require independent rollout review; no Flyway/default migration is changed.
+Exclude protected YAMLs, old reports, all prior-owner source/POM hunks, out/, target/, certs, credentials, logs and ignored runtime evidence.
+Review each listed path separately; when owner chooses to stage, use an explicit literal path list, never git add . or directory globs.
+No stage/commit/tag/push performed by this milestone. Runtime hashes are in out/ops03d/runtime-evidence-sha256.json.

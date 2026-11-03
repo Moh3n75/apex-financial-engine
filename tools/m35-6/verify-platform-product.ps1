@@ -26,7 +26,7 @@ try {
     if(-not $Fast){
         # Independent Cells resolve these before the later M22/M31 installs.
         # Do not rely on previously installed APEX SNAPSHOTs.
-        $bootstrapModules+=@('apex-starter-cell-messaging','apex-starter-grpc-server','apex-order-contracts')
+        $bootstrapModules+=@('apex-starter-cell-messaging','apex-starter-grpc-server','apex-order-contracts','apex-starter-observability')
     }
     & $MavenCommand @options -pl ($bootstrapModules -join ',') -am clean install
     if($LASTEXITCODE -ne 0){throw 'SDK build failed.'}

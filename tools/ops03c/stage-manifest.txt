@@ -1,0 +1,50 @@
+OPS-03C OWNER-REVIEW-ONLY SELECTIVE STAGING GUIDE
+No stage/add/commit/push/tag/stash/reset/clean has been performed or authorized here.
+Entry HEAD: 09ebb789fcd5fbff175c1762f8f15c1fe85d958f
+Entry branch/index/status and all 737 file hashes: out/ops03c/baseline.json
+
+NEW OPS-03C FILES: review each exact path independently
+APEX_OPS_03C_DISCOVERY_AND_CURSOR_CONTRACT.md
+APEX_OPS_03C_FINAL_ACCEPTANCE.md
+APEX_OPS_03C_OPS04_HANDOFF.md
+APEX_OPS_03C_PROJECTION_AND_RECONCILIATION.md
+APEX_OPS_03C_SECURITY_AND_EXTERNAL_ADOPTION.md
+APEX_OPS_03C_SOURCE_READ_PERFORMANCE.md
+apex-operations-console/src/main/java/com/apex/operations/console/OwnerSearchClient.java
+apex-operations-console/src/main/java/com/apex/operations/console/SearchApi.java
+apex-operations-console/src/main/resources/ops03c-openapi.json
+apex-operations-console/src/test/java/com/apex/operations/console/OwnerSearchClientTest.java
+apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerSearch.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/BoundedOwnerSearch.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingSearchSource.java
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/SearchCursor.java
+apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/OwnerSearchTest.java
+inventory-cell/src/main/java/com/apex/inventory/operations/InventorySearchHandler.java
+inventory-cell/src/test/java/com/apex/inventory/Ops03cDiscoveryIT.java
+inventory-cell/src/test/java/com/apex/inventory/Ops03cSearchLoadIT.java
+inventory-cell/src/test/java/com/apex/inventory/operations/InventorySearchTest.java
+order-cell/src/main/java/com/apex/order/modules/order/operations/OrderSearchHandler.java
+order-cell/src/test/java/com/apex/order/modules/order/operations/OrderSearchTest.java
+payment-cell/src/main/java/com/apex/payment/operations/PaymentSearchHandler.java
+payment-cell/src/test/java/com/apex/payment/operations/PaymentSearchTest.java
+tools/ops03c/README.md
+tools/ops03c/audit.py
+tools/ops03c/experimental-policy.json
+tools/ops03c/owned-existing-hunks.patch
+tools/ops03c/stage-manifest.txt
+tools/ops03c/verify-ops03c.ps1
+
+ONE PRE-EXISTING FILE, ONLY THE OPS-03C DELTA
+apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
+
+Review tools/ops03c/owned-existing-hunks.patch against the independently hash-verified
+entry snapshot (out/ops03c/hunk-baseline-proof.json). Do not apply this delta again
+to the current worktree. No whole-file staging of a previously dirty/untracked
+OPS-03/B Console file is implied: the owner must first establish/review the accepted
+prior base, then select only these new query-bound hunks.
+
+EXCLUDE every pre-existing POM/YAML/Eureka/Financial/third-party change, all prior
+OPS-01/02/03/03B and historical reports/source hunks, out/, target/, caches, logs,
+credentials, certificates/private keys and unrelated material. No owner migration
+or index was added. Inspect source and final preservation/frozen-input receipts
+before any owner-controlled staging action. Never git add . or stage all untracked.

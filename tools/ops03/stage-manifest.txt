@@ -1,0 +1,36 @@
+# Owner review only. Nothing has been staged.
+# New paths below may be staged only after review.
+# For pom.xml and order-cell/pom.xml review ONLY tools/ops03/owned-pom-hunks.patch; use interactive hunk staging, preserving prior OPS-02 hunks.
+# Exclude out/, target/, historical reports, protected YAMLs and all other existing local modifications.
+APEX_OPS_03_DECISIONS.md
+APEX_OPS_03_EVIDENCE_AND_RECONCILIATION.md
+APEX_OPS_03_FINAL_ACCEPTANCE.md
+APEX_OPS_03_IMPLEMENTATION_AND_OWNERSHIP.md
+APEX_OPS_03_PERFORMANCE_AND_FAILURE_ACCEPTANCE.md
+APEX_OPS_03_READ_ONLY_API_AND_SECURITY.md
+apex-operations-console/pom.xml
+apex-operations-console/src/main/java/com/apex/operations/console/ConsoleApplication.java
+apex-operations-console/src/main/java/com/apex/operations/console/EvidenceCache.java
+apex-operations-console/src/main/java/com/apex/operations/console/OwnerPoller.java
+apex-operations-console/src/main/java/com/apex/operations/console/ReadApi.java
+apex-operations-console/src/main/java/com/apex/operations/console/ReadOnlyFilter.java
+apex-operations-console/src/main/java/com/apex/operations/console/SafeErrors.java
+apex-operations-console/src/main/resources/application.properties
+apex-operations-console/src/test/java/com/apex/operations/console/EvidenceCacheTest.java
+apex-operations-contracts/pom.xml
+apex-operations-contracts/src/main/java/com/apex/operations/contracts/EvidenceQuery.java
+apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerSnapshot.java
+apex-operations-owner-jdbc/pom.xml
+apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingEvidenceReader.java
+apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/MessagingEvidenceReaderTest.java
+order-cell/src/main/java/com/apex/order/modules/order/operations/OrderEvidenceDataSource.java
+order-cell/src/main/java/com/apex/order/modules/order/operations/OrderEvidenceHandler.java
+order-cell/src/test/java/com/apex/order/grpc/Ops03ProcessIT.java
+tools/ops03/OwnerReadCost.java
+tools/ops03/README.md
+tools/ops03/baseline.json
+tools/ops03/junit-ledger.py
+tools/ops03/owned-pom-hunks.patch
+tools/ops03/stage-manifest.txt
+tools/ops03/verify-isolated-ops03.ps1
+tools/ops03/verify-ops03.ps1

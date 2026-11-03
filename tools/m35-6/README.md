@@ -11,7 +11,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/m35-6/verify-platf
 ```
 
 Default is the **full gate**: install the SDK, HTTP, messaging and gRPC server capabilities
-and the demo contract artifact with tests, then run unchanged
+the optional observability starter and the demo contract artifact with tests, then run unchanged
 M35 Identity acceptance and the M34 → M32 → M31 → M30/M29/M22 chain (with artifact-owner
 receipt updates), then build/test/boot the external consumer. It includes real packaged
 Gateway/Eureka/3 Order + 2 Inventory + 2 Payment processes, mTLS, retry/DLT/replay,
@@ -43,6 +43,12 @@ before registry connection; and discovery against an actual separately packaged 
 Eureka process (without auto-registering the consumer). Its Spring Cloud BOM is explicit. Capability query test is
 in-process contexts over a real socket, not a claim of separate-JVM external gRPC security;
 the complete existing multi-JVM mTLS fixtures separately qualify that boundary.
+
+OPS-02 adds an `observability` external profile: optional dependency alone stays off;
+explicit activation reuses one native observation handler and bounded local admission,
+with no exporter or network dependency. Default SDK coordinates and Fast semantics
+remain unchanged. The full bootstrap installs this new optional artifact before
+independent consumers, preserving the cold APEX prerequisite closure.
 
 Evidence is ignored under `out/m35-6`, plus existing acceptance directories. Build logs,
 runtime dependency trees, JUnit XML, external absolute path, JAR SHA and packaged JVM
