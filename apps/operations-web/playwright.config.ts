@@ -1,7 +1,9 @@
 ﻿import { defineConfig, devices } from "@playwright/test";
 
+/** Fixture-mode smoke only. Never counts as live Java qualification. */
 export default defineConfig({
   testDir: "./e2e",
+  testMatch: /smoke\.spec\.ts/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 0,

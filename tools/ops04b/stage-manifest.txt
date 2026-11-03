@@ -1,0 +1,27 @@
+# OPS-04B selective stage review (owner approval required). Do NOT auto-commit.
+# Include only paths below. Exclude node_modules, .next, test-results, out/, .env.local, credentials.
+
+APEX_OPS_04B_LIVE_INTEGRATION_ACCEPTANCE.md
+apps/operations-web/.env.example
+apps/operations-web/README.md
+apps/operations-web/package.json
+apps/operations-web/playwright.config.ts
+apps/operations-web/playwright.live.config.ts
+apps/operations-web/e2e/live-happy.spec.ts
+apps/operations-web/e2e/live-helpers.ts
+apps/operations-web/e2e/live-stale.spec.ts
+apps/operations-web/e2e/smoke.spec.ts
+apps/operations-web/src/components/recent-table.tsx
+apps/operations-web/src/lib/origin-policy.ts
+apps/operations-web/src/lib/origin-policy.test.ts
+apps/operations-web/src/server/origin.ts
+apps/operations-web/src/server/schemas.ts
+inventory-cell/src/test/java/com/apex/inventory/Ops04bLiveUiBridgeIT.java
+tools/ops04b/verify-ops04b-live.ps1
+tools/ops04b/stage-manifest.txt
+
+# Explicitly exclude
+# - Dirty */application*.yml (pre-existing protected user edits)
+# - Java business/migration/source changes outside the bridge IT
+# - OPS-03D FULL regression relabeling
+# - out/ops04b/** runtime receipts (local evidence only)

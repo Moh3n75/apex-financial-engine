@@ -14,7 +14,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "test:e2e:fixture": "playwright test -c playwright.config.ts",
+    "test:e2e:live": "playwright test -c playwright.live.config.ts",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "verify:fixture-e2e": "pnpm verify && pnpm test:e2e:fixture"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

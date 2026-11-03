@@ -1,4 +1,4 @@
-# APEX Operations Web (OPS-04 preview)
+# APEX Operations Web (OPS-04 / OPS-04B preview)
 
 Local-only, read-only Next.js UI for the restricted APEX Operations Console.
 
@@ -8,58 +8,77 @@ Local-only, read-only Next.js UI for the restricted APEX Operations Console.
 
 - Node.js ≥ 20.9
 - pnpm 9.15.x (lockfile committed)
-- Optional: Java Operations Console on `http://127.0.0.1:9190` with OPS-03D search enabled
+- Java 21 + Maven 3.9.11 for live OPS-04B acceptance
+- Optional manual: Java Operations Console on loopback with OPS-03D search enabled
 
 ## Secure topology
 
 - Browser → Next.js (`127.0.0.1:3000`) only
-- Next.js server → Java Console (`127.0.0.1:9190`) only
+- Next.js server → Java Console (loopback origin only; default `http://127.0.0.1:9190`)
 - `APEX_OPERATIONS_API_ORIGIN` is **server-only** (never `NEXT_PUBLIC_*`)
 - `pnpm dev` / `pnpm start` bind **literal `127.0.0.1`**
 - Do not publish, tunnel, Docker-expose, or set `0.0.0.0`
 
-## Setup (Windows PowerShell)
+## Setup (Windows PowerShell) — interactive
 
 ```powershell
 cd apps\operations-web
 Copy-Item .env.example .env.local
-# edit APEX_OPERATIONS_API_ORIGIN if needed (must remain loopback allowlist)
+# APEX_OPERATIONS_API_ORIGIN must remain a loopback origin (port 1024–65535)
 pnpm install --frozen-lockfile
+# Live Console on :9190 (fixture mode MUST stay unset/false):
+Remove-Item Env:APEX_OPS_UI_FIXTURE_MODE -ErrorAction SilentlyContinue
+$env:APEX_OPERATIONS_API_ORIGIN='http://127.0.0.1:9190'
 pnpm dev
 ```
 
 Open `http://127.0.0.1:3000`.
 
-### Fixture mode (no Java Console)
-
-For Playwright / offline UI smoke:
+### Fixture mode (UI-only; not live qualification)
 
 ```powershell
 $env:APEX_OPS_UI_FIXTURE_MODE='true'
 pnpm dev
 ```
 
-Synthetic rows are clearly fixture-backed; do not mix claims with live Console evidence.
+Shows `SYNTHETIC DEMO`. Never count fixture Playwright as LIVE_E2E.
+
+## OPS-04B live acceptance (real Java stack)
+
+Repeatable command (never starts fixture mode):
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Java\jdk-21'
+$env:Path="$env:JAVA_HOME\bin;$env:USERPROFILE\.local-node;$env:USERPROFILE\.local-node\bin;$env:Path"
+Remove-Item Env:APEX_OPS_UI_FIXTURE_MODE -ErrorAction SilentlyContinue
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\ops04b\verify-ops04b-live.ps1
+```
+
+What it does:
+
+1. Fails if `:9190` or `:3000` are already listening (will not kill foreign PIDs)
+2. `pnpm install --frozen-lockfile` + `pnpm build` for `apps/operations-web`
+3. Packages Order / Inventory / Payment / Operations Console JARs
+4. Runs `Ops04bLiveUiBridgeIT` which owns disposable PostgreSQL + KRaft + mTLS cells + Console on `127.0.0.1:9190`, creates a real order, starts Next with `OPS04B_REQUIRE_LIVE=true` / fixture OFF, then Playwright `live-happy` + `live-stale`
+5. Writes receipts under `out/ops04b/` (ignored runtime output)
+
+Owner indexes: fixture applies each cell’s `db/ops03d/recent-indexes.sql` in an owned autocommit session. Production index creation remains an owner action (`apex.ops03d.indexes-reviewed`, scopes, `QUERY:OPS_OWNER_RECENT_SEARCH:1`).
 
 ## Scripts
 
 | Command | Purpose |
 |---|---|
-| `pnpm dev` | Next dev on 127.0.0.1:3000 |
-| `pnpm build` | Production build |
-| `pnpm start` | Next start on 127.0.0.1:3000 |
-| `pnpm lint` | ESLint (not part of `next build`) |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm test` | Vitest unit tests |
-| `pnpm test:e2e` | Playwright browser smoke |
+| `pnpm dev` / `pnpm start` | Next on 127.0.0.1:3000 |
+| `pnpm build` | Production build (`--webpack`) |
+| `pnpm lint` / `pnpm typecheck` / `pnpm test` | Frontend gates |
+| `pnpm test:e2e` / `test:e2e:fixture` | Fixture Playwright (separate from live) |
+| `pnpm test:e2e:live` | Live Playwright only (requires running stack + handshake) |
 | `pnpm verify` | lint + typecheck + unit + build |
 
 ## Pages
 
 Overview · Cells & Sources · Recent Events · Known-Group Inbox · Workflows · Requests · Active Operations · Diagnostics
 
-All surfaces preserve freshness/availability/coverage/uncertainty semantics from the Java API. Replay/Retry/Pause/Resume are not implemented.
-
 ## Deployment restrictions
 
-No Vercel/cloud manifest, no public Docker publish, no wildcard CORS, no operator-supplied upstream URL. Owner approval required before any commit/push of this frontend phase.
+No Vercel/cloud manifest, no public Docker publish, no wildcard CORS, no operator-supplied upstream URL. OPS-03D FULL regression remains failed/open — this UI does not relabel it. Owner approval required before any commit/push.

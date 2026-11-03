@@ -8,5 +8,8 @@ export function resolveOperationsOrigin(): string {
 }
 
 export function isFixtureMode(): boolean {
+  if (process.env.OPS04B_REQUIRE_LIVE === "true" && process.env.APEX_OPS_UI_FIXTURE_MODE === "true") {
+    throw new Error("OPS04B_REQUIRE_LIVE forbids APEX_OPS_UI_FIXTURE_MODE=true.");
+  }
   return process.env.APEX_OPS_UI_FIXTURE_MODE === "true";
 }

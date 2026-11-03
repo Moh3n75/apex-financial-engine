@@ -2,7 +2,8 @@ import { z } from "zod";
 
 /** Schemas derived from apex-operations-console OpenAPI / Java DTOs. Fail closed. */
 
-const zInstant = z.string().datetime({ offset: true });
+/** Accept Java Instant / OffsetDateTime wire forms (incl. nano fractions). */
+const zInstant = z.string().refine((s) => !Number.isNaN(Date.parse(s)), "instant");
 const zOwnerName = z.string().regex(/^[A-Za-z0-9._-]{1,64}$/);
 const zScope = z.string().regex(/^[A-Za-z0-9._-]{1,200}$/);
 const zState = z.string().regex(/^[A-Z_]{1,40}$/);

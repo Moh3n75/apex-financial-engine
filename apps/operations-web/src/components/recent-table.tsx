@@ -61,6 +61,8 @@ export function RecentExplorer({
     to,
   });
   const [refreshKey, setRefreshKey] = useState(0);
+  // Do not hit Console until the operator submits Search (avoids mount fan-out / SHED).
+  const [armed, setArmed] = useState(false);
 
   const qs = new URLSearchParams({
     environment: committed.environment,
@@ -76,7 +78,7 @@ export function RecentExplorer({
   const apiPath = `/api/ops/recent/${kind}?${qs.toString()}`;
   // refreshKey is SWR-key only — never forwarded as a query param (BFF allowlists keys).
   const { data, error, isLoading, mutate } = useSWR(
-    [apiPath, refreshKey] as const,
+    armed ? ([apiPath, refreshKey] as const) : null,
     ([url]) => fetcher(url),
     { revalidateOnFocus: false, revalidateOnReconnect: false },
   );
@@ -85,6 +87,7 @@ export function RecentExplorer({
     setCursor("");
     setPageIndex(0);
     setCommitted({ environment, owner, scope, state, limit, from, to });
+    setArmed(true);
     setRefreshKey((v) => v + 1);
   }
 
@@ -225,8 +228,11 @@ export function RecentExplorer({
         assigned time — not COMMIT.
       </p>
 
+      {!armed ? (
+        <EmptyState>Submit Search to request a bounded owner observation (no automatic fetch).</EmptyState>
+      ) : null}
       {error ? <ErrorState>{error.message}</ErrorState> : null}
-      {isLoading && !data ? <EmptyState>Loading observation…</EmptyState> : null}
+      {armed && isLoading && !data ? <EmptyState>Loading observation…</EmptyState> : null}
 
       {data ? (
         <div className="space-y-3">

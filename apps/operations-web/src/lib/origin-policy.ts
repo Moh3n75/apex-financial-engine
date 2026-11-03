@@ -1,4 +1,6 @@
-const ALLOWED_ORIGINS = new Set(["http://127.0.0.1:9190", "http://localhost:9190"]);
+/** Loopback-only Operations Console origins. Remote hosts are rejected. */
+
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost"]);
 
 export function validateOperationsOrigin(raw: string | undefined): string {
   if (!raw?.trim()) {
@@ -16,9 +18,13 @@ export function validateOperationsOrigin(raw: string | undefined): string {
   if (url.username || url.password || url.search || url.hash || url.pathname !== "/") {
     throw new Error("APEX_OPERATIONS_API_ORIGIN must be origin-only (no path/query/userinfo).");
   }
-  const origin = `${url.protocol}//${url.host}`;
-  if (!ALLOWED_ORIGINS.has(origin)) {
+  if (!LOOPBACK_HOSTS.has(url.hostname)) {
     throw new Error("APEX_OPERATIONS_API_ORIGIN is outside the fixed loopback allowlist.");
   }
-  return origin.replace("localhost", "127.0.0.1");
+  const port = url.port ? Number(url.port) : url.protocol === "https:" ? 443 : 80;
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) {
+    throw new Error("APEX_OPERATIONS_API_ORIGIN port must be an explicit loopback port 1024–65535.");
+  }
+  // Normalize localhost → 127.0.0.1 so BFF fetches a single canonical origin.
+  return `http://127.0.0.1:${port}`;
 }
