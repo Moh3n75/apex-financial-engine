@@ -48,6 +48,12 @@ class CollectorWiringTest {
               ((java.util.concurrent.ScheduledThreadPoolExecutor) app.getBean("grpcDeadlines"))
                   .getRemoveOnCancelPolicy())
           .isTrue();
+      // Collection expiry must use a dedicated clock — not the query-local grpcDeadlines pool —
+      // so a saturated query timer cannot strand CollectionResult futures past the assertion.
+      var collectionClock =
+          (java.util.concurrent.ScheduledThreadPoolExecutor) app.getBean("grpcCollectorDeadlines");
+      assertThat(collectionClock.getRemoveOnCancelPolicy()).isTrue();
+      assertThat(collectionClock).isNotSameAs(app.getBean("grpcDeadlines"));
     }
   }
 

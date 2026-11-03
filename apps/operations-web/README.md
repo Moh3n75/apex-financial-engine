@@ -2,7 +2,8 @@
 
 Local-only, read-only Next.js UI for the restricted APEX Operations Console.
 
-**Not production. Not a general Event Explorer. No M36 auth. No mutations.**
+**Not production. Not a general Event Explorer. No mutations.**
+Optional **M36A** local OIDC (Identity → BFF session → Console JWT) is opt-in; see `tools/m36a/SECURE_RUN.md`.
 
 ## Requirements
 
@@ -33,6 +34,19 @@ pnpm dev
 ```
 
 Open `http://127.0.0.1:3000`.
+
+### M36A authenticated mode (local Identity)
+
+```powershell
+# After offline-provisioning apex-ops-web (tools/m36a/provision-ops-web-client.md)
+# and enabling apex.ops.m36a on the Java Console:
+$env:APEX_OPS_M36A_ENABLED='true'
+# Set APEX_OIDC_* + APEX_OPS_SESSION_SECRET in .env.local (see .env.example)
+Remove-Item Env:APEX_OPS_UI_FIXTURE_MODE -ErrorAction SilentlyContinue
+pnpm dev
+```
+
+Fixture mode **forces M36A off**. Do not treat fixture Playwright as authenticated live.
 
 ### Fixture mode (UI-only; not live qualification)
 

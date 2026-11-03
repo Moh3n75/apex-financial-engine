@@ -16,14 +16,17 @@
     "test:e2e": "playwright test",
     "test:e2e:fixture": "playwright test -c playwright.config.ts",
     "test:e2e:live": "playwright test -c playwright.live.config.ts",
+    "test:e2e:m36a-unauth": "playwright test -c playwright.m36a.config.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "verify:fixture-e2e": "pnpm verify && pnpm test:e2e:fixture"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jose": "5.10.0",
     "lucide-react": "^1.67.0",
     "next": "16.4.4",
+    "openid-client": "5.7.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",

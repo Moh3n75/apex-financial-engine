@@ -16,10 +16,16 @@ export function Shell({
   children,
   active,
   syntheticDemo = false,
+  m36aEnabled = false,
+  signedIn = false,
+  subject,
 }: {
   children: React.ReactNode;
   active: string;
   syntheticDemo?: boolean;
+  m36aEnabled?: boolean;
+  signedIn?: boolean;
+  subject?: string;
 }) {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
@@ -32,8 +38,22 @@ export function Shell({
           <Badge tone="warning">LOCAL</Badge>
           <Badge tone="info">READ-ONLY</Badge>
           <Badge tone="danger">NOT PRODUCTION</Badge>
-          <Badge tone="neutral">NO M36 AUTH</Badge>
           {syntheticDemo ? <Badge tone="warning">SYNTHETIC DEMO</Badge> : null}
+          {!m36aEnabled && !syntheticDemo ? (
+            <Badge tone="neutral">NO M36 AUTH</Badge>
+          ) : null}
+          {m36aEnabled ? <Badge tone="info">M36A OIDC</Badge> : null}
+          {m36aEnabled && signedIn ? <Badge tone="info">SIGNED IN</Badge> : null}
+          {m36aEnabled && signedIn ? (
+            <form action="/api/auth/logout" method="post" className="ml-auto">
+              <button
+                type="submit"
+                className="rounded px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              >
+                Sign out{subject ? ` (${subject.slice(0, 12)})` : ""}
+              </button>
+            </form>
+          ) : null}
         </div>
         <nav
           aria-label="Primary"

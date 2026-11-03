@@ -68,9 +68,22 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
               RpcContexts.currentOrRoot(contexts, routes.getCellId()),
               start);
       try {
+        // Schedule in milliseconds against an absolute nano deadline so a single delayed tick
+        // cannot be lost to NANOSECONDS rounding edge cases under a saturated shared clock.
+        long delayMs =
+            Math.max(0L, TimeUnit.NANOSECONDS.toMillis(job.end - System.nanoTime()));
         job.expiration =
             clock.schedule(
-                job::expire, Math.max(0, job.end - System.nanoTime()), TimeUnit.NANOSECONDS);
+                () -> {
+                  try {
+                    job.expire();
+                  } catch (Throwable unexpected) {
+                    // Never leave callers blocked if expire itself fails.
+                    job.result.completeExceptionally(RpcErrors.failure(unexpected, false));
+                  }
+                },
+                delayMs,
+                TimeUnit.MILLISECONDS);
         job.launch = workers.submit(job::launch);
       } catch (RejectedExecutionException full) {
         job.reject();

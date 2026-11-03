@@ -1,6 +1,6 @@
 import { getRecent } from "@/server/ops-client";
 import { parseSearchParams, QueryValidationError } from "@/server/query";
-import { jsonErr, jsonOk, rejectMutation } from "../../_shared";
+import { assertOpsBffAuth, jsonErr, jsonOk, rejectMutation } from "../../_shared";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,8 @@ export async function GET(
   ctx: { params: Promise<{ kind: string }> },
 ) {
   try {
+    const denied = await assertOpsBffAuth();
+    if (denied) return denied;
     const { kind } = await ctx.params;
     if (!KINDS.has(kind as Kind)) {
       throw new QueryValidationError("Unknown recent kind.");

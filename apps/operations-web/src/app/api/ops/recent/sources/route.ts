@@ -1,10 +1,12 @@
 import { getRecentGrants } from "@/server/ops-client";
-import { jsonErr, jsonOk, rejectMutation } from "../../_shared";
+import { assertOpsBffAuth, jsonErr, jsonOk, rejectMutation } from "../../_shared";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const denied = await assertOpsBffAuth();
+    if (denied) return denied;
     return jsonOk(await getRecentGrants());
   } catch (err) {
     return jsonErr(err);

@@ -1,4 +1,7 @@
 import "server-only";
+import { optionalUpstreamBearer } from "./auth/access";
+import { isM36aEnabled } from "./auth/config";
+import { AuthError } from "./auth/errors";
 import { isFixtureMode, resolveOperationsOrigin } from "./origin";
 import {
   fixtureGrants,
@@ -44,19 +47,33 @@ async function boundedFetch(path: string, init?: RequestInit): Promise<Response>
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const origin = resolveOperationsOrigin();
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      // Never forward browser Cookie. Only a server session Bearer reaches Console.
+    };
+    if (isM36aEnabled()) {
+      const bearer = await optionalUpstreamBearer();
+      if (!bearer) {
+        throw new OpsClientError(401, "UNAUTHENTICATED", "Sign-in required.");
+      }
+      headers.Authorization = `Bearer ${bearer}`;
+    }
     const res = await fetch(`${origin}${path}`, {
       ...init,
       method: "GET",
       signal: controller.signal,
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        // Do not forward browser Authorization/Cookie.
-      },
+      headers,
     });
+    if (res.status === 401) {
+      throw new OpsClientError(401, "UNAUTHENTICATED", "Console rejected credentials.");
+    }
+    if (res.status === 403) {
+      throw new OpsClientError(403, "FORBIDDEN", "Console denied this grant.");
+    }
     return res;
   } catch (err) {
-    if (err instanceof OpsClientError) throw err;
+    if (err instanceof OpsClientError || err instanceof AuthError) throw err;
     throw new OpsClientError(503, "SOURCE_UNAVAILABLE", "Operations Console is unreachable from this host.");
   } finally {
     clearTimeout(timer);

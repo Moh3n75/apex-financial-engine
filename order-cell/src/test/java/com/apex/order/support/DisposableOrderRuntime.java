@@ -33,11 +33,15 @@ public final class DisposableOrderRuntime implements AutoCloseable {
     public static DisposableOrderRuntime start(boolean sagaConsumer, String... extra) throws Exception {
         DisposableOrderRuntime runtime = new DisposableOrderRuntime();
         try {
-            runtime.database = EmbeddedPostgres.builder().start();
-            runtime.broker = new EmbeddedKafkaKraftBroker(1, 1, TOPIC);
+            runtime.database = EmbeddedPostgresSupport.loopbackBuilder().start();
+            // Start KRaft with no topics, then create topics after the controller is reachable so
+            // createTopics does not race broker registration under Windows disk pressure.
+            runtime.broker = new EmbeddedKafkaKraftBroker(1, 1);
             runtime.broker.brokerProperty("auto.create.topics.enable", "false");
             runtime.broker.brokerListProperty("apex.m24.test.brokers");
             runtime.broker.afterPropertiesSet();
+            EmbeddedKafkaSupport.awaitController(runtime.broker);
+            runtime.broker.addTopics(TOPIC);
 
             StandardEnvironment environment = new StandardEnvironment();
             environment.getPropertySources().remove(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);

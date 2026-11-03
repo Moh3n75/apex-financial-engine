@@ -35,6 +35,7 @@ import tools.jackson.databind.json.JsonMapper;
 class IdentityReplicasIT {
   static final JsonMapper JSON = JsonMapper.builder().build();
   static final String REDIRECT = "http://127.0.0.1:19999/callback";
+  static final String OPS_REDIRECT = "http://127.0.0.1:3000/api/auth/callback";
 
   static String enc(String value) {
     return URLEncoder.encode(value, StandardCharsets.UTF_8);
@@ -553,6 +554,45 @@ class IdentityReplicasIT {
     }
   }
 
+  @Test
+  void m36aOpsWebClientIssuesConsoleAudienceAndOpsScope() throws Exception {
+    try (var f = new Fixture()) {
+      f.start();
+      var browser = f.browser();
+      var grant = f.authorizeOpsWeb(browser, true);
+      var tokens = f.redeemOpsWeb(f.nodes[0], grant.code(), grant.verifier());
+      assertThat(tokens.statusCode()).isEqualTo(200);
+      var body = JSON.readTree(tokens.body());
+      var access = f.decoder("apex-operations-console").decode(body.path("access_token").asText());
+      assertThat(access.getAudience()).contains("apex-operations-console");
+      assertThat(access.getClaimAsString("principal_type")).isEqualTo("user");
+      assertThat(access.getClaimAsString("tenant_id")).isEqualTo(f.tenant.toString());
+      assertThat(access.getClaimAsString("client_id")).isEqualTo("apex-ops-web");
+      Object scopeClaim = access.getClaim("scope");
+      List<String> scopes;
+      if (scopeClaim instanceof Collection<?> c) {
+        scopes = c.stream().map(String::valueOf).toList();
+      } else {
+        scopes =
+            Arrays.stream(String.valueOf(scopeClaim).trim().split("\\s+"))
+                .filter(s -> !s.isBlank())
+                .toList();
+      }
+      assertThat(scopes).contains("ops.console.read");
+      assertThatThrownBy(() -> f.decoder("apex-api").decode(body.path("access_token").asText()))
+          .isInstanceOf(JwtException.class);
+      f.record(
+          "m36a-ops-web-token",
+          Map.of(
+              "audience",
+              "apex-operations-console",
+              "scope",
+              "ops.console.read",
+              "principal_type",
+              "user"));
+    }
+  }
+
   record Grant(String code, String verifier, String nonce) {}
 
   static final class Fixture implements AutoCloseable {
@@ -654,6 +694,37 @@ class IdentityReplicasIT {
         clients.save(builder.build());
         jdbc.update("INSERT INTO identity_client_policy VALUES(?,?,?)", name, tenant, "apex-api");
       }
+      // M36A Operations Web confidential client (does not alter public/web/machine assertions).
+      clients.save(
+          RegisteredClient.withId("apex-ops-web")
+              .clientId("apex-ops-web")
+              .clientName("apex-ops-web")
+              .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+              .clientSecret(encoder.encode(secret))
+              .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+              .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+              .redirectUri("http://127.0.0.1:3000/api/auth/callback")
+              .scope("openid")
+              .scope("profile")
+              .scope("ops.console.read")
+              .clientSettings(
+                  ClientSettings.builder()
+                      .requireProofKey(true)
+                      .requireAuthorizationConsent(true)
+                      .build())
+              .tokenSettings(
+                  TokenSettings.builder()
+                      .accessTokenTimeToLive(Duration.ofMinutes(2))
+                      .authorizationCodeTimeToLive(Duration.ofMinutes(1))
+                      .refreshTokenTimeToLive(Duration.ofHours(1))
+                      .reuseRefreshTokens(false)
+                      .build())
+              .build());
+      jdbc.update(
+          "INSERT INTO identity_client_policy VALUES(?,?,?)",
+          "apex-ops-web",
+          tenant,
+          "apex-operations-console");
       edge = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
       issuer = "http://127.0.0.1:" + edge.getAddress().getPort();
       nodes[0] = new Node(this, port(), 0);
@@ -897,6 +968,89 @@ class IdentityReplicasIT {
               "code_verifier",
               verifier),
           client.equals("web") ? "web:" + secret : null);
+    }
+
+    Grant authorizeOpsWeb(HttpClient browser, boolean login) throws Exception {
+      String verifier = UUID.randomUUID() + "-" + UUID.randomUUID(),
+          nonce = UUID.randomUUID().toString(),
+          state = UUID.randomUUID().toString();
+      var fields =
+          new LinkedHashMap<>(
+              Map.of(
+                  "client_id",
+                  "apex-ops-web",
+                  "response_type",
+                  "code",
+                  "redirect_uri",
+                  OPS_REDIRECT,
+                  "scope",
+                  "openid profile ops.console.read",
+                  "state",
+                  state,
+                  "nonce",
+                  nonce,
+                  "code_challenge",
+                  Base64.getUrlEncoder()
+                      .withoutPadding()
+                      .encodeToString(
+                          MessageDigest.getInstance("SHA-256")
+                              .digest(verifier.getBytes(StandardCharsets.US_ASCII))),
+                  "code_challenge_method",
+                  "S256"));
+      var response = get(browser, issuer + "/oauth2/authorize?" + form(fields));
+      if (login) {
+        assertThat(response.statusCode()).isEqualTo(302);
+        var page =
+            get(
+                browser,
+                URI.create(issuer)
+                    .resolve(response.headers().firstValue("location").orElseThrow())
+                    .toString());
+        var logged =
+            post(
+                browser,
+                issuer + "/login",
+                Map.of(
+                    "username",
+                    "alice",
+                    "password",
+                    password,
+                    "_csrf",
+                    hidden(page.body(), "_csrf")),
+                null);
+        assertThat(logged.statusCode()).isEqualTo(302);
+        response = get(browser, logged.headers().firstValue("location").orElseThrow());
+      }
+      if (response.statusCode() == 200) {
+        var consent = new LinkedHashMap<String, String>();
+        consent.put("client_id", "apex-ops-web");
+        consent.put("state", hidden(response.body(), "state"));
+        consent.put("scope", "ops.console.read profile");
+        response = post(browser, issuer + "/oauth2/authorize", consent, null);
+      }
+      assertThat(response.statusCode()).isEqualTo(302);
+      var q = query(response.headers().firstValue("location").orElseThrow());
+      assertThat(q.get("state")).isEqualTo(state);
+      assertThat(q.get("code")).isNotBlank();
+      return new Grant(q.get("code"), verifier, nonce);
+    }
+
+    HttpResponse<String> redeemOpsWeb(Node node, String code, String verifier) throws Exception {
+      return post(
+          plain,
+          node.url + "/oauth2/token",
+          Map.of(
+              "grant_type",
+              "authorization_code",
+              "client_id",
+              "apex-ops-web",
+              "redirect_uri",
+              OPS_REDIRECT,
+              "code",
+              code,
+              "code_verifier",
+              verifier),
+          "apex-ops-web:" + secret);
     }
 
     HttpResponse<String> refresh(Node node, String token) throws Exception {

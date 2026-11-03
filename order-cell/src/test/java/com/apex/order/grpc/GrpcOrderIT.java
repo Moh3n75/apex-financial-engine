@@ -37,19 +37,24 @@ class GrpcOrderIT {
     Path clientJar = root.resolve("sample-grpc-client/target/sample-grpc-client.jar");
     assertThat(serverJar).isRegularFile();
     assertThat(clientJar).isRegularFile();
-    var broker = new EmbeddedKafkaKraftBroker(1, 1, TOPIC, TOPIC + "-dlt");
+    // Start KRaft before durable PG sync so createTopics does not contend with fsync flush, and
+    // create topics only after the quorum controller answers metadata RPCs.
+    var broker = new EmbeddedKafkaKraftBroker(1, 1);
     broker.brokerProperty("auto.create.topics.enable", "false");
     broker.brokerListProperty("apex.m31.disposable.brokers");
     Process server = null;
-    try (var db =
-        EmbeddedPostgres.builder()
-            .setServerConfig("fsync", "on")
-            .setServerConfig("synchronous_commit", "on")
-            .setServerConfig("full_page_writes", "on")
-            .start()) {
-      try {
-        broker.afterPropertiesSet();
-        int grpcPort = freePort(), httpPort = freePort();
+    try {
+      broker.afterPropertiesSet();
+      com.apex.order.support.EmbeddedKafkaSupport.awaitController(broker);
+      broker.addTopics(TOPIC, TOPIC + "-dlt");
+      try (var db =
+          com.apex.order.support.EmbeddedPostgresSupport.loopbackBuilder()
+              .setServerConfig("fsync", "on")
+              .setServerConfig("synchronous_commit", "on")
+              .setServerConfig("full_page_writes", "on")
+              .start()) {
+        try {
+          int grpcPort = freePort(), httpPort = freePort();
         var jdbc = new JdbcTemplate(db.getPostgresDatabase());
         String group = "m31-owned-" + UUID.randomUUID();
         Path serverLog = output.resolve("grpc-order-process.log");
@@ -380,13 +385,15 @@ class GrpcOrderIT {
                   "queriesEmitKafka",
                   false));
         }
-      } finally {
-        stop(server);
-        broker.destroy();
-        Files.writeString(
-            output.resolve("grpc-e2e-evidence.json"),
-            JSON.writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
+        } finally {
+          stop(server);
+          Files.writeString(
+              output.resolve("grpc-e2e-evidence.json"),
+              JSON.writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
+        }
       }
+    } finally {
+      broker.destroy();
     }
   }
 
