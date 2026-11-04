@@ -87,6 +87,60 @@
         <plugins>
 
             <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>4.3.1</version>
+
+                <executions>
+                    <execution>
+                        <id>load-database-config</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <scripts>
+                        <script>${project.basedir}/build/load-db-config.groovy</script>
+                    </scripts>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.groovy</groupId>
+                        <artifactId>groovy</artifactId>
+                        <version>4.0.24</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.groovy</groupId>
+                        <artifactId>groovy-yaml</artifactId>
+                        <version>4.0.24</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>13.12.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-database-postgresql</artifactId>
+                        <version>13.12.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.7.13</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
                 <version>3.21.7</version>
@@ -118,23 +172,10 @@
                     <skip>${jooq.codegen.skip}</skip>
 
                     <jdbc>
-
-                        <driver>
-                            org.postgresql.Driver
-                        </driver>
-
-                        <url>
-                            jdbc:postgresql://localhost:5432/postgres
-                        </url>
-
-                        <user>
-                            postgres
-                        </user>
-
-                        <password>
-                            123456789
-                        </password>
-
+                        <driver>org.postgresql.Driver</driver>
+                        <url>${db.url}</url>
+                        <user>${db.user}</user>
+                        <password>${db.password}</password>
                     </jdbc>
 
 
@@ -202,7 +243,6 @@
                 </configuration>
 
             </plugin>
-
         </plugins>
     </build>
 
