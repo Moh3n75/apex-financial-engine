@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { isM36aEnabled } from "@/server/auth/config";
 import { requireOpsSession } from "@/server/auth/access";
 import { AuthError } from "@/server/auth/errors";
+import {
+  assertNoTenantRowFilter,
+  assertResourceGrant,
+} from "@/server/auth/resource-grants";
+import type { OpsSession } from "@/server/auth/session";
 import { OpsClientError, redactedErrorMessage } from "@/server/ops-client";
 import { QueryValidationError } from "@/server/query";
 
@@ -19,6 +24,33 @@ export async function assertOpsBffAuth(): Promise<NextResponse | null> {
   } catch (err) {
     return jsonErr(err);
   }
+}
+
+/** Session + optional M36B resource precheck (Console remains authoritative). */
+export async function requireOpsSessionForBff(): Promise<OpsSession> {
+  return requireOpsSession();
+}
+
+export function assertRecentResourceGrant(
+  session: OpsSession,
+  kindPath: string,
+  environment: string,
+  owner: string,
+  scope: string,
+  searchParams: URLSearchParams,
+): void {
+  assertNoTenantRowFilter(searchParams);
+  const kindMap: Record<string, string> = {
+    events: "OUTBOX_EVENT",
+    inbox: "KNOWN_GROUP_INBOX",
+    requests: "REQUEST_RECEIPT",
+    workflows: "WORKFLOW",
+  };
+  const kind = kindMap[kindPath];
+  if (!kind) {
+    throw new QueryValidationError("Unknown recent kind.");
+  }
+  assertResourceGrant(session, environment, owner, kind, scope);
 }
 
 export function rejectMutation(): NextResponse {

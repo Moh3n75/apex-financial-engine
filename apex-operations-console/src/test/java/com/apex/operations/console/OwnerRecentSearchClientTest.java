@@ -63,7 +63,11 @@ class OwnerRecentSearchClientTest {
         assertThat(JsonMapper.builder().build().writeValueAsString(p)).doesNotContain("payload","idempotency","principal","Authorization");
     }
     @Test void listParametersRejectUnknownDuplicatesGiantLimitsAndNonUtcBeforeRpc() {
-        var c=mock(OwnerRecentSearchClient.class);var api=new RecentSearchApi(c);var p=new org.springframework.util.LinkedMultiValueMap<String,String>();
+        var c=mock(OwnerRecentSearchClient.class);
+        @SuppressWarnings("unchecked")
+        var auth=mock(org.springframework.beans.factory.ObjectProvider.class);
+        when(auth.getIfAvailable()).thenReturn(null);
+        var api=new RecentSearchApi(c,auth);var p=new org.springframework.util.LinkedMultiValueMap<String,String>();
         p.add("environment","test");p.add("owner","order-cell");p.add("scope","order");p.add("from",Instant.now().minusSeconds(60).toString());p.add("to",Instant.now().toString());
         p.add("sql","CANARY_SECRET");assertThatThrownBy(()->api.workflows(p)).isInstanceOf(ResponseStatusException.class);p.remove("sql");
         p.add("limit","1000000");assertThatThrownBy(()->api.workflows(p)).isInstanceOf(ResponseStatusException.class);p.remove("limit");

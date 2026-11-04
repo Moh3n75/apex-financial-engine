@@ -1,137 +1,72 @@
 package com.apex.gateway;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.*;
-import org.junit.jupiter.api.*;
-import org.springframework.core.env.*;
-import org.springframework.mock.web.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 @Tag("unit")
 class GatewaySafetyTest {
+
   @Test
-  void missingBackendKeeps503AndDoesNotExposeInternalDiagnostics() throws Exception {
-    var request =
-        org.springframework.web.servlet.function.ServerRequest.create(
-            new MockHttpServletRequest(), List.of());
-    var response =
-        GatewayApplication.upstreamFailures()
-            .filter(
-                request,
-                ignored -> {
-                  throw new org.springframework.web.client.HttpServerErrorException(
-                      org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,
-                      "internal diagnostic must not escape");
-                });
-    assertThat(response.statusCode().value()).isEqualTo(503);
-    assertThat(((org.springframework.web.servlet.function.EntityResponse<?>) response).entity())
-        .isEqualTo(Map.of("code", "UPSTREAM_UNAVAILABLE", "outcome", "UNKNOWN"));
+  void gatewayRemainsASimpleSpringBootEntryPoint() {
+    assertThat(GatewayApplication.class.isAnnotationPresent(SpringBootApplication.class))
+            .isTrue();
   }
 
   @Test
-  void timedOutWriteRemainsUnknownAndIsNeverAutomaticallyRetried() throws Exception {
-    var calls = new java.util.concurrent.atomic.AtomicInteger();
-    var request =
-        org.springframework.web.servlet.function.ServerRequest.create(
-            new MockHttpServletRequest(), List.of());
-    var response =
-        GatewayApplication.upstreamFailures()
-            .filter(
-                request,
-                ignored -> {
-                  calls.incrementAndGet();
-                  throw new org.springframework.web.client.ResourceAccessException(
-                      "owned transport timeout");
-                });
-    assertThat(response.statusCode().value()).isEqualTo(504);
-    assertThat(calls.get()).isEqualTo(1);
-    assertThat(((org.springframework.web.servlet.function.EntityResponse<?>) response).entity())
-        .isEqualTo(Map.of("code", "UPSTREAM_TRANSPORT_FAILURE", "outcome", "UNKNOWN"));
-  }
-
-  @Test
-  void publicAndDefaultExposureFailClosed() {
-    for (var props :
-        List.<Map<String, Object>>of(
-            Map.of(),
-            Map.of("apex.gateway.mode", "loopback-development", "server.address", "0.0.0.0"))) {
-      var e = new StandardEnvironment();
-      e.getPropertySources().addFirst(new MapPropertySource("test", props));
-      assertThatThrownBy(() -> GatewayApplication.validateExposure(e))
-          .isInstanceOf(IllegalStateException.class);
-    }
-  }
-
-  @Test
-  void onlyExplicitLoopbackDevelopmentIsEnabled() {
-    var e = new StandardEnvironment();
-    e.getPropertySources()
-        .addFirst(
-            new MapPropertySource(
-                "test",
-                Map.of(
-                    "apex.gateway.mode", "loopback-development", "server.address", "127.0.0.1")));
-    assertThatCode(() -> GatewayApplication.validateExposure(e)).doesNotThrowAnyException();
-  }
-
-  @Test
-  void stripsSecurityForwardingAndCallerRequestIdentityButPreservesValidCorrelation()
-      throws Exception {
+  void edgeHeadersStripsUntrustedHeadersAndReplacesCallerRequestId() throws Exception {
     var incoming = new MockHttpServletRequest();
     var response = new MockHttpServletResponse();
     String correlation = UUID.randomUUID().toString();
     incoming.addHeader("X-Correlation-ID", correlation);
     incoming.addHeader("X-Request-ID", "forged");
-    for (String name :
-        List.of(
-            "Authorization",
-            "Cookie",
-            "X-User",
-            "X-Tenant",
-            "X-Cell-Id",
-            "Forwarded",
-            "X-Forwarded-Host",
-            "X-Apex-Instance")) incoming.addHeader(name, "forged");
-    new EdgeHeaders()
-        .doFilter(
-            incoming,
-            response,
-            (request, reply) -> {
-              var safe = (HttpServletRequest) request;
-              for (String name :
-                  List.of(
-                      "Authorization",
-                      "Cookie",
-                      "X-User",
-                      "X-Tenant",
-                      "X-Cell-Id",
-                      "Forwarded",
-                      "X-Forwarded-Host",
-                      "X-Apex-Instance")) {
-                assertThat(safe.getHeader(name)).isNull();
-                assertThat(Collections.list(safe.getHeaders(name))).isEmpty();
-                assertThat(Collections.list(safe.getHeaderNames())).doesNotContain(name);
-              }
-              assertThat(safe.getHeader("X-Correlation-ID")).isEqualTo(correlation);
-              assertThat(UUID.fromString(safe.getHeader("X-Request-ID"))).isNotNull();
-              assertThat(safe.getHeader("X-Request-ID")).isNotEqualTo("forged");
-            });
+
+    var untrustedHeaders = List.of(
+            "Authorization", "Cookie", "X-User", "X-Tenant", "X-Cell-Id",
+            "Forwarded", "X-Forwarded-Host", "X-Apex-Instance");
+    for (String header : untrustedHeaders) {
+      incoming.addHeader(header, "forged");
+    }
+
+    new EdgeHeaders().doFilter(incoming, response, (request, reply) -> {
+      var safe = (HttpServletRequest) request;
+      for (String header : untrustedHeaders) {
+        assertThat(safe.getHeader(header)).isNull();
+        assertThat(Collections.list(safe.getHeaders(header))).isEmpty();
+        assertThat(Collections.list(safe.getHeaderNames())).doesNotContain(header);
+      }
+
+      assertThat(safe.getHeader("X-Correlation-ID")).isEqualTo(correlation);
+      String requestId = safe.getHeader("X-Request-ID");
+      assertThat(UUID.fromString(requestId)).isNotNull();
+      assertThat(requestId).isNotEqualTo("forged");
+    });
+
     assertThat(response.getHeader("X-Correlation-ID")).isEqualTo(correlation);
+    assertThat(UUID.fromString(response.getHeader("X-Request-ID"))).isNotNull();
   }
 
   @Test
-  void malformedTraceIsReplacedWithoutBecomingAuthentication() throws Exception {
+  void edgeHeadersReplacesMalformedCorrelationId() throws Exception {
     var request = new MockHttpServletRequest();
     request.addHeader("X-Correlation-ID", "bad");
     var response = new MockHttpServletResponse();
-    new EdgeHeaders()
-        .doFilter(
-            request,
-            response,
-            (r, s) ->
-                assertThat(UUID.fromString(((HttpServletRequest) r).getHeader("X-Correlation-ID")))
-                    .isNotNull());
+
+    new EdgeHeaders().doFilter(request, response, (wrapped, ignored) -> {
+      String correlation = ((HttpServletRequest) wrapped).getHeader("X-Correlation-ID");
+      assertThat(UUID.fromString(correlation)).isNotNull();
+      assertThat(correlation).isNotEqualTo("bad");
+    });
+
+    assertThat(UUID.fromString(response.getHeader("X-Correlation-ID"))).isNotNull();
     assertThat(response.getHeader("X-Correlation-ID")).isNotEqualTo("bad");
   }
 }

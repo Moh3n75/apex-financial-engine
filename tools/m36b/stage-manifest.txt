@@ -1,0 +1,35 @@
+# M36B selective staging candidates (examples only — user commits selectively).
+# EXCLUDE: root APEX_*_ACCEPTANCE.md, out/, target/, node_modules/, .next/,
+# private keys, .env.local, Playwright screenshots with credentials, generated certs.
+
+tools/m36b/M36B_DECISION_RECORD.md
+tools/m36b/verify-m36b-live.ps1
+tools/m36b/stage-manifest.txt
+
+apex-operations-console/src/main/java/com/apex/operations/console/security/m36b/
+apex-operations-console/src/main/java/com/apex/operations/console/security/OpsM36aProperties.java
+apex-operations-console/src/main/java/com/apex/operations/console/security/OpsM36aSecurityConfiguration.java
+apex-operations-console/src/main/java/com/apex/operations/console/ReadApi.java
+apex-operations-console/src/main/java/com/apex/operations/console/RecentSearchApi.java
+apex-operations-console/src/main/java/com/apex/operations/console/OwnerRecentSearchClient.java
+apex-operations-console/src/test/java/com/apex/operations/console/security/m36b/
+apex-operations-console/src/test/java/com/apex/operations/console/OwnerRecentSearchClientTest.java
+
+apps/operations-web/src/lib/resource-grants.ts
+apps/operations-web/src/lib/resource-grants.test.ts
+apps/operations-web/src/server/auth/resource-grants.ts
+apps/operations-web/src/server/auth/oidc.ts
+apps/operations-web/src/app/api/auth/callback/route.ts
+apps/operations-web/src/app/api/ops/_shared.ts
+apps/operations-web/src/app/api/ops/recent/[kind]/route.ts
+apps/operations-web/e2e/m36b-*.spec.ts
+apps/operations-web/playwright.m36b.config.ts
+apps/operations-web/package.json
+
+inventory-cell/src/test/java/com/apex/inventory/OpsM36bLiveIT.java
+inventory-cell/src/test/java/com/apex/inventory/m36a/DisposableM36aIdentity.java
+
+# Do NOT stage (protected / unrelated dirty):
+# apex-bootstrap/**/application*.yml
+# */src/main/resources/application.yml (cells)
+# out/**

@@ -17,6 +17,11 @@ public class OpsM36aProperties {
   private String tenantId = "";
   /** Optional environment boundary; empty skips the claim check. */
   private String environment = "";
+  /**
+   * When &gt; 0, Console uses a bounded remote JWKS cache lifespan (ms) instead of the Nimbus
+   * default (~5 min). Used by M36B live rotation proofs. {@code 0} keeps Spring default decoder.
+   */
+  private long jwksCacheTtlMs = 0;
 
   public boolean isEnabled() {
     return enabled;
@@ -64,6 +69,14 @@ public class OpsM36aProperties {
 
   public void setEnvironment(String environment) {
     this.environment = environment;
+  }
+
+  public long getJwksCacheTtlMs() {
+    return jwksCacheTtlMs;
+  }
+
+  public void setJwksCacheTtlMs(long jwksCacheTtlMs) {
+    this.jwksCacheTtlMs = jwksCacheTtlMs;
   }
 
   public UUID tenantUuid() {

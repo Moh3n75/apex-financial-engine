@@ -17,7 +17,7 @@
     <properties>
         <!-- No implicit database connection during ordinary reactor builds.
              tools/m30/verify-m30.ps1 supplies an owned disposable schema. -->
-        <jooq.codegen.skip>true</jooq.codegen.skip>
+        <jooq.codegen.skip>false</jooq.codegen.skip>
     </properties>
 
     <dependencies>
@@ -124,15 +124,15 @@
                         </driver>
 
                         <url>
-                            ${apex.jooq.url}
+                            jdbc:postgresql://localhost:5432/postgres
                         </url>
 
                         <user>
-                            ${apex.jooq.user}
+                            postgres
                         </user>
 
                         <password>
-                            ${apex.jooq.password}
+                            123456789
                         </password>
 
                     </jdbc>

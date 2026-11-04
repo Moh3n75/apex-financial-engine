@@ -17,6 +17,8 @@
     "test:e2e:fixture": "playwright test -c playwright.config.ts",
     "test:e2e:live": "playwright test -c playwright.live.config.ts",
     "test:e2e:m36a-unauth": "playwright test -c playwright.m36a.config.ts",
+    "test:e2e:m36a-live": "playwright test -c playwright.m36a-live.config.ts",
+    "test:e2e:m36b-live": "playwright test -c playwright.m36b.config.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "verify:fixture-e2e": "pnpm verify && pnpm test:e2e:fixture"
   },

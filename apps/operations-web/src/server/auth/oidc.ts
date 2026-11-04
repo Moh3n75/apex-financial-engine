@@ -44,7 +44,7 @@ export async function beginLogin(returnTo = "/"): Promise<string> {
     state,
     nonce,
     codeVerifier,
-    returnTo: returnTo.startsWith("/") ? returnTo : "/",
+    returnTo: safeReturnTo(returnTo),
   });
   return client.authorizationUrl({
     scope: cfg.scopes,
@@ -113,6 +113,22 @@ export async function refreshSession(session: OpsSession): Promise<OpsSession | 
   if (!hasOpsConsoleScope(next)) return null;
   await writeSession(next);
   return next;
+}
+
+/** Path-only same-origin return; rejects protocol-relative and absolute URLs. */
+export function safeReturnTo(returnTo: string): string {
+  if (!returnTo.startsWith("/") || returnTo.startsWith("//") || returnTo.includes("\\")) {
+    return "/";
+  }
+  try {
+    const u = new URL(returnTo, "http://127.0.0.1:3000");
+    if (u.hostname !== "127.0.0.1" && u.hostname !== "localhost") {
+      return "/";
+    }
+    return u.pathname + u.search + u.hash;
+  } catch {
+    return "/";
+  }
 }
 
 export async function endLoginAtIssuer(idToken?: string): Promise<string | null> {

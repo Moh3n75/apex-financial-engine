@@ -1,5 +1,9 @@
 package com.apex.operations.console.security;
 
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
+import com.nimbusds.jose.proc.SecurityContext;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -62,7 +66,7 @@ public class OpsM36aSecurityConfiguration {
 
   @Bean(name = "opsM36aJwtDecoder")
   @ConditionalOnMissingBean(name = "opsM36aJwtDecoder")
-  JwtDecoder opsM36aJwtDecoder(OpsM36aProperties props) {
+  JwtDecoder opsM36aJwtDecoder(OpsM36aProperties props) throws Exception {
     validateProps(props);
     return buildJwtDecoder(props);
   }
@@ -83,8 +87,26 @@ public class OpsM36aSecurityConfiguration {
     props.tenantUuid();
   }
 
-  static JwtDecoder buildJwtDecoder(OpsM36aProperties props) {
-    NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(props.getIssuer());
+  static JwtDecoder buildJwtDecoder(OpsM36aProperties props) throws Exception {
+    NimbusJwtDecoder decoder;
+    long ttlMs = props.getJwksCacheTtlMs();
+    if (ttlMs > 0) {
+      String issuer = props.getIssuer().replaceAll("/$", "");
+      String jwksUri = issuer + "/oauth2/jwks";
+      long refreshMs = Math.max(1_000L, Math.min(ttlMs / 2, 5_000L));
+      // Nimbus requires rateLimit < TTL and refreshAhead+refreshTimeout ≤ TTL.
+      long rateLimitMs = Math.max(500L, Math.min(refreshMs, ttlMs / 3));
+      long refreshAheadMs = Math.max(500L, Math.min(2_000L, ttlMs / 4));
+      JWKSource<SecurityContext> source =
+          JWKSourceBuilder.create(URI.create(jwksUri).toURL())
+              .cache(ttlMs, refreshMs)
+              .rateLimited(rateLimitMs)
+              .refreshAheadCache(refreshAheadMs, false)
+              .build();
+      decoder = NimbusJwtDecoder.withJwkSource(source).build();
+    } else {
+      decoder = JwtDecoders.fromIssuerLocation(props.getIssuer());
+    }
     OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(props.getIssuer());
     decoder.setJwtValidator(
         new DelegatingOAuth2TokenValidator<>(
@@ -120,7 +142,7 @@ public class OpsM36aSecurityConfiguration {
   static OAuth2TokenValidator<Jwt> tenantValidator(String tenantId) {
     return token -> {
       Object claim = token.getClaim("tenant_id");
-      if (claim != null && tenantId.equals(String.valueOf(claim))) {
+      if (claim != null && tenantId.equals(Objects.toString(claim, ""))) {
         return OAuth2TokenValidatorResult.success();
       }
       return OAuth2TokenValidatorResult.failure(

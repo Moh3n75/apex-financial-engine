@@ -63,7 +63,9 @@ public final class OwnerRecentSearchClient {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         if(query.fromInclusive().isBefore(Instant.now().minusSeconds(3600)) || query.toExclusive().isAfter(Instant.now().plusSeconds(1)))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        String key=query.binding()+"|"+query.cursor();
+        // Partition cache by authenticated principal so permission loss cannot replay another subject's page.
+        String principal=org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication()==null?"":String.valueOf(org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName());
+        String key=principal+"|"+query.binding()+"|"+query.cursor();
         Semaphore owner=admissions.get(query.owner());
         if(!owner.tryAcquire())return failed(key,"SHED");
         boolean admitted=false;

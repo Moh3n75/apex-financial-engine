@@ -1,0 +1,35 @@
+# M36A.1 selective source-only staging manifest
+# Do NOT auto-stage/commit/push. Review each path before `git add`.
+# Never stage: secrets, .env.local, out/, target/, node_modules/, .next/,
+# credentials/certificates, acceptance reports, protected dirty application.yml trees.
+
+## Include (M36A.1 + prior M36A already in HEAD 3997c0a where noted)
+
+### Tools
+tools/m36a/verify-m36a1-live.ps1
+tools/m36a/M36A1_STAGE_MANIFEST.txt
+
+### Inventory live bridge + disposable Identity fixture (test-only)
+inventory-cell/pom.xml
+inventory-cell/src/test/java/com/apex/inventory/OpsM36a1AuthenticatedLiveIT.java
+inventory-cell/src/test/java/com/apex/inventory/m36a/DisposableM36aIdentity.java
+# Optional: apex-identity-server test-jar plugin + support copy — not required for Full offline
+
+### Next.js authenticated live Playwright
+apps/operations-web/package.json
+apps/operations-web/e2e/m36a-auth-helpers.ts
+apps/operations-web/e2e/m36a-live-happy.spec.ts
+apps/operations-web/e2e/m36a-live-stale.spec.ts
+apps/operations-web/playwright.m36a-live.config.ts
+
+## Exclude (operator upload only / protected)
+APEX_M36A_1_AUTHENTICATED_LIVE_ACCEPTANCE.md
+APEX_M36A_1_FOLLOW_GAPS.md
+APEX_M36A_SECURITY_ACCEPTANCE.md
+APEX_REG_01_FINAL_ACCEPTANCE.md
+APEX_OPS_04B_LIVE_INTEGRATION_ACCEPTANCE.md
+out/**
+**/target/**
+apps/operations-web/.env.local
+apex-bootstrap/**/application*.yml
+*-cell/src/main/resources/application.yml

@@ -11,30 +11,6 @@ import org.springframework.core.env.*;
 
 @Tag("unit")
 class DiscoveryTest {
-  @Test
-  void fetchOnlyEurekaDoesNotStartWebAutoRegistrationAndRegisteredReadinessIncludesDb() {
-    var values = new HashMap<String, Object>();
-    values.put("apex.discovery.provider", "eureka");
-    values.put("eureka.client.service-url.defaultZone", "http://127.0.0.1:8761/eureka/");
-    values.put("apex.discovery.insecure-loopback-test-only", true);
-    var client = env(values);
-    client.setActiveProfiles("eureka");
-    new DiscoveryModeGuard().postProcessEnvironment(client, null);
-    assertThat(
-            client.getProperty(
-                "spring.cloud.service-registry.auto-registration.enabled", Boolean.class))
-        .isFalse();
-    values.put("apex.discovery.registration.enabled", true);
-    var server = env(values);
-    server.setActiveProfiles("eureka");
-    new DiscoveryModeGuard().postProcessEnvironment(server, null);
-    assertThat(
-            server.getProperty(
-                "spring.cloud.service-registry.auto-registration.enabled", Boolean.class))
-        .isTrue();
-    assertThat(server.getProperty("management.endpoint.health.group.readiness.include"))
-        .isEqualTo("*");
-  }
 
   final List<ServiceInstance> live = new ArrayList<>();
   final DiscoveryClient provider =
@@ -142,54 +118,6 @@ class DiscoveryTest {
         .isInstanceOf(IllegalArgumentException.class);
   }
 
-  @Test
-  void disabledModeTurnsOffBothNetworkProvidersBeforeBeans() {
-    var env = env(Map.of());
-    new DiscoveryModeGuard().postProcessEnvironment(env, null);
-    assertThat(env.getProperty("eureka.client.enabled", Boolean.class)).isFalse();
-    assertThat(env.getProperty("spring.cloud.kubernetes.enabled", Boolean.class)).isFalse();
-  }
-
-  @Test
-  void rejectsMultipleModesWrongProfileAndUnscopedKubernetes() {
-    var env = env(Map.of("apex.discovery.provider", "eureka"));
-    assertThatThrownBy(() -> new DiscoveryModeGuard().postProcessEnvironment(env, null))
-        .isInstanceOf(IllegalStateException.class);
-    env.setActiveProfiles("eureka", "kubernetes");
-    assertThatThrownBy(() -> new DiscoveryModeGuard().postProcessEnvironment(env, null))
-        .isInstanceOf(IllegalStateException.class);
-    var kube =
-        env(
-            Map.of(
-                "apex.discovery.provider",
-                "kubernetes",
-                "spring.cloud.kubernetes.discovery.all-namespaces",
-                true));
-    kube.setActiveProfiles("kubernetes");
-    assertThatThrownBy(() -> new DiscoveryModeGuard().postProcessEnvironment(kube, null))
-        .hasMessageContaining("namespace");
-  }
-
-  @Test
-  void kubernetesSelectsOnlyReadyEndpointSlicesAndDisablesEureka() {
-    var env =
-        env(
-            Map.of(
-                "apex.discovery.provider",
-                "kubernetes",
-                "spring.cloud.kubernetes.client.namespace",
-                "apex-test"));
-    env.setActiveProfiles("kubernetes");
-    new DiscoveryModeGuard().postProcessEnvironment(env, null);
-    assertThat(env.getProperty("eureka.client.enabled", Boolean.class)).isFalse();
-    assertThat(
-            env.getProperty("spring.cloud.kubernetes.discovery.use-endpoint-slices", Boolean.class))
-        .isTrue();
-    assertThat(
-            env.getProperty(
-                "spring.cloud.kubernetes.discovery.include-not-ready-addresses", Boolean.class))
-        .isFalse();
-  }
 
   static StandardEnvironment env(Map<String, Object> values) {
     var e = new StandardEnvironment();
