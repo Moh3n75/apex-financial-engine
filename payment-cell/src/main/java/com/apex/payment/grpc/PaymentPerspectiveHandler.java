@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Profile("grpc")
 public class PaymentPerspectiveHandler {
   private final JdbcTemplate jdbc;
 

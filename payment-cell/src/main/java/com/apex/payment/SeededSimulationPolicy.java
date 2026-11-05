@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.jdbc.core.JdbcTemplate;
 @Component
-@Profile("simulation")
 public class SeededSimulationPolicy implements PaymentPolicy {
     private final JdbcTemplate jdbc;
     public SeededSimulationPolicy(JdbcTemplate jdbc) { this.jdbc=jdbc; }
