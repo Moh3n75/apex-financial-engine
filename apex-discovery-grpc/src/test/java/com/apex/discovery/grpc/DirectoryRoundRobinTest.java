@@ -37,7 +37,7 @@ class DirectoryRoundRobinTest {
           new DirectoryNameResolverFactory(
               directory, "order-cell", "localhost", scheduler, Duration.ofMillis(250));
       channel =
-          NettyChannelBuilder.forTarget("dns:///localhost:443")
+          NettyChannelBuilder.forTarget("apex:///order-cell")
               .nameResolverFactory(factory)
               .intercept(new DiscoveryFreshnessInterceptor(directory, "order-cell"))
               .defaultLoadBalancingPolicy("round_robin")
@@ -90,6 +90,12 @@ class DirectoryRoundRobinTest {
   void rejectsUnboundedRefreshAndUntrustedAuthoritySyntax() {
     var timer = Executors.newSingleThreadScheduledExecutor();
     try {
+      var logical = new DirectoryNameResolverFactory(
+          id -> List.of(), "order-cell", "localhost", timer, Duration.ofSeconds(1));
+      assertThat(logical.getDefaultScheme()).isEqualTo("apex");
+      assertThat(logical.newNameResolver(URI.create("dns:///localhost:443"), null)).isNull();
+      assertThat(logical.newNameResolver(URI.create("apex:///payment-cell"), null)).isNull();
+      assertThat(logical.newNameResolver(URI.create("apex:///order-cell?target=evil"), null)).isNull();
       assertThatThrownBy(
               () ->
                   new DirectoryNameResolverFactory(

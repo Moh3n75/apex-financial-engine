@@ -21,17 +21,17 @@ public final class CloudCellServiceDirectory implements CellServiceDirectory {
   @Override
   public List<CellEndpoint> endpoints(String logicalCell) {
     String logical = CellEndpoint.logicalName(logicalCell);
-    var target = policy.getTargets().get(logical);
-    if (target == null) throw new IllegalArgumentException("Destination is not allowlisted");
+    String authority = policy.trustedAuthority(logical);
     if (!fresh.getAsBoolean()) throw new IllegalStateException("Discovery snapshot is stale");
     var ids = new HashSet<String>();
     var sockets = new HashSet<String>();
     var endpoints = new ArrayList<CellEndpoint>();
     for (var instance : cloud.getInstances(logical)) {
       var metadata = instance.getMetadata();
+      if ("false".equals(metadata.get("apex.grpc.enabled"))) continue;
       if (!CellEndpoint.logicalName(instance.getServiceId()).equals(logical)
           || !logical.equals(metadata.get("apex.cell-id"))
-          || !target.authority().equals(metadata.get("apex.grpc.authority")))
+          || !authority.equals(metadata.get("apex.grpc.authority")))
         throw new IllegalStateException("Discovered Cell identity/authority mismatch");
       String rawPort = metadata.getOrDefault("apex.grpc.port", metadata.get("port.grpc"));
       int grpcPort;
@@ -48,7 +48,7 @@ public final class CloudCellServiceDirectory implements CellServiceDirectory {
               instance.getPort(),
               grpcPort,
               instance.isSecure(),
-              target.authority());
+              authority);
       if (!ids.add(endpoint.instanceId())
           || !sockets.add(endpoint.host() + ":" + endpoint.grpcPort()))
         throw new IllegalStateException("Duplicate discovered endpoint identity");

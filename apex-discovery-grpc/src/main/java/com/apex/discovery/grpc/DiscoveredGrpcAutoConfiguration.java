@@ -1,15 +1,16 @@
 package com.apex.discovery.grpc;
 
 import com.apex.platform.discovery.*;
-import com.apex.platform.grpc.internal.GrpcProperties;
+import com.apex.platform.grpc.internal.DiscoveredCellChannelFactory;
 import java.util.*;
 import java.util.concurrent.*;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.grpc.client.autoconfigure.GrpcClientProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.grpc.client.GrpcChannelBuilderCustomizer;
+import org.springframework.grpc.client.*;
 
 @AutoConfiguration(
     afterName = {
@@ -18,7 +19,9 @@ import org.springframework.grpc.client.GrpcChannelBuilderCustomizer;
       "org.springframework.boot.grpc.client.autoconfigure.GrpcClientAutoConfiguration"
     },
     beforeName = "com.apex.platform.grpc.internal.GrpcClientAutoConfiguration")
-@ConditionalOnProperty(name = "apex.discovery.grpc.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "apex.discovery.grpc.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "apex.grpc.client.enabled", havingValue = "true")
+@ConditionalOnBean(CellServiceDirectory.class)
 @EnableConfigurationProperties(DiscoveryProperties.class)
 public class DiscoveredGrpcAutoConfiguration {
   @Bean(destroyMethod = "shutdownNow")
@@ -32,48 +35,37 @@ public class DiscoveredGrpcAutoConfiguration {
 
   @Bean
   @SuppressWarnings({"rawtypes", "unchecked"})
-  GrpcChannelBuilderCustomizer discoveredGrpcChannels(
+  DiscoveredCellChannelFactory discoveredCellChannels(
       DiscoveryProperties discovery,
-      GrpcProperties routes,
       GrpcClientProperties boot,
       CellServiceDirectory directory,
-      ScheduledExecutorService cellEndpointRefresh) {
+      ScheduledExecutorService cellEndpointRefresh,
+      ObjectProvider<GrpcChannelFactory> factories) {
     discovery.validate();
-    if ("none".equals(discovery.getProvider()))
-      throw new IllegalStateException("Explicit discovery provider required");
-    var channels = new HashMap<String, String>();
-    routes
-        .getDestinations()
-        .forEach(
-            (logical, route) -> {
-              if (route.local()) return;
-              var target = discovery.getTargets().get(logical);
-              var channel = boot.getChannel().get(route.channel());
-              if (target == null
-                  || channel == null
-                  || !Boolean.TRUE.equals(channel.getSsl().getEnabled())
-                  || channel.isBypassCertificateValidation()
-                  || !("dns:///" + target.authority() + ":443").equals(channel.getTarget())
-                  || channels.putIfAbsent(route.channel(), logical) != null)
-                throw new IllegalStateException(
-                    "Discovery channel requires unique logical route and pinned TLS authority");
-              if (directory.endpoints(logical).isEmpty())
-                throw new IllegalStateException("Required discovered gRPC endpoints missing");
-            });
-    return (name, builder) -> {
-      String logical = channels.get(name);
-      if (logical == null) return;
-      String authority = discovery.getTargets().get(logical).authority();
-      builder.nameResolverFactory(
-          new DirectoryNameResolverFactory(
-              directory, logical, authority, cellEndpointRefresh, discovery.getRefreshInterval()));
-      builder.overrideAuthority(authority);
-      builder.intercept(new DiscoveryFreshnessInterceptor(directory, logical));
-      builder.defaultLoadBalancingPolicy("round_robin");
-      builder.defaultServiceConfig(
-          Map.of("loadBalancingConfig", List.of(Map.of("round_robin", Map.of()))));
-      builder.disableServiceConfigLookUp();
-      builder.disableRetry();
+    // One infrastructure-owned TLS configuration for any logical Cell. No destination
+    // address/channel map is needed, and editable registry metadata never supplies trust.
+    var tls = boot.getChannel().get("default");
+    if (tls == null || tls.isBypassCertificateValidation()
+        || Boolean.FALSE.equals(tls.getSsl().getEnabled())
+        || (!Boolean.TRUE.equals(tls.getSsl().getEnabled()) && tls.getSsl().getBundle() == null))
+      throw new IllegalStateException("Automatic Cell discovery requires verified default gRPC TLS");
+    return logicalCell -> {
+      String logical = CellEndpoint.logicalName(logicalCell);
+      String target = "apex:///" + logical;
+      if (boot.getChannel().containsKey(target))
+        throw new IllegalStateException("Logical discovery targets cannot be overridden by named channels");
+      String authority = discovery.trustedAuthority(logical);
+      var options = ChannelBuilderOptions.defaults().withCustomizer((name, builder) -> {
+        builder.nameResolverFactory(new DirectoryNameResolverFactory(
+            directory, logical, authority, cellEndpointRefresh, discovery.getRefreshInterval()));
+        builder.overrideAuthority(authority);
+        builder.intercept(new DiscoveryFreshnessInterceptor(directory, logical));
+        builder.defaultLoadBalancingPolicy("round_robin");
+        builder.defaultServiceConfig(Map.of("loadBalancingConfig", List.of(Map.of("round_robin", Map.of()))));
+        builder.disableServiceConfigLookUp();
+        builder.disableRetry();
+      });
+      return factories.getObject().createChannel(target, options);
     };
   }
 }

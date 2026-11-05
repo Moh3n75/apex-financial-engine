@@ -16,19 +16,24 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
   private final GrpcProperties properties;
   private final RpcCodec codec;
   private final ExecutionContextProvider contexts;
-  private final Map<String, ManagedChannel> channels = new HashMap<>();
+  private final CellGrpcChannelProvider channels;
   private RpcObservation observations=RpcObservation.NONE;
   GrpcInvocationClient withObservations(RpcObservation value){observations=value;return this;}
 
   GrpcInvocationClient(
       GrpcProperties p, RpcCodec c, ExecutionContextProvider ctx, GrpcChannelFactory factory) {
+    this(p, c, ctx, factory, null);
+  }
+
+  GrpcInvocationClient(GrpcProperties p, RpcCodec c, ExecutionContextProvider ctx,
+      GrpcChannelFactory factory, DiscoveredCellChannelFactory discovered) {
     properties = p;
     codec = c;
     contexts = ctx;
-    p.getDestinations().values().stream()
-        .filter(d -> !d.local())
-        .forEach(d -> channels.computeIfAbsent(d.channel(), factory::createChannel));
+    channels = new CellGrpcChannelProvider(p, factory, discovered);
   }
+
+  boolean supportsDiscovery() { return channels.supportsDiscovery(); }
 
   @Override
   public <R> R request(String destination, Object request, Class<R> type, RequestOptions options) {
@@ -66,8 +71,9 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
       if (TransactionSynchronizationManager.isActualTransactionActive())
         throw new GatewayException(GatewayException.Code.FAILED_PRECONDITION, false);
       var route = properties.getDestinations().get(destination);
-      if (route == null) throw new GatewayException(GatewayException.Code.NOT_FOUND, false);
-      if (route.local()) throw new GatewayException(GatewayException.Code.INVALID_ARGUMENT, false);
+      if (route == null && !channels.supportsDiscovery())
+        throw new GatewayException(GatewayException.Code.NOT_FOUND, false);
+      if (route != null && route.local()) throw new GatewayException(GatewayException.Code.INVALID_ARGUMENT, false);
       if (deadline.compareTo(properties.getMaxDeadline()) > 0)
         throw new IllegalArgumentException("Deadline exceeds configured maximum");
       var contract = Contracts.inspect(value.getClass(), query);
@@ -93,7 +99,7 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
       headers.put(RpcServerAuth.CORRELATION, current.correlationId().toString());
       headers.put(RpcServerAuth.REQUEST, requestId.toString());
       var stub =
-          CellGatewayGrpc.newFutureStub(channels.get(route.channel()))
+          CellGatewayGrpc.newFutureStub(channels.channel(destination))
               .withDeadlineAfter(deadline.toMillis(), TimeUnit.MILLISECONDS)
               .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
       var nativeResult = query ? stub.invokeQuery(wire) : stub.invokeRequest(wire);
@@ -131,14 +137,6 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
 
   @Override
   public void close() {
-    for (var channel : channels.values()) channel.shutdown();
-    for (var channel : channels.values()) {
-      try {
-        if (!channel.awaitTermination(5, TimeUnit.SECONDS)) channel.shutdownNow();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        channel.shutdownNow();
-      }
-    }
+    channels.close();
   }
 }

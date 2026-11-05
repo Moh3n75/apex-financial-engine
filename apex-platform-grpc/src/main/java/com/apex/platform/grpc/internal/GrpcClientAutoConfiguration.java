@@ -1,6 +1,7 @@
 package com.apex.platform.grpc.internal;
 
 import com.apex.platform.core.context.ExecutionContextProvider;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.grpc.client.autoconfigure.GrpcClientProperties;
@@ -19,8 +20,10 @@ public class GrpcClientAutoConfiguration {
       RpcCodec codec,
       ExecutionContextProvider ctx,
       GrpcChannelFactory factory,
-      GrpcClientProperties boot,RpcObservation observations) {
-    p.getDestinations()
+      GrpcClientProperties boot,RpcObservation observations,
+      ObjectProvider<DiscoveredCellChannelFactory> discovery) {
+    var discovered = discovery.getIfAvailable();
+    if (discovered == null) p.getDestinations()
         .forEach(
             (logical, d) -> {
               if (d.local()) return;
@@ -47,7 +50,7 @@ public class GrpcClientAutoConfiguration {
                       "Explicit gRPC TLS required outside explicitly enabled loopback tests");
               }
             });
-    return new GrpcInvocationClient(p, codec, ctx, factory).withObservations(observations);
+    return new GrpcInvocationClient(p, codec, ctx, factory, discovered).withObservations(observations);
   }
 
   @Bean

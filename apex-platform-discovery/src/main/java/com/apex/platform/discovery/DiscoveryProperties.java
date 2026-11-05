@@ -59,6 +59,13 @@ public class DiscoveryProperties {
     targets = Map.copyOf(v);
   }
 
+  /** Trusted local policy, never a certificate identity learned from registry metadata. */
+  public String trustedAuthority(String logicalCell) {
+    String logical = CellEndpoint.logicalName(logicalCell);
+    var pinned = targets.get(logical);
+    return pinned == null ? logical : pinned.authority();
+  }
+
   public void validate() {
     if (!java.util.Set.of("none", "eureka", "kubernetes").contains(provider)
         || refreshInterval == null

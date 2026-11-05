@@ -67,17 +67,27 @@ class DiscoveryTest {
   }
 
   @Test
-  void refusesUnknownRouteAndExpiredSnapshot() {
-    assertThatThrownBy(
-            () ->
-                new CloudCellServiceDirectory(provider, policy, () -> true)
-                    .endpoints("payment-cell"))
-        .isInstanceOf(IllegalArgumentException.class);
+  void unknownLogicalCellIsEmptyButExpiredSnapshotStillFailsClosed() {
+    assertThat(new CloudCellServiceDirectory(provider, policy, () -> true).endpoints("payment-cell"))
+        .isEmpty();
     assertThatThrownBy(
             () ->
                 new CloudCellServiceDirectory(provider, policy, () -> false)
                     .endpoints("order-cell"))
         .hasMessageContaining("stale");
+  }
+
+  @Test void automaticNamesPinTlsIndependentlyOfEditableMetadataAndSkipDisabledReplicas() {
+    policy.setTargets(Map.of());
+    var instance=instance("auto",8080);
+    instance.getMetadata().put("apex.grpc.authority","order-cell"); live.add(instance);
+    var directory=new CloudCellServiceDirectory(provider,policy,()->true);
+    assertThat(directory.endpoints("order-cell").getFirst().tlsAuthority()).isEqualTo("order-cell");
+    instance.getMetadata().put("apex.grpc.authority","attacker.example");
+    assertThatThrownBy(()->directory.endpoints("order-cell")).hasMessageContaining("mismatch");
+    instance.getMetadata().put("apex.grpc.enabled","false");
+    instance.getMetadata().remove("apex.grpc.port");
+    assertThat(directory.endpoints("order-cell")).isEmpty();
   }
 
   @Test

@@ -52,11 +52,11 @@ final class DefaultQueryGateway implements QueryGateway {
   public <R> CompletionStage<R> queryAsync(
       String destination, Object query, Class<R> type, QueryOptions options) {
     var route = properties.getDestinations().get(destination);
-    if (route == null)
+    if (route != null && route.local()) return local(query, type, options);
+    var client = remote.getIfAvailable();
+    if (route == null && (client == null || !client.supportsDiscovery()))
       return CompletableFuture.failedFuture(
           new GatewayException(GatewayException.Code.NOT_FOUND, false));
-    if (route.local()) return local(query, type, options);
-    var client = remote.getIfAvailable();
     if (client == null)
       return CompletableFuture.failedFuture(
           new GatewayException(GatewayException.Code.FAILED_PRECONDITION, false));

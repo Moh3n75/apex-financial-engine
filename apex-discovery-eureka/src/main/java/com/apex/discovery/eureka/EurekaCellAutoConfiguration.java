@@ -1,6 +1,8 @@
 package com.apex.discovery.eureka;
 
 import com.apex.platform.discovery.*;
+import com.apex.platform.grpc.api.GrpcServerEndpoint;
+import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.discovery.EurekaClient;
 
 import java.util.*;
@@ -12,6 +14,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.core.env.Environment;
 
 @AutoConfiguration(
@@ -28,14 +32,6 @@ public class EurekaCellAutoConfiguration {
         long maxAge = env.getProperty("apex.discovery.max-stale-ms", Long.class, 60000L);
         if (maxAge < 1000 || maxAge > 120000)
             throw new IllegalStateException("Invalid registry freshness bound");
-        var startupWait =
-                env.getProperty(
-                        "apex.discovery.startup-wait",
-                        java.time.Duration.class,
-                        java.time.Duration.ofSeconds(35));
-        if (startupWait.toMillis() < 250 || startupWait.compareTo(java.time.Duration.ofSeconds(60)) > 0)
-            throw new IllegalStateException("Invalid bounded discovery startup wait");
-        awaitFirstRegistry(client, startupWait);
         return new CloudCellServiceDirectory(
                 new EurekaDiscoveryClient(client, config),
                 p,
@@ -51,26 +47,15 @@ public class EurekaCellAutoConfiguration {
             @Override
             public Object postProcessBeforeInitialization(Object bean, String name) {
                 if (bean instanceof EurekaInstanceConfigBean instance
-                        && env.getProperty("apex.discovery.registration.enabled", Boolean.class, false)) {
-                    String cell = CellEndpoint.logicalName(env.getRequiredProperty("apex.cell.id"));
+                        && env.getProperty("apex.discovery.registration.enabled", Boolean.class, true)) {
+                    String cell = CellEndpoint.logicalName(env.getProperty("apex.cell.id",
+                            env.getProperty("apex.grpc.cell-id", env.getRequiredProperty("spring.application.name"))));
                     if (!cell.equals(env.getRequiredProperty("spring.application.name")))
                         throw new IllegalStateException("Eureka application and logical Cell must agree");
-                    String replica = env.getRequiredProperty("apex.discovery.instance-id");
-                    String authority = env.getRequiredProperty("apex.discovery.authority");
-                    int http = env.getRequiredProperty("server.port", Integer.class);
-                    int grpc =
-                            env.getProperty(
-                                    "apex.discovery.grpc-advertised-port",
-                                    Integer.class,
-                                    env.getRequiredProperty("spring.grpc.server.port", Integer.class));
-                    new CellEndpoint(
-                            cell,
-                            cell + ":" + replica,
-                            instance.getHostName(false),
-                            http,
-                            grpc,
-                            false,
-                            authority);
+                    String replica = env.getProperty("apex.discovery.instance-id", UUID.randomUUID().toString());
+                    String authority = env.getProperty("apex.discovery.authority", cell);
+                    if (!replica.matches("[A-Za-z0-9._:-]{1,64}") || !authority.matches("[A-Za-z0-9.-]{1,253}"))
+                        throw new IllegalStateException("Invalid registered Cell identity/authority");
                     instance.setAppname(cell);
                     instance.setVirtualHostName(cell);
                     instance.setInstanceId(cell + ":" + replica);
@@ -78,8 +63,6 @@ public class EurekaCellAutoConfiguration {
                     Map.of(
                                     "apex.cell-id",
                                     cell,
-                                    "apex.grpc.port",
-                                    Integer.toString(grpc),
                                     "apex.grpc.authority",
                                     authority)
                             .forEach(
@@ -88,6 +71,14 @@ public class EurekaCellAutoConfiguration {
                                             throw new IllegalStateException("Conflicting Eureka transport metadata");
                                         metadata.put(k, v);
                                     });
+                    // Configuration is not proof of a listening server, especially for port=0.
+                    String configuredPort = env.getProperty("apex.discovery.grpc-advertised-port",
+                            env.getProperty("spring.grpc.server.port", "0"));
+                    if (metadata.containsKey("apex.grpc.port")
+                            && !metadata.get("apex.grpc.port").equals(configuredPort))
+                        throw new IllegalStateException("Conflicting Eureka transport metadata");
+                    metadata.remove("apex.grpc.port");
+                    metadata.put("apex.grpc.enabled", "false");
                     instance.setMetadataMap(metadata);
                 }
                 return bean;
@@ -96,7 +87,26 @@ public class EurekaCellAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true", matchIfMissing = true)
+    ApplicationListener<PayloadApplicationEvent<GrpcServerEndpoint>> actualGrpcRegistration(
+            EurekaInstanceConfigBean instance, ApplicationInfoManager manager, Environment env) {
+        return event -> {
+            if (!env.getProperty("apex.grpc.server.enabled", Boolean.class, false)) return;
+            var endpoint = event.getPayload();
+            if (!endpoint.cellId().equals(instance.getAppname()))
+                throw new IllegalStateException("Bound gRPC Cell does not match Eureka identity");
+            int port = env.getProperty("apex.discovery.grpc-advertised-port", Integer.class, endpoint.port());
+            new CellEndpoint(endpoint.cellId(), instance.getInstanceId(), instance.getHostName(false),
+                    instance.getNonSecurePort(), port, false, instance.getMetadataMap().get("apex.grpc.authority"));
+            var metadata = Map.of("apex.grpc.port", Integer.toString(port), "apex.grpc.enabled", "true");
+            instance.getMetadataMap().putAll(metadata);
+            // Marks InstanceInfo dirty so Eureka's normal instance-info replication publishes it.
+            manager.registerAppMetadata(metadata);
+        };
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true", matchIfMissing = true)
     org.springframework.beans.factory.SmartInitializingSingleton uniqueRegistrationIdentity(
             EurekaClient client, EurekaInstanceConfigBean instance) {
         return () -> {
@@ -106,8 +116,8 @@ public class EurekaCellAutoConfiguration {
                         || !instance.getHostName(false).equals(other.getHostName())
                         || !instance
                         .getMetadataMap()
-                        .get("apex.grpc.port")
-                        .equals(other.getMetadata().get("apex.grpc.port"))))
+                        .getOrDefault("apex.grpc.port", "")
+                        .equals(other.getMetadata().getOrDefault("apex.grpc.port", ""))))
                     throw new IllegalStateException(
                             "Duplicate active Eureka instanceId with different endpoint");
             }

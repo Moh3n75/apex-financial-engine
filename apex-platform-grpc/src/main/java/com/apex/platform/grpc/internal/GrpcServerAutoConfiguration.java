@@ -1,6 +1,7 @@
 package com.apex.platform.grpc.internal;
 
 import com.apex.platform.grpc.api.TransactionalRequestExecutor;
+import com.apex.platform.grpc.api.GrpcServerEndpoint;
 import com.apex.platform.grpc.security.PeerIdentityVerifier;
 import io.grpc.*;
 import java.util.concurrent.*;
@@ -9,6 +10,9 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.grpc.server.autoconfigure.GrpcServerProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.grpc.server.lifecycle.GrpcServerStartedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.grpc.server.ServerBuilderCustomizer;
 
@@ -18,6 +22,16 @@ import org.springframework.grpc.server.ServerBuilderCustomizer;
 @ConditionalOnClass(GrpcServerProperties.class)
 @ConditionalOnProperty(prefix = "apex.grpc.server", name = "enabled", havingValue = "true")
 public class GrpcServerAutoConfiguration {
+  @Bean
+  ApplicationListener<GrpcServerStartedEvent> apexGrpcBoundEndpoint(
+      GrpcProperties properties, ApplicationEventPublisher events) {
+    return event -> {
+      // In-process servers have no remotely advertisable TCP endpoint.
+      if (event.getPort() > 0)
+        events.publishEvent(new GrpcServerEndpoint(properties.getCellId(), event.getPort()));
+    };
+  }
+
   @Bean(destroyMethod = "shutdown")
   ThreadPoolExecutor grpcServerWorkers() {
     return new ThreadPoolExecutor(

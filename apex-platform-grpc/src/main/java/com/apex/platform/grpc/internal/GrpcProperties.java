@@ -71,6 +71,10 @@ public class GrpcProperties {
   }
 
   public void validate() {
+    validate(false);
+  }
+
+  public void validate(boolean automaticDiscovery) {
     if (cellId == null || !cellId.matches("[a-zA-Z0-9._-]{1,64}"))
       throw new IllegalStateException("apex.grpc.cell-id (or apex.cell.id) is required");
     if (maxPayloadBytes < 128
@@ -79,8 +83,8 @@ public class GrpcProperties {
         || maxDeadline.toMillis() < 1
         || maxDeadline.toMillis() > 30000)
       throw new IllegalStateException("Invalid gRPC size/deadline bound");
-    if (destinations.size() > 32) throw new IllegalStateException("At most 32 gRPC destinations");
-    if (client.isEnabled() && destinations.isEmpty())
+    if (!automaticDiscovery && destinations.size() > 32) throw new IllegalStateException("At most 32 gRPC destinations");
+    if (client.isEnabled() && destinations.isEmpty() && !automaticDiscovery)
       throw new IllegalStateException("gRPC client requires at least one explicit destination");
     destinations.forEach(
         (name, d) -> {

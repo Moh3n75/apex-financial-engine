@@ -22,12 +22,13 @@ public class GrpcCommonAutoConfiguration {
         ?registries.getIfAvailable(()->io.micrometer.observation.ObservationRegistry.NOOP):io.micrometer.observation.ObservationRegistry.NOOP);
   }
   @Bean
-  RpcCodec rpcCodec(GrpcProperties p, Environment environment) {
+  RpcCodec rpcCodec(GrpcProperties p, Environment environment,
+      ObjectProvider<DiscoveredCellChannelFactory> discovery) {
     if (p.getCellId() == null)
       p.setCellId(
           environment.getProperty(
               "apex.cell.id", environment.getProperty("spring.application.name")));
-    p.validate();
+    p.validate(discovery.getIfAvailable() != null);
     return new RpcCodec(p.getMaxPayloadBytes());
   }
 

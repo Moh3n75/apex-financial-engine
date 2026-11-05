@@ -34,12 +34,12 @@ public final class DirectoryNameResolverFactory extends NameResolver.Factory {
 
   @Override
   public String getDefaultScheme() {
-    return "dns";
+    return "apex";
   }
 
   @Override
   public NameResolver newNameResolver(URI uri, NameResolver.Args args) {
-    if (!uri.toString().equals("dns:///" + authority + ":443")) return null;
+    if (!uri.toString().equals("apex:///" + logical)) return null;
     return new NameResolver() {
       private volatile Listener2 listener;
       private volatile boolean stopped;
@@ -62,6 +62,9 @@ public final class DirectoryNameResolverFactory extends NameResolver.Factory {
         if (stopped) return;
         try {
           var endpoints = directory.endpoints(logical);
+          if (endpoints.isEmpty()) throw new IllegalStateException("No ready replicas");
+          if (endpoints.stream().anyMatch(e -> !logical.equals(e.serviceId()) || !authority.equals(e.tlsAuthority())))
+            throw new IllegalStateException("Discovered identity does not match trusted logical target");
           var groups =
               endpoints.stream()
                   .map(
