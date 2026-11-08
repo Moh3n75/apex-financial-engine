@@ -1,10 +1,13 @@
+# Default runtime: Inventory HTTP + PostgreSQL + Kafka outbox + Eureka.
+# REQUIRED for startup: INVENTORY_DB_URL, INVENTORY_DB_USERNAME,
+# INVENTORY_DB_PASSWORD, and KAFKA_BOOTSTRAP_SERVERS.
 spring:
   application:
     name: inventory-cell
   datasource:
-    url: ${INVENTORY_DB_URL}
-    username: ${INVENTORY_DB_USERNAME}
-    password: ${INVENTORY_DB_PASSWORD}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/inventory}
+    username: ${CELL_DB_USERNAME:apex}
+    password: ${CELL_DB_PASSWORD:apex123}
   flyway:
     locations: classpath:db/migration,classpath:db/platform
   kafka:
@@ -27,7 +30,7 @@ spring:
         allow.auto.create.topics: false
     listener:
       ack-mode: manual_immediate
-      # No ORDER_PLACED handler exists yet. Prevent ACK of unhandled records.
+      # Keep consumption paused until the handler coverage is verified.
       auto-startup: false
 
 apex:
@@ -47,3 +50,77 @@ apex:
 
 server:
   port: ${SERVER_PORT:8084}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+
+---
+# Optional gRPC server: spring.profiles.active=grpc
+spring:
+  config:
+    activate:
+      on-profile: grpc
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:9092}
+      shutdown:
+        grace-period: 5s
+apex:
+  grpc:
+    server:
+      enabled: true
+
+---
+# Optional Kafka Saga processing. Activate only after verifying handler coverage.
+spring:
+  config:
+    activate:
+      on-profile: saga
+  kafka:
+    listener:
+      auto-startup: true
+apex:
+  messaging:
+    consumer:
+      reliability:
+        enabled: true
+
+---
+# Add release request topic when three-cell-saga is active.
+spring:
+  config:
+    activate:
+      on-profile: three-cell-saga
+apex:
+  messaging:
+    consumer:
+      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1
+
+---
+# Two-cell Saga replay: profiles saga,replay (without three-cell-saga).
+spring:
+  config:
+    activate:
+      on-profile: saga & replay & !three-cell-saga
+apex:
+  messaging:
+    consumer:
+      topics: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1},${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1}
+      reliability:
+        enabled: true
+
+---
+# Three-cell Saga replay: profiles saga,three-cell-saga,replay.
+spring:
+  config:
+    activate:
+      on-profile: three-cell-saga & replay
+apex:
+  messaging:
+    consumer:
+      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1,${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1},${APEX_INVENTORY_RELEASE_REPLAY_TOPIC:apex.inventory.release-request.replay.v1}

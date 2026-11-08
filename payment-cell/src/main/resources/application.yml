@@ -1,12 +1,17 @@
+# Payment Cell: one configuration, no Spring or Maven profiles.
+# Required environment: PAYMENT_DB_URL, PAYMENT_DB_USERNAME,
+# PAYMENT_DB_PASSWORD, KAFKA_BOOTSTRAP_SERVERS.
+# HTTP is enabled for Eureka registration and local diagnostics (port 8085).
+# The Kafka listener stays paused by default. Enable it ONLY when the
+# payment handler/policy and topic + DLT topology are verified.
+
 spring:
   application:
     name: payment-cell
-  main:
-    web-application-type: none
   datasource:
-    url: ${PAYMENT_DB_URL}
-    username: ${PAYMENT_DB_USERNAME}
-    password: ${PAYMENT_DB_PASSWORD}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/payment}
+    username: ${CELL_DB_USERNAME:apex}
+    password: ${CELL_DB_PASSWORD:apex123}
   flyway:
     locations: classpath:db/migration,classpath:db/platform
   kafka:
@@ -29,20 +34,42 @@ spring:
         allow.auto.create.topics: false
     listener:
       ack-mode: manual_immediate
-      auto-startup: false
+      auto-startup: ${PAYMENT_LISTENER_ENABLED:false}
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:9093}
+      shutdown:
+        grace-period: 5s
+
+server:
+  port: ${SERVER_PORT:8085}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+
 apex:
   cell:
     id: payment-cell
+  grpc:
+    server:
+      enabled: true
   messaging:
     cell:
       enabled: true
     consumer:
       enabled: true
-      topics: apex.order.payment-requests.v1
+      # To replay, set PAYMENT_CONSUMER_TOPICS explicitly to the normal
+      # and approved replay topics. Do not subscribe to unrelated topics.
+      topics: ${PAYMENT_CONSUMER_TOPICS:apex.order.payment-requests.v1}
       reliability:
         enabled: true
     publisher:
-      topic: apex.payment.events.v1
+      topic: ${APEX_PAYMENT_EVENTS_TOPIC:apex.payment.events.v1}
     outbox:
       publisher:
         enabled: true

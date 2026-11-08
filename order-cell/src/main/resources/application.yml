@@ -1,10 +1,11 @@
+# Default runtime: HTTP Order + PostgreSQL/Kafka publisher + Eureka registration.
 spring:
   application:
     name: order-cell
   datasource:
-    url: ${CELL_DB_URL}
-    username: ${CELL_DB_USERNAME}
-    password: ${CELL_DB_PASSWORD}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/order}
+    username: ${CELL_DB_USERNAME:apex}
+    password: ${CELL_DB_PASSWORD:apex123}
   flyway:
     locations: classpath:db/migration,classpath:db/platform
   kafka:
@@ -31,6 +32,123 @@ apex:
         enabled: true
     consumer:
       enabled: false
-
 server:
   port: ${SERVER_PORT:8083}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+---
+# Optional gRPC server. Enable with spring.profiles.active=grpc.
+spring:
+  config:
+    activate:
+      on-profile: grpc
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:9091}
+      shutdown:
+        grace-period: 5s
+apex:
+  grpc:
+    server:
+      enabled: true
+---
+# Optional operator read endpoints. Enable with profile operations.
+spring:
+  config:
+    activate:
+      on-profile: operations
+apex:
+  order:
+    operations:
+      age-threshold: ${APEX_ORDER_STALLED_AGE_THRESHOLD:15m}
+      read-token: ${APEX_ORDER_OPERATIONS_READ_TOKEN}
+---
+# Optional saga consumer. Enable with profile saga.
+spring:
+  config:
+    activate:
+      on-profile: saga
+  datasource:
+    url: ${ORDER_DB_URL}
+    username: ${ORDER_DB_USERNAME}
+    password: ${ORDER_DB_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      auto-create: false
+    consumer:
+      group-id: ${APEX_ORDER_CONSUMER_GROUP:order-cell-inventory-outcome-v1}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        allow.auto.create.topics: false
+    listener:
+      ack-mode: manual_immediate
+      auto-startup: true
+apex:
+  messaging:
+    consumer:
+      enabled: true
+      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
+      reliability:
+        enabled: true
+---
+# Optional three-cell saga routing. Combine saga,three-cell-saga.
+spring:
+  config:
+    activate:
+      on-profile: three-cell-saga
+apex:
+  messaging:
+    consumer:
+      topics: apex.inventory.events.v1,apex.payment.events.v1
+    publisher:
+      routing:
+        enabled: true
+        required-contracts:
+          - ORDER_PLACED:1
+          - ORDER_CREATED:1
+          - ORDER_READY_FOR_PAYMENT:1
+          - ORDER_CANCELLATION_REQUESTED:1
+        routes:
+          - event-type: ORDER_PLACED
+            event-version: 1
+            topic: apex.order.events.v1
+          - event-type: ORDER_CREATED
+            event-version: 1
+            topic: apex.order.legacy.events.v1
+          - event-type: ORDER_READY_FOR_PAYMENT
+            event-version: 1
+            topic: apex.order.payment-requests.v1
+          - event-type: ORDER_CANCELLATION_REQUESTED
+            event-version: 1
+            topic: apex.order.inventory-release-requests.v1
+---
+# Optional replay of two-cell saga. Combine saga,replay.
+spring:
+  config:
+    activate:
+      on-profile: saga & replay & !three-cell-saga
+apex:
+  messaging:
+    consumer:
+      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1},${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1}
+      reliability:
+        enabled: true
+---
+# Optional replay of three-cell saga. Combine saga,three-cell-saga,replay.
+spring:
+  config:
+    activate:
+      on-profile: three-cell-saga & replay
+apex:
+  messaging:
+    consumer:
+      topics: apex.inventory.events.v1,apex.payment.events.v1,${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1},${APEX_ORDER_PAYMENT_REPLAY_TOPIC:apex.order.payment-outcome.replay.v1}
