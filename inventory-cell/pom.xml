@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -29,7 +27,7 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <!-- Eureka is a normal runtime capability; no Maven discovery profile required. -->
+        <!--Eureka is a normal runtime capability.-->
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-discovery-eureka</artifactId>
@@ -89,7 +87,7 @@
             <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- M36A.1: library-only (not Boot starter) so inventory @SpringBootTest smoke stays 404, not 401 -->
+        <!--M36A.1: library-only (not Boot starter) so inventory @SpringBootTest smoke stays 404, not 401-->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
@@ -121,6 +119,76 @@
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>financial-isolated-build</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/FinancialBuildIT.java</include>
+                            </includes>
+                            <failIfNoTests>true</failIfNoTests>
+                            <reportsDirectory>${project.build.directory}/financial-build-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>saga-performance</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/SagaPerformanceIT.java</include>
+                            </includes>
+                            <failIfNoTests>true</failIfNoTests>
+                            <reportsDirectory>${project.build.directory}/performance-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
+                                <saga.inventoryJar>${project.build.directory}/inventory-cell.jar</saga.inventoryJar>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>operational-recovery-packaged</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/OperationalRecoverySagaIT.java</include>
+                            </includes>
+                            <failIfNoTests>true</failIfNoTests>
+                            <reportsDirectory>${project.build.directory}/operational-recovery-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
+                                <saga.inventoryJar>${project.build.directory}/inventory-cell.jar</saga.inventoryJar>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>three-cell-packaged</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/ThreeCellSagaIT.java</include>
+                            </includes>
+                            <reportsDirectory>${project.build.directory}/three-cell-reports</reportsDirectory>
+                            <systemPropertyVariables>
+                                <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
+                                <saga.inventoryJar>${project.build.directory}/inventory-cell.jar</saga.inventoryJar>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -129,140 +197,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <!-- Test-owned exporter fixture; never selected by default deployment builds. -->
-        <profile>
-            <id>ops02-acceptance</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.apex</groupId>
-                    <artifactId>apex-starter-observability</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.apex</groupId>
-                    <artifactId>apex-starter-observability</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                    <type>test-jar</type>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>m30</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <!-- Explicit tool invocation only: this nested clean build must
-                                 finish before the Cell artifact-receipt workflow. -->
-                            <execution>
-                                <id>financial-isolated-build</id>
-                                <phase>none</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/FinancialBuildIT.java</include>
-                                    </includes>
-                                    <failIfNoTests>true</failIfNoTests>
-                                    <reportsDirectory>${project.build.directory}/financial-build-reports
-                                    </reportsDirectory>
-                                    <systemPropertyVariables>
-                                        <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>saga-performance</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/SagaPerformanceIT.java</include>
-                                    </includes>
-                                    <failIfNoTests>true</failIfNoTests>
-                                    <reportsDirectory>${project.build.directory}/performance-reports</reportsDirectory>
-                                    <systemPropertyVariables>
-                                        <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
-                                        <saga.inventoryJar>${project.build.directory}/inventory-cell.jar
-                                        </saga.inventoryJar>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>operational-recovery</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>operational-recovery-packaged</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/OperationalRecoverySagaIT.java</include>
-                                    </includes>
-                                    <failIfNoTests>true</failIfNoTests>
-                                    <reportsDirectory>${project.build.directory}/operational-recovery-reports
-                                    </reportsDirectory>
-                                    <systemPropertyVariables>
-                                        <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
-                                        <saga.inventoryJar>${project.build.directory}/inventory-cell.jar
-                                        </saga.inventoryJar>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>three-cell</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>three-cell-packaged</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/ThreeCellSagaIT.java</include>
-                                    </includes>
-                                    <reportsDirectory>${project.build.directory}/three-cell-reports</reportsDirectory>
-                                    <systemPropertyVariables>
-                                        <saga.repositoryRoot>${project.basedir}/..</saga.repositoryRoot>
-                                        <saga.inventoryJar>${project.build.directory}/inventory-cell.jar
-                                        </saga.inventoryJar>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
