@@ -14,6 +14,7 @@ public final class DirectoryNameResolverFactory extends NameResolver.Factory {
   private final String authority;
   private final ScheduledExecutorService refresh;
   private final Duration interval;
+  private final String target;
 
   public DirectoryNameResolverFactory(
       CellServiceDirectory directory,
@@ -21,11 +22,16 @@ public final class DirectoryNameResolverFactory extends NameResolver.Factory {
       String authority,
       ScheduledExecutorService refresh,
       Duration interval) {
+    this(directory,logical,authority,refresh,interval,"apex:///"+logical);
+  }
+  public DirectoryNameResolverFactory(CellServiceDirectory directory,String logical,String authority,
+      ScheduledExecutorService refresh,Duration interval,String target) {
     this.directory = directory;
     this.logical = CellEndpoint.logicalName(logical);
     this.authority = authority;
     this.refresh = refresh;
     this.interval = interval;
+    this.target=target;
     if (authority == null
         || !authority.matches("[A-Za-z0-9.-]{1,253}")
         || interval.toMillis() < 250
@@ -39,7 +45,7 @@ public final class DirectoryNameResolverFactory extends NameResolver.Factory {
 
   @Override
   public NameResolver newNameResolver(URI uri, NameResolver.Args args) {
-    if (!uri.toString().equals("apex:///" + logical)) return null;
+    if (!uri.toString().equals(target)) return null;
     return new NameResolver() {
       private volatile Listener2 listener;
       private volatile boolean stopped;

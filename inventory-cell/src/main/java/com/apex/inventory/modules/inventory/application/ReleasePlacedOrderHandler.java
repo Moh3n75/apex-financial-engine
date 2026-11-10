@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Profile;
 
 @Component
-@Profile("three-cell-saga")
 public class ReleasePlacedOrderHandler {
-    private static final EventContract<InventoryReleasedIntegrationEvent> RELEASED=EventContracts.define(
+    public static final EventContract<InventoryReleasedIntegrationEvent> RELEASED=EventContracts.define(
             "INVENTORY_RELEASED",1,"INVENTORY_RESERVATION",InventoryReleasedIntegrationEvent.class,"inventory.released.v1");
     private final ReleaseInventoryUseCase release;
     private final CellEvents events;

@@ -628,6 +628,7 @@ class OpsM36a1AuthenticatedLiveIT {
     var env = builder.environment();
     env.put("OPS04B_HANDSHAKE", handshake.toAbsolutePath().toString());
     env.put("OPS04B_LIVE", "1");
+    if(System.getProperty("controlcenter.membership.expected")!=null)env.put("APEX_MEMBERSHIP_EXPECTED",System.getProperty("controlcenter.membership.expected"));
     env.put("OPS04B_NEXT_ORIGIN", "http://127.0.0.1:" + NEXT_PORT);
     env.put("OPS04B_REQUIRE_LIVE", "true");
     env.put("APEX_OPS_UI_FIXTURE_MODE", "false");

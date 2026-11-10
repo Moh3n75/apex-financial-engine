@@ -23,6 +23,15 @@ import org.springframework.core.env.Environment;
 @ConditionalOnProperty(name = "apex.discovery.provider", havingValue = "eureka")
 @EnableConfigurationProperties(DiscoveryProperties.class)
 public class EurekaCellAutoConfiguration {
+    static BeanPostProcessor apexEurekaRegistrationMetadata(Environment env) {
+        return apexEurekaRegistrationMetadata(env,new org.springframework.beans.factory.support.DefaultListableBeanFactory().getBeanProvider(CellRuntimeIdentity.class));
+    }
+    @Bean
+    @ConditionalOnProperty(name="apex.discovery.membership.enabled",havingValue="true")
+    CellRuntimeIdentity cellRuntimeIdentity(Environment env) {
+        return new CellRuntimeIdentity(env.getRequiredProperty("apex.contract-discovery.environment"),
+                env.getRequiredProperty("apex.cell.id"),env.getRequiredProperty("apex.contract-discovery.instance"),UUID.randomUUID());
+    }
     @Bean
     CellServiceDirectory eurekaCellDirectory(
             EurekaClient client,
@@ -38,16 +47,16 @@ public class EurekaCellAutoConfiguration {
                 () -> {
                     long age = registryAge(client);
                     return age >= 0 && age <= maxAge;
-                });
+                },"EUREKA",env.getProperty("apex.discovery.registry-id","unknown"));
     }
 
     @Bean
-    static BeanPostProcessor apexEurekaRegistrationMetadata(Environment env) {
+    static BeanPostProcessor apexEurekaRegistrationMetadata(Environment env,org.springframework.beans.factory.ObjectProvider<CellRuntimeIdentity> identities) {
         return new BeanPostProcessor() {
             @Override
             public Object postProcessBeforeInitialization(Object bean, String name) {
                 if (bean instanceof EurekaInstanceConfigBean instance
-                        && env.getProperty("apex.discovery.registration.enabled", Boolean.class, true)) {
+                        && env.getProperty("apex.discovery.registration.enabled", Boolean.class, false)) {
                     String cell = CellEndpoint.logicalName(env.getProperty("apex.cell.id",
                             env.getProperty("apex.grpc.cell-id", env.getRequiredProperty("spring.application.name"))));
                     if (!cell.equals(env.getRequiredProperty("spring.application.name")))
@@ -58,8 +67,10 @@ public class EurekaCellAutoConfiguration {
                         throw new IllegalStateException("Invalid registered Cell identity/authority");
                     instance.setAppname(cell);
                     instance.setVirtualHostName(cell);
-                    instance.setInstanceId(cell + ":" + replica);
+                    var runtime=identities.getIfAvailable();
+                    instance.setInstanceId(runtime==null?cell+":"+replica:cell+":"+runtime.epoch());
                     var metadata = new HashMap<>(instance.getMetadataMap());
+                    if(runtime!=null)metadata.putAll(Map.of("apex.environment",runtime.environment(),"apex.instance-id",runtime.instanceId(),"apex.epoch",runtime.epoch().toString()));
                     Map.of(
                                     "apex.cell-id",
                                     cell,
@@ -87,7 +98,7 @@ public class EurekaCellAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true")
     ApplicationListener<PayloadApplicationEvent<GrpcServerEndpoint>> actualGrpcRegistration(
             EurekaInstanceConfigBean instance, ApplicationInfoManager manager, Environment env) {
         return event -> {
@@ -106,7 +117,7 @@ public class EurekaCellAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(name = "apex.discovery.registration.enabled", havingValue = "true")
     org.springframework.beans.factory.SmartInitializingSingleton uniqueRegistrationIdentity(
             EurekaClient client, EurekaInstanceConfigBean instance) {
         return () -> {

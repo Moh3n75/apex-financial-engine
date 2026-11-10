@@ -1,0 +1,30 @@
+{
+  "schemaVersion" : 1,
+  "environment" : "control-center-live",
+  "service" : "customer-cell",
+  "cell" : "customer-cell",
+  "instance" : "customer-cell-one",
+  "epoch" : "3d194efb-f55e-4050-b76f-fffc0fdca72e",
+  "collectedAt" : "2026-11-09T14:40:42.616531600Z",
+  "sourceMode" : "EFFECTIVE_DECLARATION",
+  "cluster" : "owned-kraft",
+  "publications" : [ {
+    "contract" : {
+      "type" : "CUSTOMER_CREATED",
+      "version" : 1
+    },
+    "topic" : "apex.customer.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  } ],
+  "subscriptions" : [ ],
+  "consumerGroup" : "",
+  "eventHandlers" : [ ],
+  "grpcHandlers" : [ {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "OPS_CONTRACT_DISCOVERY",
+      "version" : 1
+    }
+  } ],
+  "gaps" : [ ]
+}

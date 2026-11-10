@@ -1,0 +1,1321 @@
+{
+  "schemaVersion" : 2,
+  "asOf" : "2026-11-09T14:41:33.176032700Z",
+  "coverage" : "AUTHORIZED_DECLARATIONS_PARTIAL_NO_TRAFFIC_HISTORY",
+  "capabilities" : {
+    "declared" : "CONTRACT_DISCOVERY_PARTIAL",
+    "instances" : "OWNER_SNAPSHOTS_PARTIAL",
+    "observedInteractions" : "NOT_CONFIGURED",
+    "messaging" : "DECLARATIONS_ONLY_NO_BROKER_METADATA",
+    "traces" : "NOT_CONFIGURED",
+    "runtimeHealth" : "NOT_CONFIGURED"
+  },
+  "nodes" : [ {
+    "id" : "control-center-live:service:order-cell",
+    "kind" : "SERVICE",
+    "name" : "order-cell",
+    "environment" : "control-center-live",
+    "serviceId" : "control-center-live:service:order-cell",
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:cell:order-cell",
+    "kind" : "CELL",
+    "name" : "order-cell",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.events.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.order.events.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.legacy.events.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.order.legacy.events.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.payment-requests.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.order.payment-requests.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.inventory-release-requests.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.order.inventory-release-requests.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:inventory-cell",
+    "kind" : "SERVICE",
+    "name" : "inventory-cell",
+    "environment" : "control-center-live",
+    "serviceId" : "control-center-live:service:inventory-cell",
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:cell:inventory-cell",
+    "kind" : "CELL",
+    "name" : "inventory-cell",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.inventory.events.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:payment-cell",
+    "kind" : "SERVICE",
+    "name" : "payment-cell",
+    "environment" : "control-center-live",
+    "serviceId" : "control-center-live:service:payment-cell",
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:cell:payment-cell",
+    "kind" : "CELL",
+    "name" : "payment-cell",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.payment.events.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.payment.events.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:customer-cell",
+    "kind" : "SERVICE",
+    "name" : "customer-cell",
+    "environment" : "control-center-live",
+    "serviceId" : "control-center-live:service:customer-cell",
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.683759900Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:cell:customer-cell",
+    "kind" : "CELL",
+    "name" : "customer-cell",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.683759900Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.customer.events.v1",
+    "kind" : "KAFKA_TOPIC",
+    "name" : "apex.customer.events.v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.683759900Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:reporting-cell",
+    "kind" : "SERVICE",
+    "name" : "reporting-cell",
+    "environment" : "control-center-live",
+    "serviceId" : "control-center-live:service:reporting-cell",
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.732758400Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:cell:reporting-cell",
+    "kind" : "CELL",
+    "name" : "reporting-cell",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "AVAILABLE",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.732758400Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "kind" : "CONSUMER_GROUP",
+    "name" : "order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "DECLARED",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1",
+    "kind" : "CONSUMER_GROUP",
+    "name" : "inventory-cell-order-placed-v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "DECLARED",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:payment-cell-authorization-v1",
+    "kind" : "CONSUMER_GROUP",
+    "name" : "payment-cell-authorization-v1",
+    "environment" : "control-center-live",
+    "serviceId" : null,
+    "instanceId" : null,
+    "epoch" : null,
+    "scope" : "SERVICE",
+    "health" : "UNKNOWN",
+    "freshness" : "DECLARED",
+    "uncertainty" : "DECLARATION_NOT_RUNTIME_OBSERVATION",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  } ],
+  "connections" : [ {
+    "id" : "control-center-live:service:order-cell->control-center-live:topic:owned-kraft:apex.order.events.v1:ORDER_PLACED:1",
+    "source" : "control-center-live:service:order-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.order.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_PLACED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:order-cell->control-center-live:topic:owned-kraft:apex.order.legacy.events.v1:ORDER_CREATED:1",
+    "source" : "control-center-live:service:order-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.order.legacy.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_CREATED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:order-cell->control-center-live:topic:owned-kraft:apex.order.payment-requests.v1:ORDER_READY_FOR_PAYMENT:1",
+    "source" : "control-center-live:service:order-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.order.payment-requests.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_READY_FOR_PAYMENT:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:order-cell->control-center-live:topic:owned-kraft:apex.order.inventory-release-requests.v1:ORDER_CANCELLATION_REQUESTED:1",
+    "source" : "control-center-live:service:order-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.order.inventory-release-requests.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_CANCELLATION_REQUESTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHER_ROUTING",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:inventory-cell->control-center-live:topic:owned-kraft:apex.inventory.events.v1:INVENTORY_RESERVED:1",
+    "source" : "control-center-live:service:inventory-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:inventory-cell->control-center-live:topic:owned-kraft:apex.inventory.events.v1:INVENTORY_RESERVATION_REJECTED:1",
+    "source" : "control-center-live:service:inventory-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVATION_REJECTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:inventory-cell->control-center-live:topic:owned-kraft:apex.inventory.events.v1:INVENTORY_RELEASED:1",
+    "source" : "control-center-live:service:inventory-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RELEASED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:payment-cell->control-center-live:topic:owned-kraft:apex.payment.events.v1:PAYMENT_AUTHORIZED:1",
+    "source" : "control-center-live:service:payment-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.payment.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_AUTHORIZED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:payment-cell->control-center-live:topic:owned-kraft:apex.payment.events.v1:PAYMENT_DECLINED:1",
+    "source" : "control-center-live:service:payment-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.payment.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_DECLINED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:service:customer-cell->control-center-live:topic:owned-kraft:apex.customer.events.v1:CUSTOMER_CREATED:1",
+    "source" : "control-center-live:service:customer-cell",
+    "target" : "control-center-live:topic:owned-kraft:apex.customer.events.v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "CUSTOMER_CREATED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "PUBLISHED_CONTRACT_CATALOG",
+      "collectedAt" : "2026-11-09T14:41:32.683759900Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1->control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1:INVENTORY_RELEASED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "target" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RELEASED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1->control-center-live:service:order-cell:INVENTORY_RELEASED:1",
+    "source" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "target" : "control-center-live:service:order-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RELEASED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1->control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1:INVENTORY_RESERVATION_REJECTED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "target" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVATION_REJECTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1->control-center-live:service:order-cell:INVENTORY_RESERVATION_REJECTED:1",
+    "source" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "target" : "control-center-live:service:order-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVATION_REJECTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1->control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1:INVENTORY_RESERVED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.inventory.events.v1",
+    "target" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1->control-center-live:service:order-cell:INVENTORY_RESERVED:1",
+    "source" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "target" : "control-center-live:service:order-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "INVENTORY_RESERVED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.payment.events.v1->control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1:PAYMENT_AUTHORIZED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.payment.events.v1",
+    "target" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_AUTHORIZED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1->control-center-live:service:order-cell:PAYMENT_AUTHORIZED:1",
+    "source" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "target" : "control-center-live:service:order-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_AUTHORIZED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.payment.events.v1->control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1:PAYMENT_DECLINED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.payment.events.v1",
+    "target" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_DECLINED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1->control-center-live:service:order-cell:PAYMENT_DECLINED:1",
+    "source" : "control-center-live:group:owned-kraft:order-cell-inventory-outcome-v1",
+    "target" : "control-center-live:service:order-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "PAYMENT_DECLINED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.inventory-release-requests.v1->control-center-live:group:owned-kraft:inventory-cell-order-placed-v1:ORDER_CANCELLATION_REQUESTED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.order.inventory-release-requests.v1",
+    "target" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_CANCELLATION_REQUESTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1->control-center-live:service:inventory-cell:ORDER_CANCELLATION_REQUESTED:1",
+    "source" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1",
+    "target" : "control-center-live:service:inventory-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_CANCELLATION_REQUESTED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.events.v1->control-center-live:group:owned-kraft:inventory-cell-order-placed-v1:ORDER_PLACED:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.order.events.v1",
+    "target" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_PLACED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1->control-center-live:service:inventory-cell:ORDER_PLACED:1",
+    "source" : "control-center-live:group:owned-kraft:inventory-cell-order-placed-v1",
+    "target" : "control-center-live:service:inventory-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_PLACED:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:topic:owned-kraft:apex.order.payment-requests.v1->control-center-live:group:owned-kraft:payment-cell-authorization-v1:ORDER_READY_FOR_PAYMENT:1",
+    "source" : "control-center-live:topic:owned-kraft:apex.order.payment-requests.v1",
+    "target" : "control-center-live:group:owned-kraft:payment-cell-authorization-v1",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_READY_FOR_PAYMENT:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "id" : "control-center-live:group:owned-kraft:payment-cell-authorization-v1->control-center-live:service:payment-cell:ORDER_READY_FOR_PAYMENT:1",
+    "source" : "control-center-live:group:owned-kraft:payment-cell-authorization-v1",
+    "target" : "control-center-live:service:payment-cell",
+    "environment" : "control-center-live",
+    "protocol" : "KAFKA",
+    "scope" : "SERVICE",
+    "contract" : "ORDER_READY_FOR_PAYMENT:1",
+    "health" : "UNKNOWN",
+    "lastSeen" : null,
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  } ],
+  "providers" : [ {
+    "name" : "contracts:control-center-live:order-cell",
+    "status" : "AVAILABLE",
+    "coverage" : "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",
+    "sourceMode" : "EFFECTIVE_DECLARATION",
+    "collectedAt" : "2026-11-09T14:41:32.660698Z"
+  }, {
+    "name" : "contracts:control-center-live:inventory-cell",
+    "status" : "AVAILABLE",
+    "coverage" : "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",
+    "sourceMode" : "EFFECTIVE_DECLARATION",
+    "collectedAt" : "2026-11-09T14:41:32.669695800Z"
+  }, {
+    "name" : "contracts:control-center-live:payment-cell",
+    "status" : "AVAILABLE",
+    "coverage" : "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",
+    "sourceMode" : "EFFECTIVE_DECLARATION",
+    "collectedAt" : "2026-11-09T14:41:32.676760700Z"
+  }, {
+    "name" : "contracts:control-center-live:customer-cell",
+    "status" : "AVAILABLE",
+    "coverage" : "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",
+    "sourceMode" : "EFFECTIVE_DECLARATION",
+    "collectedAt" : "2026-11-09T14:41:32.683759900Z"
+  }, {
+    "name" : "contracts:control-center-live:reporting-cell",
+    "status" : "AVAILABLE",
+    "coverage" : "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",
+    "sourceMode" : "EFFECTIVE_DECLARATION",
+    "collectedAt" : "2026-11-09T14:41:32.732758400Z"
+  }, {
+    "name" : "otel",
+    "status" : "NOT_CONFIGURED",
+    "coverage" : "NO_OBSERVED_INTERACTIONS",
+    "sourceMode" : "UNKNOWN",
+    "collectedAt" : null
+  }, {
+    "name" : "kafka-admin",
+    "status" : "NOT_CONFIGURED",
+    "coverage" : "NO_BROKER_METADATA",
+    "sourceMode" : "UNKNOWN",
+    "collectedAt" : null
+  }, {
+    "name" : "runtime-health",
+    "status" : "NOT_CONFIGURED",
+    "coverage" : "NO_HEALTH_PROVIDER",
+    "sourceMode" : "UNKNOWN",
+    "collectedAt" : null
+  } ],
+  "unresolved" : [ {
+    "serviceId" : "control-center-live:service:reporting-cell",
+    "contract" : "CUSTOMER_CREATED:1",
+    "reason" : "NO_VISIBLE_EXACT_TOPIC_CONTRACT_MATCH"
+  }, {
+    "serviceId" : "control-center-live:service:reporting-cell",
+    "contract" : "",
+    "reason" : "SUBSCRIPTION_WITHOUT_VISIBLE_CONTRACT_MATCH"
+  } ],
+  "descriptors" : [ {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "GET_ORDER:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "OPS_CONTRACT_DISCOVERY:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "GRPC",
+    "kind" : "REQUEST",
+    "contract" : "CREATE_ORDER:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "INVENTORY_RELEASED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "INVENTORY_RESERVATION_REJECTED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "INVENTORY_RESERVED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "PAYMENT_AUTHORIZED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:order-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "PAYMENT_DECLINED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.660698Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:inventory-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:inventory-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "OPS_CONTRACT_DISCOVERY:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:inventory-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "ORDER_CANCELLATION_REQUESTED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:inventory-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "ORDER_PLACED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.669695800Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:payment-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:payment-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "OPS_CONTRACT_DISCOVERY:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:payment-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "ORDER_READY_FOR_PAYMENT:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.676760700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:customer-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "OPS_CONTRACT_DISCOVERY:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.683759900Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:reporting-cell",
+    "protocol" : "GRPC",
+    "kind" : "QUERY",
+    "contract" : "OPS_CONTRACT_DISCOVERY:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.732758400Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  }, {
+    "serviceId" : "control-center-live:service:reporting-cell",
+    "protocol" : "KAFKA",
+    "kind" : "EVENT_HANDLER",
+    "contract" : "CUSTOMER_CREATED:1",
+    "evidence" : [ {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "REGISTERED_CONTRACTS_AND_EFFECTIVE_CONFIGURATION",
+      "collectedAt" : "2026-11-09T14:41:32.732758400Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ]
+  } ]
+}

@@ -55,4 +55,12 @@ final class CellGrpcChannelProvider implements AutoCloseable {
       }
     }
   }
+
+  synchronized ManagedChannel instanceChannel(String cell,String registryId) {
+    if(closed||discovered==null||registryId==null||!registryId.matches("[A-Za-z0-9._:-]{1,128}"))
+      throw new GatewayException(GatewayException.Code.FAILED_PRECONDITION,false);
+    String key="instance:"+cell+":"+registryId;
+    if(channels.size()>=128&&!channels.containsKey(key)){var first=channels.keySet().iterator().next();channels.remove(first).shutdown();}
+    return channels.computeIfAbsent(key,ignored->discovered.createInstanceChannel(cell,registryId));
+  }
 }

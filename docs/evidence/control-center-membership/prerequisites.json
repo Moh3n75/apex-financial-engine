@@ -1,0 +1,10 @@
+{
+  "startedAt" : "2026-11-10T07:23:14.536012500Z",
+  "sourceMode" : "LIVE_PREREQUISITE_CHECK",
+  "cellsContacted" : [ ],
+  "postgres" : "PASS_REAL_SQL",
+  "kafka" : "PASS_REAL_ADMIN_METADATA",
+  "mtlsMaterial" : "PASS_EPHEMERAL_CA_AND_SSL_CONTEXT",
+  "verdict" : "PREREQUISITES_PASS_NOT_FIVE_CELL_ACCEPTANCE",
+  "completedAt" : "2026-11-10T07:23:31.699058700Z"
+}

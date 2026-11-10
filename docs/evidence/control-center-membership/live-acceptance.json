@@ -1,0 +1,108 @@
+{
+  "sourceMode" : "LIVE_EXECUTION",
+  "startedAt" : "2026-11-10T07:45:22.237869100Z",
+  "verdict" : "LIVE_MEMBERSHIP_ACCEPTANCE_PASS",
+  "calls" : [ {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-10T07:46:34.564865300Z",
+    "cell" : "order-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-10T07:46:34.766732900Z",
+    "cell" : "inventory-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-10T07:46:34.981758900Z",
+    "cell" : "payment-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-10T07:46:35.185531800Z",
+    "cell" : "customer-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-10T07:46:35.393747800Z",
+    "cell" : "reporting-cell"
+  }, {
+    "purpose" : "UNTRUSTED_CA",
+    "result" : "UNAVAILABLE",
+    "at" : "2026-11-10T07:46:35.695217600Z",
+    "cell" : "order-cell"
+  }, {
+    "purpose" : "CONTRACT_DENIED_PEER",
+    "result" : "PERMISSION_DENIED",
+    "at" : "2026-11-10T07:46:35.986109200Z",
+    "cell" : "order-cell"
+  } ],
+  "securityMode" : {
+    "insecureLoopback" : false,
+    "destinations" : "EXPLICIT_TEST_OWNED_PORTS",
+    "console" : "M36A_JWT_AND_M36B_OWNER_GRANTS",
+    "grpc" : "REQUIRED_MTLS_EXACT_URI_SAN_PER_CONTRACT_GRANTS",
+    "browser" : "REAL_OIDC_LOGIN"
+  },
+  "launchConfigurationSource" : "PACKAGED_APPLICATION_YAML_NOT_COMPARISON_FIXTURES",
+  "staticComparison:order-cell" : {
+    "publicationsSubscriptionsEvents" : "MATCH",
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ]
+  },
+  "staticComparison:inventory-cell" : {
+    "publicationsSubscriptionsEvents" : "MATCH",
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ]
+  },
+  "staticComparison:payment-cell" : {
+    "publicationsSubscriptionsEvents" : "MATCH",
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ]
+  },
+  "staticComparison:customer-cell" : {
+    "publicationsSubscriptionsEvents" : "MATCH",
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ]
+  },
+  "staticComparison:reporting-cell" : {
+    "publicationsSubscriptionsEvents" : "MATCH",
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ]
+  },
+  "baseline" : {
+    "connections" : 28,
+    "nodes" : 26,
+    "services" : 5
+  },
+  "mutationDeniedStatus" : 403,
+  "deniedOwner" : {
+    "visibleOwners" : [ "order-cell" ],
+    "connections" : 4,
+    "nodes" : 7
+  },
+  "workflow" : {
+    "topologyEvidence" : "DECLARED_ONLY",
+    "payment" : "AUTHORIZED",
+    "order" : "CONFIRMED",
+    "inventory" : "RESERVED"
+  },
+  "browserExit" : 0,
+  "membershipAcceptance" : {
+    "registryFailure" : true,
+    "browserMultiInstance" : true,
+    "disappearance" : true,
+    "sequentialRestartNotDuplicate" : true,
+    "crossEnvironmentFiltered" : true,
+    "twoSimultaneousReplicas" : true,
+    "duplicateAutomaticallyDetected" : true,
+    "independentRegistryEnumeration" : true,
+    "registryDeniedPeer" : true
+  },
+  "unimplemented" : [ "observed_otel_interactions", "trace_queries", "kafka_admin_provider", "runtime_health_provider", "kubernetes_live_membership_validation" ],
+  "completedAt" : "2026-11-10T07:48:22.130552400Z",
+  "stage" : "COMPLETE",
+  "cellsContacted" : [ "order-cell", "inventory-cell", "payment-cell", "customer-cell", "reporting-cell" ],
+  "ownedChildrenStopped" : true
+}

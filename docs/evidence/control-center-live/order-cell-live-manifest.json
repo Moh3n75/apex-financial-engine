@@ -1,0 +1,84 @@
+{
+  "schemaVersion" : 1,
+  "environment" : "control-center-live",
+  "service" : "order-cell",
+  "cell" : "order-cell",
+  "instance" : "order-cell-one",
+  "epoch" : "6aaddb38-ab5d-4216-809e-67d65340b4b6",
+  "collectedAt" : "2026-11-09T14:40:41.888470700Z",
+  "sourceMode" : "EFFECTIVE_DECLARATION",
+  "cluster" : "owned-kraft",
+  "publications" : [ {
+    "contract" : {
+      "type" : "ORDER_PLACED",
+      "version" : 1
+    },
+    "topic" : "apex.order.events.v1",
+    "provenance" : "PUBLISHER_ROUTING"
+  }, {
+    "contract" : {
+      "type" : "ORDER_CREATED",
+      "version" : 1
+    },
+    "topic" : "apex.order.legacy.events.v1",
+    "provenance" : "PUBLISHER_ROUTING"
+  }, {
+    "contract" : {
+      "type" : "ORDER_READY_FOR_PAYMENT",
+      "version" : 1
+    },
+    "topic" : "apex.order.payment-requests.v1",
+    "provenance" : "PUBLISHER_ROUTING"
+  }, {
+    "contract" : {
+      "type" : "ORDER_CANCELLATION_REQUESTED",
+      "version" : 1
+    },
+    "topic" : "apex.order.inventory-release-requests.v1",
+    "provenance" : "PUBLISHER_ROUTING"
+  } ],
+  "subscriptions" : [ "apex.inventory.events.v1", "apex.payment.events.v1" ],
+  "consumerGroup" : "order-cell-inventory-outcome-v1",
+  "eventHandlers" : [ {
+    "type" : "INVENTORY_RELEASED",
+    "version" : 1
+  }, {
+    "type" : "INVENTORY_RESERVATION_REJECTED",
+    "version" : 1
+  }, {
+    "type" : "INVENTORY_RESERVED",
+    "version" : 1
+  }, {
+    "type" : "PAYMENT_AUTHORIZED",
+    "version" : 1
+  }, {
+    "type" : "PAYMENT_DECLINED",
+    "version" : 1
+  } ],
+  "grpcHandlers" : [ {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "GET_ORDER",
+      "version" : 1
+    }
+  }, {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "GET_ORDER_PERSPECTIVE",
+      "version" : 1
+    }
+  }, {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "OPS_CONTRACT_DISCOVERY",
+      "version" : 1
+    }
+  }, {
+    "kind" : "REQUEST",
+    "contract" : {
+      "type" : "CREATE_ORDER",
+      "version" : 1
+    }
+  } ],
+  "gaps" : [ ]
+}

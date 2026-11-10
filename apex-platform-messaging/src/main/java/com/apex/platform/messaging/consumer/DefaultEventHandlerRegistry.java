@@ -42,6 +42,12 @@ public final class DefaultEventHandlerRegistry
     }
 
     @Override
+    public java.util.List<EventHandlerKey> descriptors() {
+        return handlers.keySet().stream().sorted(java.util.Comparator.comparing(EventHandlerKey::eventType)
+                .thenComparingInt(EventHandlerKey::eventVersion)).toList();
+    }
+
+    @Override
     public Optional<EventHandler<?>> find(
             String eventType,
             int eventVersion

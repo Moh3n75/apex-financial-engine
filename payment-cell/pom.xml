@@ -33,6 +33,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-platform-contract-discovery</artifactId>
+            <version>${apex.platform.version}</version>
+        </dependency>
         <!-- Platform and service discovery -->
         <dependency>
             <groupId>com.apex</groupId>

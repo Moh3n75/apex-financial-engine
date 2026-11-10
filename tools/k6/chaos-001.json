@@ -1,0 +1,205 @@
+{
+    "metrics": {
+        "apex_orders_created": {
+            "count": 757,
+            "rate": 2.8349032980986726
+        },
+        "apex_status_poll_requests": {
+            "count": 873,
+            "rate": 3.269313843117756
+        },
+        "apex_saga_end_to_end_ms": {
+            "p(95)": 5445.299999999977,
+            "avg": 3113.5140845070423,
+            "min": 1011,
+            "med": 2519.5,
+            "max": 27851,
+            "p(90)": 3034
+        },
+        "apex_post_success_rate": {
+            "passes": 757,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "apex_saga_terminal_rate": {
+            "fails": 0,
+            "passes": 142,
+            "thresholds": {
+                "rate>0.95": false
+            },
+            "value": 1
+        },
+        "vus_max": {
+            "value": 100,
+            "min": 100,
+            "max": 100
+        },
+        "vus": {
+            "value": 0,
+            "min": 0,
+            "max": 9
+        },
+        "apex_order_create_ms": {
+            "med": 4,
+            "max": 89,
+            "p(90)": 12,
+            "p(95)": 13,
+            "avg": 6.110964332892999,
+            "min": 2
+        },
+        "http_req_duration{endpoint:placement}": {
+            "min": 2.6656,
+            "med": 4.3861,
+            "max": 83.6247,
+            "p(90)": 12.25536,
+            "p(95)": 13.266759999999984,
+            "avg": 6.0033778071334165,
+            "thresholds": {
+                "p(95)<1000": false,
+                "p(99)<2500": false
+            }
+        },
+        "http_req_waiting": {
+            "min": 1.5082,
+            "med": 3.4442,
+            "max": 235.4505,
+            "p(90)": 6.8294,
+            "p(95)": 12.032900000000001,
+            "avg": 4.726749110974869
+        },
+        "http_req_connecting": {
+            "avg": 0.0274698344573881,
+            "min": 0,
+            "med": 0,
+            "max": 5.5111,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 1631,
+            "value": 0
+        },
+        "data_sent": {
+            "rate": 1373.8907571556986,
+            "count": 366868
+        },
+        "http_req_receiving": {
+            "med": 0.3086,
+            "max": 4.6636,
+            "p(90)": 0.9213,
+            "p(95)": 0.9985,
+            "avg": 0.386730778663397,
+            "min": 0
+        },
+        "data_received": {
+            "count": 323859,
+            "rate": 1212.8255577528903
+        },
+        "iteration_duration": {
+            "p(95)": 2533.00944,
+            "avg": 588.9801195508588,
+            "min": 2.6656,
+            "med": 4.8628,
+            "max": 27850.9784,
+            "p(90)": 2032.5790599999998
+        },
+        "apex_saga_expected_rate": {
+            "passes": 142,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.95": false
+            },
+            "value": 1
+        },
+        "http_req_duration{expected_response:true}": {
+            "med": 3.7856,
+            "max": 235.4505,
+            "p(90)": 7.1481,
+            "p(95)": 12.350950000000001,
+            "avg": 5.118676517473943,
+            "min": 1.6719
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 757,
+            "value": 1
+        },
+        "dropped_iterations": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<1": false
+            }
+        },
+        "apex_orders_confirmed_sampled": {
+            "rate": 0.5317784257992226,
+            "count": 142
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_duration": {
+            "avg": 5.118676517473943,
+            "min": 1.6719,
+            "med": 3.7856,
+            "max": 235.4505,
+            "p(90)": 7.1481,
+            "p(95)": 12.350950000000001
+        },
+        "http_reqs": {
+            "count": 1631,
+            "rate": 6.1079620597079725
+        },
+        "http_req_blocked": {
+            "avg": 0.03272636419374618,
+            "min": 0,
+            "med": 0,
+            "max": 5.8101,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_sending": {
+            "min": 0,
+            "med": 0,
+            "max": 1.0763,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.00519662783568363
+        },
+        "apex_orders_attempted": {
+            "count": 757,
+            "rate": 2.8349032980986726
+        },
+        "iterations": {
+            "count": 757,
+            "rate": 2.8349032980986726
+        }
+    },
+    "setup_data": {
+        "ready": true
+    },
+    "root_group": {
+        "checks": {
+            "POST 201 + orderId + status": {
+                "fails": 0,
+                "name": "POST 201 + orderId + status",
+                "path": "::POST 201 + orderId + status",
+                "id": "4e67851cd03f3876493a9376c2e50695",
+                "passes": 757
+            }
+        },
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {}
+    }
+}

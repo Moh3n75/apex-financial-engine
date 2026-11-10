@@ -59,7 +59,7 @@ public class KubernetesCellAutoConfiguration {
 
   @Bean
   CellServiceDirectory kubernetesCellDirectory(
-      EndpointSliceDiscoveryClient provider, DiscoveryProperties p) {
-    return new CloudCellServiceDirectory(provider, p, provider::fresh);
+      EndpointSliceDiscoveryClient provider, DiscoveryProperties p,Environment env) {
+    return new CloudCellServiceDirectory(provider,p,provider::fresh,"KUBERNETES",env.getProperty("apex.discovery.registry-id","unknown"));
   }
 }

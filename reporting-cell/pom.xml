@@ -26,6 +26,17 @@
     </properties>
 
     <dependencies>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-discovery-eureka</artifactId><version>${apex.platform.version}</version></dependency>
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-starter-grpc-server</artifactId>
+            <version>${apex.platform.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-platform-contract-discovery</artifactId>
+            <version>${apex.platform.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>

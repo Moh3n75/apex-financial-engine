@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 /** Validate this Cell's required business contracts before Kafka containers start. */
 @Component
-@Profile("saga")
 public class SagaSubscriptionPreflight implements SmartLifecycle {
     private final EventHandlerRegistry registry;
     private boolean running;

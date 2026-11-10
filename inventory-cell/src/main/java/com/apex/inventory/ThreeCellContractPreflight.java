@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.SmartLifecycle;
 import com.apex.platform.messaging.consumer.EventHandlerRegistry;
 @Component
-@Profile("three-cell-saga")
 public class ThreeCellContractPreflight implements SmartLifecycle {
     private final EventHandlerRegistry registry;
     private boolean running;

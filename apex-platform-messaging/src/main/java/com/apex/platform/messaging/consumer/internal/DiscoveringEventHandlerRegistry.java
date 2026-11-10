@@ -37,6 +37,12 @@ public final class DiscoveringEventHandlerRegistry implements EventHandlerRegist
     }
 
     @Override
+    public java.util.List<com.apex.platform.messaging.consumer.EventHandlerKey> descriptors() {
+        if (delegate == null) throw new IllegalStateException("Event registry not initialized");
+        return delegate.descriptors();
+    }
+
+    @Override
     public Optional<EventHandler<?>> find(String eventType, int eventVersion) {
         EventHandlerRegistry initialized = delegate;
         if (initialized == null) {

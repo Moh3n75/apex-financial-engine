@@ -5,9 +5,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.apex.operations.console.OwnerPoller;
 import com.apex.operations.console.ReadApi;
+import com.apex.operations.console.TopologyApi;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = ReadApi.class)
+@WebMvcTest(controllers = {ReadApi.class, TopologyApi.class})
 @Import({OpsM36aSecurityConfiguration.class, OpsM36aHttpSecurityIT.StubDecoder.class})
 @TestPropertySource(
     properties = {
@@ -54,6 +56,7 @@ class OpsM36aHttpSecurityIT {
   @Test
   void unauthenticatedOverviewIs401() throws Exception {
     mvc.perform(get("/ops/v1/overview")).andExpect(status().isUnauthorized());
+    mvc.perform(get("/ops/v1/topology")).andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -76,6 +79,13 @@ class OpsM36aHttpSecurityIT {
                         .authorities(
                             new SimpleGrantedAuthority("SCOPE_ops.console.read"))))
         .andExpect(status().isOk());
+    mvc.perform(get("/ops/v1/topology").with(jwt().authorities(
+        new SimpleGrantedAuthority("SCOPE_ops.console.read")))).andExpect(status().isOk());
+    mvc.perform(get("/ops/v1/topology?schemaVersion=2").with(jwt().authorities(
+        new SimpleGrantedAuthority("SCOPE_ops.console.read")))).andExpect(status().isOk())
+        .andExpect(jsonPath("$.schemaVersion").value(2)).andExpect(jsonPath("$.providers").isArray());
+    mvc.perform(get("/ops/v1/topology?schemaVersion=3").with(jwt().authorities(
+        new SimpleGrantedAuthority("SCOPE_ops.console.read")))).andExpect(status().isBadRequest());
   }
 
   @Test
@@ -88,5 +98,7 @@ class OpsM36aHttpSecurityIT {
                         .authorities(
                             new SimpleGrantedAuthority("SCOPE_ops.console.read"))))
         .andExpect(status().isMethodNotAllowed());
+    mvc.perform(post("/ops/v1/topology?schemaVersion=2").with(jwt().authorities(
+        new SimpleGrantedAuthority("SCOPE_ops.console.read")))).andExpect(status().isMethodNotAllowed());
   }
 }

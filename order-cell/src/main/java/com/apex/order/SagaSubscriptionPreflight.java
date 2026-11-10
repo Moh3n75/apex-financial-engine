@@ -1,14 +1,16 @@
 package com.apex.order;
 
 import java.util.List;
+
 import com.apex.platform.messaging.consumer.EventHandlerRegistry;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-/** Validate this Cell's required business contracts before Kafka containers start. */
+/**
+ * Validate this Cell's required business contracts before Kafka containers start.
+ */
 @Component
-@Profile("saga")
 public class SagaSubscriptionPreflight implements SmartLifecycle {
     private final EventHandlerRegistry registry;
     private boolean running;

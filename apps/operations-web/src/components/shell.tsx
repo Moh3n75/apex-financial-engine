@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 const nav = [
   { href: "/", label: "Overview" },
   { href: "/cells", label: "Cells & Sources" },
+  { href: "/topology", label: "Topology" },
   { href: "/events", label: "Recent Events" },
   { href: "/inbox", label: "Known-Group Inbox" },
   { href: "/workflows", label: "Workflows" },

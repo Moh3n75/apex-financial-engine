@@ -66,6 +66,17 @@ class DiscoveryTest {
     assertThat(directory.endpoints("order-cell")).isEmpty();
   }
 
+  @Test void membershipNeedsCompleteMetadataAndFiltersOtherEnvironments() {
+    var own=instance("registry-a",8080);own.getMetadata().putAll(Map.of("apex.environment","test","apex.instance-id","one","apex.epoch",UUID.randomUUID().toString()));live.add(own);
+    var directory=new CloudCellServiceDirectory(provider,policy,()->true,"EUREKA","owned");
+    assertThat(directory.membership("order-cell","test").authoritative()).isTrue();
+    assertThat(directory.membership("order-cell","test").members()).hasSize(1);
+    var foreign=instance("registry-b",8082);foreign.getMetadata().putAll(Map.of("apex.environment","other","apex.instance-id","one","apex.epoch",UUID.randomUUID().toString()));live.add(foreign);
+    assertThat(directory.membership("order-cell","test").authoritative()).isFalse();
+    assertThat(directory.membership("order-cell","test").members()).hasSize(1);
+    own.getMetadata().remove("apex.epoch");assertThat(directory.membership("order-cell","test").members()).isEmpty();
+  }
+
   @Test
   void unknownLogicalCellIsEmptyButExpiredSnapshotStillFailsClosed() {
     assertThat(new CloudCellServiceDirectory(provider, policy, () -> true).endpoints("payment-cell"))

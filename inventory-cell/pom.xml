@@ -27,6 +27,17 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-starter-grpc-client</artifactId>
+            <version>${apex.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-platform-contract-discovery</artifactId>
+            <version>${apex.platform.version}</version>
+        </dependency>
         <!--Eureka is a normal runtime capability.-->
         <dependency>
             <groupId>com.apex</groupId>

@@ -1,0 +1,46 @@
+{
+  "schemaVersion" : 1,
+  "environment" : "control-center-live",
+  "service" : "payment-cell",
+  "cell" : "payment-cell",
+  "instance" : "payment-cell-one",
+  "epoch" : "c2dc7be9-dac4-496c-a564-dc970c2335dc",
+  "collectedAt" : "2026-11-09T14:40:42.406531500Z",
+  "sourceMode" : "EFFECTIVE_DECLARATION",
+  "cluster" : "owned-kraft",
+  "publications" : [ {
+    "contract" : {
+      "type" : "PAYMENT_AUTHORIZED",
+      "version" : 1
+    },
+    "topic" : "apex.payment.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  }, {
+    "contract" : {
+      "type" : "PAYMENT_DECLINED",
+      "version" : 1
+    },
+    "topic" : "apex.payment.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  } ],
+  "subscriptions" : [ "apex.order.payment-requests.v1" ],
+  "consumerGroup" : "payment-cell-authorization-v1",
+  "eventHandlers" : [ {
+    "type" : "ORDER_READY_FOR_PAYMENT",
+    "version" : 1
+  } ],
+  "grpcHandlers" : [ {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "GET_ORDER_PERSPECTIVE",
+      "version" : 1
+    }
+  }, {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "OPS_CONTRACT_DISCOVERY",
+      "version" : 1
+    }
+  } ],
+  "gaps" : [ ]
+}

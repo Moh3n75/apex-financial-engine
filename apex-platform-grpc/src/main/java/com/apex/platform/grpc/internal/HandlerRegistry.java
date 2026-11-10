@@ -116,4 +116,14 @@ public final class HandlerRegistry implements SmartInitializingSingleton {
   public int size() {
     return handlers.size();
   }
+
+  public record Descriptor(String kind, String type, int version) {}
+
+  /** Capabilities only: registration never identifies callers. */
+  public List<Descriptor> descriptors() {
+    return handlers.keySet().stream()
+        .map(k -> new Descriptor(k.query() ? "QUERY" : "REQUEST", k.type(), k.version()))
+        .sorted(Comparator.comparing(Descriptor::kind).thenComparing(Descriptor::type)
+            .thenComparingInt(Descriptor::version)).toList();
+  }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
+final class GrpcInvocationClient implements RequestReplyGateway, InstanceQueryGateway, AutoCloseable {
   private final GrpcProperties properties;
   private final RpcCodec codec;
   private final ExecutionContextProvider contexts;
@@ -67,6 +67,13 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
       UUID requestId,
       String key,
       Duration deadline) {
+    return invoke(query,destination,value,resultType,requestId,key,deadline,null);
+  }
+  @Override public <R> R queryInstance(String cell,String registryId,Object query,Class<R> response,QueryOptions options) {
+    return RpcErrors.await(invoke(true,cell,query,response,options.requestId(),"",options.deadline(),registryId),options.deadline(),false);
+  }
+  private <R> CompletionStage<R> invoke(boolean query,String destination,Object value,Class<R> resultType,
+      UUID requestId,String key,Duration deadline,String registryId) {
     try {
       if (TransactionSynchronizationManager.isActualTransactionActive())
         throw new GatewayException(GatewayException.Code.FAILED_PRECONDITION, false);
@@ -99,7 +106,7 @@ final class GrpcInvocationClient implements RequestReplyGateway, AutoCloseable {
       headers.put(RpcServerAuth.CORRELATION, current.correlationId().toString());
       headers.put(RpcServerAuth.REQUEST, requestId.toString());
       var stub =
-          CellGatewayGrpc.newFutureStub(channels.channel(destination))
+          CellGatewayGrpc.newFutureStub(registryId==null?channels.channel(destination):channels.instanceChannel(destination,registryId))
               .withDeadlineAfter(deadline.toMillis(), TimeUnit.MILLISECONDS)
               .withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
       var nativeResult = query ? stub.invokeQuery(wire) : stub.invokeRequest(wire);

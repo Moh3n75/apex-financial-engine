@@ -41,6 +41,7 @@
         <module>apex-discovery-grpc</module>
         <module>apex-starter-observability</module>
         <module>apex-operations-contracts</module>
+        <module>apex-platform-contract-discovery</module>
         <module>apex-operations-owner-jdbc</module>
         <module>apex-operations-console</module>
     </modules>

@@ -1,4 +1,5 @@
 import "server-only";
+import { topologySchema, type Topology } from "@/lib/topology";
 import { optionalUpstreamBearer } from "./auth/access";
 import { isM36aEnabled } from "./auth/config";
 import { AuthError } from "./auth/errors";
@@ -44,39 +45,75 @@ async function boundedFetch(path: string, init?: RequestInit): Promise<Response>
   }
   inFlight += 1;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    const origin = resolveOperationsOrigin();
-    const headers: Record<string, string> = {
-      Accept: "application/json",
-      // Never forward browser Cookie. Only a server session Bearer reaches Console.
-    };
-    if (isM36aEnabled()) {
-      const bearer = await optionalUpstreamBearer();
-      if (!bearer) {
-        throw new OpsClientError(401, "UNAUTHENTICATED", "Sign-in required.");
-      }
-      headers.Authorization = `Bearer ${bearer}`;
-    }
-    const res = await fetch(`${origin}${path}`, {
-      ...init,
-      method: "GET",
-      signal: controller.signal,
-      cache: "no-store",
-      headers,
+    const deadline = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        controller.abort();
+        reject(new OpsClientError(504, "SOURCE_TIMEOUT", "Operations Console exchange timed out."));
+      }, FETCH_TIMEOUT_MS);
     });
-    if (res.status === 401) {
-      throw new OpsClientError(401, "UNAUTHENTICATED", "Console rejected credentials.");
-    }
-    if (res.status === 403) {
-      throw new OpsClientError(403, "FORBIDDEN", "Console denied this grant.");
-    }
-    return res;
+    return await Promise.race([deadline, (async () => {
+      const origin = resolveOperationsOrigin();
+      const headers: Record<string, string> = {
+        Accept: "application/json",
+        // Never forward browser Cookie. Only a server session Bearer reaches Console.
+      };
+      if (isM36aEnabled()) {
+        const bearer = await optionalUpstreamBearer();
+        if (!bearer) {
+          throw new OpsClientError(401, "UNAUTHENTICATED", "Sign-in required.");
+        }
+        headers.Authorization = `Bearer ${bearer}`;
+      }
+      controller.signal.throwIfAborted();
+      const res = await fetch(`${origin}${path}`, {
+        ...init,
+        method: "GET",
+        signal: controller.signal,
+        cache: "no-store",
+        headers,
+        redirect: "error",
+      });
+      reader = res.body?.getReader();
+      if (controller.signal.aborted) {
+        void reader?.cancel().catch(() => {});
+        controller.signal.throwIfAborted();
+      }
+      if (res.status === 401) {
+        throw new OpsClientError(401, "UNAUTHENTICATED", "Console rejected credentials.");
+      }
+      if (res.status === 403) {
+        throw new OpsClientError(403, "FORBIDDEN", "Console denied this grant.");
+      }
+      const chunks: Uint8Array[] = [];
+      let size = 0;
+      const length = res.headers.get("content-length");
+      if (length && Number(length) > MAX_RESPONSE_BYTES) {
+        throw new OpsClientError(502, "RESPONSE_TOO_LARGE", "Upstream response exceeded byte cap.");
+      }
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > MAX_RESPONSE_BYTES) {
+          throw new OpsClientError(502, "RESPONSE_TOO_LARGE", "Upstream response exceeded byte cap.");
+        }
+        chunks.push(value);
+      }
+      const body = new Uint8Array(size);
+      let offset = 0;
+      for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
+      return new Response(size ? body : null, { status: res.status, headers: res.headers });
+    })()]);
   } catch (err) {
     if (err instanceof OpsClientError || err instanceof AuthError) throw err;
     throw new OpsClientError(503, "SOURCE_UNAVAILABLE", "Operations Console is unreachable from this host.");
   } finally {
     clearTimeout(timer);
+    controller.abort();
+    void reader?.cancel().catch(() => {});
     inFlight -= 1;
   }
 }
@@ -212,4 +249,20 @@ export async function getRecent(
 export function redactedErrorMessage(err: unknown): string {
   if (err instanceof OpsClientError) return err.message;
   return "Request failed.";
+}
+
+export async function getTopology(): Promise<Topology> {
+  if (isFixtureMode()) {
+    return topologySchema.parse({
+      schemaVersion: 1, asOf: new Date().toISOString(),
+      coverage: "SYNTHETIC_DEMO_EMPTY_TOPOLOGY",
+      capabilities: { declared: "CONFIGURED_OWNER_QUERIES_ONLY", instances: "OWNER_SNAPSHOTS_PARTIAL",
+        observedInteractions: "NOT_CONFIGURED", messaging: "NOT_CONFIGURED", traces: "NOT_CONFIGURED",
+        runtimeHealth: "NOT_CONFIGURED" },
+      nodes: [], connections: [],
+    });
+  }
+  const res = await boundedFetch("/ops/v1/topology?schemaVersion=2");
+  if (!res.ok) throw new OpsClientError(res.status, "UPSTREAM", "Topology unavailable.");
+  return topologySchema.parse(await readJsonBounded(res));
 }

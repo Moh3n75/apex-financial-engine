@@ -1,0 +1,128 @@
+{
+  "sourceMode" : "LIVE_EXECUTION",
+  "startedAt" : "2026-11-09T14:39:42.120472500Z",
+  "verdict" : "LIVE_PARTIAL_DUPLICATE_DETECTION_UNIMPLEMENTED",
+  "calls" : [ {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:40:41.932226600Z",
+    "cell" : "order-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:40:42.184530200Z",
+    "cell" : "inventory-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:40:42.429533100Z",
+    "cell" : "payment-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:40:42.640532700Z",
+    "cell" : "customer-cell"
+  }, {
+    "purpose" : "PRIMARY",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:40:42.865200700Z",
+    "cell" : "reporting-cell"
+  }, {
+    "purpose" : "UNTRUSTED_CA",
+    "result" : "UNAVAILABLE",
+    "at" : "2026-11-09T14:40:43.167114Z",
+    "cell" : "order-cell"
+  }, {
+    "purpose" : "CONTRACT_DENIED_PEER",
+    "result" : "PERMISSION_DENIED",
+    "at" : "2026-11-09T14:40:43.467962400Z",
+    "cell" : "order-cell"
+  }, {
+    "purpose" : "DUPLICATE_ORIGINAL",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:41:38.621693500Z",
+    "cell" : "reporting-cell"
+  }, {
+    "purpose" : "DUPLICATE_SECOND",
+    "result" : "SUCCESS",
+    "at" : "2026-11-09T14:41:38.863945300Z",
+    "cell" : "reporting-cell"
+  } ],
+  "securityMode" : {
+    "destinations" : "EXPLICIT_TEST_OWNED_PORTS",
+    "console" : "M36A_JWT_AND_M36B_OWNER_GRANTS",
+    "grpc" : "REQUIRED_MTLS_EXACT_URI_SAN_PER_CONTRACT_GRANTS",
+    "browser" : "REAL_OIDC_LOGIN",
+    "insecureLoopback" : false
+  },
+  "launchConfigurationSource" : "PACKAGED_APPLICATION_YAML_NOT_COMPARISON_FIXTURES",
+  "staticComparison:order-cell" : {
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ],
+    "publicationsSubscriptionsEvents" : "MATCH"
+  },
+  "staticComparison:inventory-cell" : {
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ],
+    "publicationsSubscriptionsEvents" : "MATCH"
+  },
+  "staticComparison:payment-cell" : {
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ],
+    "publicationsSubscriptionsEvents" : "MATCH"
+  },
+  "staticComparison:customer-cell" : {
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ],
+    "publicationsSubscriptionsEvents" : "MATCH"
+  },
+  "staticComparison:reporting-cell" : {
+    "identityDifferences" : [ "environment", "cluster", "instance", "epoch", "collectedAt", "sourceMode" ],
+    "extraGrpc" : [ "QUERY:OPS_CONTRACT_DISCOVERY:1" ],
+    "publicationsSubscriptionsEvents" : "MATCH"
+  },
+  "baseline" : {
+    "connections" : 28,
+    "nodes" : 21,
+    "services" : 5
+  },
+  "mutationDeniedStatus" : 403,
+  "deniedOwner" : {
+    "connections" : 4,
+    "nodes" : 6,
+    "visibleOwners" : [ "order-cell" ]
+  },
+  "workflow" : {
+    "topologyEvidence" : "DECLARED_ONLY",
+    "payment" : "AUTHORIZED",
+    "order" : "CONFIRMED",
+    "inventory" : "RESERVED"
+  },
+  "browserExit" : 0,
+  "expiredUnavailable" : {
+    "retainsDeclaredEdges" : true,
+    "ageOverSeconds" : 30,
+    "status" : "SOURCE_UNAVAILABLE"
+  },
+  "missingConsumer" : {
+    "availableManifests" : 4,
+    "connections" : 26
+  },
+  "wrongCluster" : {
+    "unresolved" : true,
+    "connections" : 26
+  },
+  "duplicateInstance" : {
+    "twoRealEpochs" : true,
+    "automaticDetection" : "UNIMPLEMENTED_SINGLE_DESTINATION_PROVIDER",
+    "secondEpoch" : "a2eb1073-6a8d-4ca1-9e37-f59394a9538c",
+    "service" : "reporting-cell",
+    "firstEpoch" : "b7f662d8-a9de-45af-af16-5fa7bc6e132a",
+    "instance" : "reporting-cell-one"
+  },
+  "unimplemented" : [ "duplicate_instance_registry_detection", "observed_otel_interactions", "trace_queries", "kafka_admin_provider", "runtime_health_provider", "complete_runtime_membership" ],
+  "completedAt" : "2026-11-09T14:41:46.549961800Z",
+  "stage" : "COMPLETE",
+  "cellsContacted" : [ "order-cell", "inventory-cell", "payment-cell", "customer-cell", "reporting-cell" ],
+  "ownedChildrenStopped" : true
+}

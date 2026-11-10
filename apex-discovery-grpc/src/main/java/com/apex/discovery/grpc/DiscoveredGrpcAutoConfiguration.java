@@ -49,23 +49,28 @@ public class DiscoveredGrpcAutoConfiguration {
         || Boolean.FALSE.equals(tls.getSsl().getEnabled())
         || (!Boolean.TRUE.equals(tls.getSsl().getEnabled()) && tls.getSsl().getBundle() == null))
       throw new IllegalStateException("Automatic Cell discovery requires verified default gRPC TLS");
-    return logicalCell -> {
+    return new DiscoveredCellChannelFactory() {
+      public io.grpc.ManagedChannel createChannel(String logicalCell){return create(logicalCell,null);}
+      public io.grpc.ManagedChannel createInstanceChannel(String logicalCell,String registryId){return create(logicalCell,registryId);}
+      private io.grpc.ManagedChannel create(String logicalCell,String registryId) {
       String logical = CellEndpoint.logicalName(logicalCell);
-      String target = "apex:///" + logical;
+      String target = "apex:///" + logical+(registryId==null?"":"?instance="+Base64.getUrlEncoder().withoutPadding().encodeToString(registryId.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+      CellServiceDirectory selected=registryId==null?directory:cell->directory.endpoints(cell).stream().filter(e->e.instanceId().equals(registryId)).toList();
       if (boot.getChannel().containsKey(target))
         throw new IllegalStateException("Logical discovery targets cannot be overridden by named channels");
       String authority = discovery.trustedAuthority(logical);
       var options = ChannelBuilderOptions.defaults().withCustomizer((name, builder) -> {
         builder.nameResolverFactory(new DirectoryNameResolverFactory(
-            directory, logical, authority, cellEndpointRefresh, discovery.getRefreshInterval()));
+            selected, logical, authority, cellEndpointRefresh, discovery.getRefreshInterval(),target));
         builder.overrideAuthority(authority);
-        builder.intercept(new DiscoveryFreshnessInterceptor(directory, logical));
+        builder.intercept(new DiscoveryFreshnessInterceptor(selected, logical));
         builder.defaultLoadBalancingPolicy("round_robin");
         builder.defaultServiceConfig(Map.of("loadBalancingConfig", List.of(Map.of("round_robin", Map.of()))));
         builder.disableServiceConfigLookUp();
         builder.disableRetry();
       });
       return factories.getObject().createChannel(target, options);
+      }
     };
   }
 }

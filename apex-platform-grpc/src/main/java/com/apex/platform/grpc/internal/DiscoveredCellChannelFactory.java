@@ -6,4 +6,5 @@ import io.grpc.ManagedChannel;
 @FunctionalInterface
 public interface DiscoveredCellChannelFactory {
   ManagedChannel createChannel(String logicalCell);
+  default ManagedChannel createInstanceChannel(String logicalCell,String registryId){throw new UnsupportedOperationException("Pinned discovery unavailable");}
 }

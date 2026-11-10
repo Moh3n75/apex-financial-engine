@@ -253,11 +253,46 @@ class OperationalRecoverySagaIT {
         broker.brokerProperty("auto.create.topics.enable", "false"); broker.brokerListProperty("apex.m29.test.brokers");
         broker.afterPropertiesSet(); brokers = broker.getBrokersAsString();
         http = HttpClient.newHttpClient(); orderPort = freePort(); inventoryPort = freePort();
-        order = launch(orderJar, orderDb, brokers, orderGroup, orderPort, output.resolve("m29-order.log"), ORDER_TOPIC, null,
-                "--spring.profiles.active=saga,three-cell-saga,replay,operations", "--apex.order.operations.read-token=" + token,
-                "--apex.order.operations.age-threshold=200ms", "--apex.messaging.consumer.reliability.retry-delay=200ms");
-        inventory = launch(inventoryJar, inventoryDb, brokers, inventoryGroup, inventoryPort, output.resolve("m29-inventory.log"), INVENTORY_TOPIC, null,
-                "--spring.profiles.active=saga,three-cell-saga,replay", "--apex.messaging.consumer.reliability.retry-delay=200ms");
+        order = launch(
+                orderJar,
+                orderDb,
+                brokers,
+                orderGroup,
+                orderPort,
+                output.resolve("m29-order.log"),
+                ORDER_TOPIC,
+                null,
+                "--spring.profiles.active=saga,three-cell-saga,replay,operations",
+
+                "--apex.messaging.consumer.topics="
+                        + INVENTORY_TOPIC + ","
+                        + PAYMENT + ","
+                        + ORDER_INVENTORY_REPLAY + ","
+                        + ORDER_PAYMENT_REPLAY,
+
+                "--apex.order.operations.read-token=" + token,
+                "--apex.order.operations.age-threshold=200ms",
+                "--apex.messaging.consumer.reliability.retry-delay=200ms"
+        );
+        inventory = launch(
+                inventoryJar,
+                inventoryDb,
+                brokers,
+                inventoryGroup,
+                inventoryPort,
+                output.resolve("m29-inventory.log"),
+                INVENTORY_TOPIC,
+                null,
+                "--spring.profiles.active=saga,three-cell-saga,replay",
+
+                "--apex.messaging.consumer.topics="
+                        + ORDER_TOPIC + ","
+                        + RELEASE + ","
+                        + INVENTORY_REPLAY + ","
+                        + RELEASE_REPLAY,
+
+                "--apex.messaging.consumer.reliability.retry-delay=200ms"
+        );
         ready(order, output.resolve("m29-order.log"), http, orderPort);
         ready(inventory, output.resolve("m29-inventory.log"), http, inventoryPort);
         startPayment();
@@ -292,12 +327,39 @@ class OperationalRecoverySagaIT {
     }
 
     private void startPayment() throws Exception {
-        Path log = output.resolve("m29-payment-" + UUID.randomUUID() + ".log");
-        payment = launch(paymentJar, paymentDb, brokers, paymentGroup, 0, log, PAYMENT, null,
-                "--spring.profiles.active=three-cell-saga,simulation,replay", "--apex.messaging.consumer.reliability.retry-delay=200ms");
+        Path log = output.resolve(
+                "m29-payment-" + UUID.randomUUID() + ".log"
+        );
+
+        payment = launch(
+                paymentJar,
+                paymentDb,
+                brokers,
+                paymentGroup,
+                0,
+                log,
+                PAYMENT,
+                null,
+                "--spring.profiles.active=three-cell-saga,simulation,replay",
+
+                // Explicitly subscribe to normal + approved replay topics
+                "--apex.messaging.consumer.topics="
+                        + REQUEST + "," + PAYMENT_REPLAY,
+
+                "--apex.messaging.consumer.reliability.retry-delay=200ms"
+        );
+
         paymentReady(payment, log);
-        assertThat(read(log)).contains("topics=[" + REQUEST + ", " + PAYMENT_REPLAY + "]");
-        evidence.add(Map.of("stage", "payment-started", "pid", payment.pid(), "group", paymentGroup));
+
+        assertThat(read(log)).contains(
+                "topics=[" + REQUEST + ", " + PAYMENT_REPLAY + "]"
+        );
+
+        evidence.add(Map.of(
+                "stage", "payment-started",
+                "pid", payment.pid(),
+                "group", paymentGroup
+        ));
     }
 
     private void stopPayment() throws Exception {

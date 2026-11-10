@@ -1,0 +1,56 @@
+{
+  "schemaVersion" : 1,
+  "environment" : "control-center-live",
+  "service" : "inventory-cell",
+  "cell" : "inventory-cell",
+  "instance" : "inventory-cell-one",
+  "epoch" : "a15c0131-b540-44e8-a9ac-520adb9ce042",
+  "collectedAt" : "2026-11-09T14:40:42.163529Z",
+  "sourceMode" : "EFFECTIVE_DECLARATION",
+  "cluster" : "owned-kraft",
+  "publications" : [ {
+    "contract" : {
+      "type" : "INVENTORY_RESERVED",
+      "version" : 1
+    },
+    "topic" : "apex.inventory.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  }, {
+    "contract" : {
+      "type" : "INVENTORY_RESERVATION_REJECTED",
+      "version" : 1
+    },
+    "topic" : "apex.inventory.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  }, {
+    "contract" : {
+      "type" : "INVENTORY_RELEASED",
+      "version" : 1
+    },
+    "topic" : "apex.inventory.events.v1",
+    "provenance" : "PUBLISHED_CONTRACT_CATALOG"
+  } ],
+  "subscriptions" : [ "apex.order.events.v1", "apex.order.inventory-release-requests.v1" ],
+  "consumerGroup" : "inventory-cell-order-placed-v1",
+  "eventHandlers" : [ {
+    "type" : "ORDER_CANCELLATION_REQUESTED",
+    "version" : 1
+  }, {
+    "type" : "ORDER_PLACED",
+    "version" : 1
+  } ],
+  "grpcHandlers" : [ {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "GET_ORDER_PERSPECTIVE",
+      "version" : 1
+    }
+  }, {
+    "kind" : "QUERY",
+    "contract" : {
+      "type" : "OPS_CONTRACT_DISCOVERY",
+      "version" : 1
+    }
+  } ],
+  "gaps" : [ ]
+}

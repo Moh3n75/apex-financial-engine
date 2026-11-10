@@ -93,6 +93,23 @@ Owner indexes: fixture applies each cell’s `db/ops03d/recent-indexes.sql` in a
 
 Overview · Cells & Sources · Recent Events · Known-Group Inbox · Workflows · Requests · Active Operations · Diagnostics
 
+Topology (`/topology`) adds a read-only view of configured Console-to-owner gRPC dependencies
+and owner snapshot instance evidence. Dependencies are DECLARED; snapshots do not prove
+observed traffic, complete membership or health. Kafka metadata, tracing and runtime health
+providers are not connected in this slice. Fixture mode shows an explicitly synthetic empty
+graph. See [Control Center audit and plan](../../docs/control-center-audit.md).
+
+The next iteration adds opt-in platform contract discovery and topology schema version 2.
+The BFF requests `/ops/v1/topology?schemaVersion=2`; version 1 remains the Java default.
+Topic/group links require exact authorized environment, cluster, topic and event-contract
+matches. Provider coverage, gRPC capabilities and unresolved declarations render from the
+response. See [discovery setup, validation and generated JSON](../../docs/control-center-discovery.md).
+
+Opt-in runtime membership adds registry-backed INSTANCE nodes, epoch-aware duplicate detection,
+restart/disappearance states and explicit provider coverage. See the
+[multi-instance LIVE acceptance report](../../docs/control-center-membership-live-acceptance.md).
+The UI remains read-only; registry and mTLS configuration stays on the server.
+
 ## Deployment restrictions
 
 No Vercel/cloud manifest, no public Docker publish, no wildcard CORS, no operator-supplied upstream URL. OPS-03D FULL regression remains failed/open — this UI does not relabel it. Owner approval required before any commit/push.

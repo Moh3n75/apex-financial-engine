@@ -1,0 +1,12 @@
+{
+    "source":  "ACTUAL_MAVEN_SUREFIRE_RESULTS",
+    "intentionalDeletedClassesRestored":  false,
+    "failures":  7,
+    "compilation":  "PASS",
+    "retiredAdminRegressionTests":  "2_PASS",
+    "command":  "mvn -o -q -f order-cell/pom.xml test",
+    "errors":  7,
+    "tests":  42,
+    "skipped":  0,
+    "suite":  "FAIL"
+}
