@@ -9,7 +9,7 @@ import java.util.function.BiPredicate;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.bind.annotation.*;
 
-/** Bounded projection of configured owner reads, not a service-discovery or traffic graph. */
+/** Bounded read-only projection of owner evidence and opt-in discovery; never inferred traffic. */
 @RestController
 public final class TopologyApi {
   private final OwnerPoller owners;
@@ -17,12 +17,15 @@ public final class TopologyApi {
   private final ObjectProvider<ContractDiscoveryPoller> discovery;
   private final ObjectProvider<RuntimeMembershipPoller> membership;
   private final String environment;
+  private final ObjectProvider<LocalEurekaTopologyInventory> localInventory;
 
   public TopologyApi(OwnerPoller owners, ObjectProvider<OpsM36bResourceAuthorizer> authorizer,
-      ObjectProvider<ContractDiscoveryPoller> discovery,ObjectProvider<RuntimeMembershipPoller> membership,org.springframework.core.env.Environment env) {
+      ObjectProvider<ContractDiscoveryPoller> discovery,ObjectProvider<RuntimeMembershipPoller> membership,
+      ObjectProvider<LocalEurekaTopologyInventory> localInventory, org.springframework.core.env.Environment env) {
     this.owners = owners;
     this.authorizer = authorizer;
     this.discovery = discovery;
+    this.localInventory = localInventory;
     this.membership=membership;this.environment=env.getProperty("apex.ops.contract-discovery.environment","unknown");
   }
 
@@ -34,8 +37,11 @@ public final class TopologyApi {
     var base = project(owners.views(), Instant.now(), visible);
     var provider = discovery.getIfAvailable();
     var runtime=membership.getIfAvailable();
-    if(schemaVersion==2&&runtime!=null)return RuntimeTopology.project(base,runtime.views(),environment,visible);
-    return schemaVersion == 1 ? base : ContractTopology.join(base, provider == null ? List.of() : provider.views(), visible);
+    if (schemaVersion == 1) return base;
+    var graph = runtime != null ? RuntimeTopology.project(base,runtime.views(),environment,visible)
+        : ContractTopology.join(base, provider == null ? List.of() : provider.views(), visible);
+    var inventory = localInventory.getIfAvailable();
+    return inventory == null ? graph : inventory.join(graph, visible);
   }
 
   static TopologySnapshot project(List<EvidenceCache.View> views, Instant now,

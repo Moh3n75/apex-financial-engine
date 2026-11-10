@@ -1,5 +1,6 @@
 import "server-only";
 import { topologySchema, type Topology } from "@/lib/topology";
+import { OperationsOriginError } from "@/lib/origin-policy";
 import { optionalUpstreamBearer } from "./auth/access";
 import { isM36aEnabled } from "./auth/config";
 import { AuthError } from "./auth/errors";
@@ -109,6 +110,9 @@ async function boundedFetch(path: string, init?: RequestInit): Promise<Response>
     })()]);
   } catch (err) {
     if (err instanceof OpsClientError || err instanceof AuthError) throw err;
+    if (err instanceof OperationsOriginError) {
+      throw new OpsClientError(500, "CONFIGURATION_ERROR", err.message);
+    }
     throw new OpsClientError(503, "SOURCE_UNAVAILABLE", "Operations Console is unreachable from this host.");
   } finally {
     clearTimeout(timer);

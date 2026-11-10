@@ -82,7 +82,9 @@ export default async function DiagnosticsPage() {
 
         <Panel title="Manual operator steps">
           <ol className="list-decimal space-y-2 pl-5 text-sm">
-            <li>Confirm Java Console is bound to 127.0.0.1:9190 with ops03d search enabled.</li>
+            <li>Confirm Java Console is bound to 127.0.0.1:9190. Enable its local profile for read-only Eureka inventory.</li>
+            <li>Set APEX_OPERATIONS_API_ORIGIN=http://127.0.0.1:9190 in apps/operations-web/.env.local, then restart Next.js. CONFIGURATION_ERROR means missing or invalid setup; SOURCE_UNAVAILABLE means the configured Console could not be reached.</li>
+            <li>For deliberate local no-auth use APEX_OPS_M36A_ENABLED=false and apex.ops.m36a.enabled=false. Keep fixture mode off. These switches do not configure discovery.</li>
             <li>Start this app with `pnpm dev` (already forces 127.0.0.1).</li>
             <li>Use Search / Refresh explicitly; keep auto-polling off for lists.</li>
             <li>

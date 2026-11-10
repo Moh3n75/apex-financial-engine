@@ -46,6 +46,7 @@ export const topologySchema = schema.superRefine((graph, ctx) => {
     if (nodes.get(edge.source)?.environment !== edge.environment || nodes.get(edge.target)?.environment !== edge.environment) issue("Invalid connection endpoints");
     if (edge.lastSeen !== null && !edge.evidence.some(e => e.kind === "OBSERVED" && e.lastSeen !== null)) issue("Traffic requires observed evidence");
     if (edge.evidence.some(e => e.source === "OWNER_SNAPSHOT" && e.kind === "OBSERVED")) issue("Instance snapshot is not traffic");
+    if (edge.evidence.some(e => e.source === "EUREKA" && e.kind === "OBSERVED")) issue("Registry presence is not traffic");
   }
   for (const node of graph.nodes) {
     if (node.kind === "INSTANCE") {

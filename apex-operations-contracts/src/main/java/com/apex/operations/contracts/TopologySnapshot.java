@@ -35,6 +35,8 @@ public record TopologySnapshot(int schemaVersion, Instant asOf, String coverage,
                            Instant lastSeen, List<Evidence> evidence) {
     public Connection {
       Protocol.valueOf(protocol); evidence = List.copyOf(evidence);
+      if (evidence.stream().anyMatch(e -> e.kind().equals("OBSERVED") && e.source().equals("EUREKA")))
+        throw new IllegalArgumentException("REGISTRY_PRESENCE_IS_NOT_TRAFFIC");
       if (lastSeen != null && evidence.stream().noneMatch(e -> e.kind().equals("OBSERVED") && e.lastSeen() != null)) throw new IllegalArgumentException("TRAFFIC_REQUIRES_OBSERVATION");
     }
   }

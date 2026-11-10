@@ -6,6 +6,7 @@ describe("validateOperationsOrigin", () => {
     expect(validateOperationsOrigin("http://127.0.0.1:9190")).toBe("http://127.0.0.1:9190");
     expect(validateOperationsOrigin("http://localhost:9190")).toBe("http://127.0.0.1:9190");
     expect(validateOperationsOrigin("http://127.0.0.1:19290")).toBe("http://127.0.0.1:19290");
+    expect(validateOperationsOrigin("https://localhost:9190")).toBe("https://127.0.0.1:9190");
   });
 
   it("rejects remote or path-bearing origins", () => {

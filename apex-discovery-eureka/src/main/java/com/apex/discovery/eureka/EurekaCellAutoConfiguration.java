@@ -153,7 +153,7 @@ public class EurekaCellAutoConfiguration {
     // EurekaClient's public interface omits the freshness clock. Resolve Spring Cloud's scoped
     // infrastructure proxy on each read so refresh-scope replacement is respected; unknown adapters
     // remain fail-closed. This does not bypass any business invocation or authorization advice.
-    static long registryAge(EurekaClient client) {
+    public static long registryAge(EurekaClient client) {
         try {
             Object target = client;
             for (int depth = 0;
