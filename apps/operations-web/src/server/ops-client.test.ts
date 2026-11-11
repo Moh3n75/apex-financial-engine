@@ -3,10 +3,21 @@ vi.mock("server-only", () => ({}));
 vi.mock("./auth/access", () => ({ optionalUpstreamBearer: vi.fn() }));
 vi.mock("./auth/config", () => ({ isM36aEnabled: () => false }));
 vi.mock("./origin", () => ({ isFixtureMode: () => false, resolveOperationsOrigin: () => "http://127.0.0.1:9190" }));
-import { getRecentGrants } from "./ops-client";
+import { getRecentGrants, getTopology } from "./ops-client";
 
 afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
 describe("bounded Console exchange", () => {
+  it("allows bounded detailed topology while enforcing its incremental 256 KiB cap", async () => {
+    const graph = { schemaVersion: 2, asOf: "2026-11-10T10:00:00Z", coverage: "TEST_FIXTURE",
+      capabilities: { declared: "UNKNOWN", instances: "UNKNOWN", observedInteractions: "NOT_CONFIGURED", messaging: "NOT_CONFIGURED", traces: "NOT_CONFIGURED", runtimeHealth: "NOT_CONFIGURED" },
+      nodes: [], connections: [], providers: [{ name: "fixture", status: "FIXTURE", coverage: "TEST_ONLY", sourceMode: "FIXTURE", collectedAt: null }], padding: " ".repeat(70000) };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(graph))));
+    expect((await getTopology()).nodes).toEqual([]);
+    const cancel = vi.fn();
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(new ReadableStream({ start(c) { c.enqueue(new Uint8Array(150000)); c.enqueue(new Uint8Array(150000)); }, cancel }))));
+    await expect(getTopology()).rejects.toMatchObject({ code: "RESPONSE_TOO_LARGE" });
+    expect(cancel).toHaveBeenCalled();
+  });
   it("times out stalled body consumption, cancels the stream and releases the slot", async () => {
     vi.useFakeTimers();
     const cancel = vi.fn();

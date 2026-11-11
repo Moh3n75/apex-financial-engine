@@ -1,0 +1,35 @@
+﻿{
+    "frontendUnitPassed":  37,
+    "registryConverged":  true,
+    "liveBrowserFailed":  0,
+    "source":  "ACTUAL_TEST_RUNS_AND_LIVE_API_RECEIPTS",
+    "liveBrowserPassed":  2,
+    "javaStatus":  200,
+    "memberships":  0,
+    "consoleSuiteSkippedOptInLive":  1,
+    "bffStatus":  200,
+    "nodeCount":  10,
+    "liveLifecyclePassed":  1,
+    "build":  "PASS_WITH_EXISTING_DEPRECATION_WARNING",
+    "consoleSuitePassed":  65,
+    "overviewStatus":  200,
+    "lint":  "PASS_WITH_EXISTING_WARNING",
+    "pageStatus":  200,
+    "fullCI":  "NOT_QUALIFIED",
+    "liveBrowserSkipped":  0,
+    "liveNodeCounts":  [
+                           10,
+                           12,
+                           10
+                       ],
+    "httpEdgeCount":  5,
+    "collectedAt":  "2026-11-10T13:48:48.6725189Z",
+    "gatewaySafetyPassed":  4,
+    "typecheck":  "PASS",
+    "liveServiceCounts":  [
+                              5,
+                              6,
+                              5
+                          ],
+    "developmentBundler":  "WEBPACK_EXPLICIT_TURBOPACK_RELOAD_ISSUE_DOCUMENTED"
+}

@@ -9,7 +9,7 @@ spring:
   application:
     name: payment-cell
   datasource:
-    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/payment}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/payment_db}
     username: ${CELL_DB_USERNAME:apex}
     password: ${CELL_DB_PASSWORD:apex123}
   flyway:
@@ -34,18 +34,20 @@ spring:
         allow.auto.create.topics: false
     listener:
       ack-mode: manual_immediate
-      auto-startup: ${PAYMENT_LISTENER_ENABLED:false}
+      auto-startup: ${PAYMENT_LISTENER_ENABLED:true}
   grpc:
     server:
       address: ${CELL_GRPC_ADDRESS:127.0.0.1}
-      port: ${CELL_GRPC_PORT:9093}
+      port: ${CELL_GRPC_PORT:0}
       shutdown:
         grace-period: 5s
 
 server:
-  port: ${SERVER_PORT:8085}
+  port: ${SERVER_PORT:0}
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
@@ -58,6 +60,11 @@ apex:
   grpc:
     server:
       enabled: true
+    insecure-loopback-test-only: ${APEX_GRPC_INSECURE_LOOPBACK_TEST_ONLY:true}
+    test-clients:
+      - order-cell
+      - inventory-cell
+      - sample-grpc-client
   messaging:
     cell:
       enabled: true

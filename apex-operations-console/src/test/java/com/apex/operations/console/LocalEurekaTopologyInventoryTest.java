@@ -156,4 +156,19 @@ class LocalEurekaTopologyInventoryTest {
     assertThat(graph.memberships()).containsExactly(member);
     assertThat(graph.nodes().stream().filter(n -> n.kind().equals("INSTANCE"))).containsExactly(instance);
   }
+
+  @Test void optInRegistryInstancesHaveOpaqueStableIdsAndNoEpochHealthOrVerifiedMembership() {
+    env.withProperty("apex.ops.local-inventory.include-instances", "true");
+    when(client.getApplications()).thenReturn(apps(instance("ORDER-CELL", "private-host:order-cell:8081", InstanceStatus.UP, Map.of()),
+        instance("ORDER-CELL", "private-host:order-cell:8082", InstanceStatus.UP, Map.of())));
+    var graph=inventory().join(base(),(e,o)->true);
+    assertThat(graph.nodes()).hasSize(3);
+    assertThat(graph.nodes().stream().filter(n->n.kind().equals("INSTANCE"))).hasSize(2).allSatisfy(n->{
+      assertThat(n.epoch()).isNull(); assertThat(n.health()).isEqualTo("UNKNOWN");
+      assertThat(n.instanceId()).startsWith("eureka-"); assertThat(n.uncertainty()).contains("UNVERIFIED_NO_EPOCH");
+    });
+    assertThat(graph.memberships()).isEmpty(); assertThat(graph.connections()).isEmpty();
+    assertThat(graph.toString()).doesNotContain("private-host", "8081", "8082");
+    assertThat(inventory().join(base(),(e,o)->true).nodes()).extracting(Node::id).containsExactlyElementsOf(graph.nodes().stream().map(Node::id).toList());
+  }
 }

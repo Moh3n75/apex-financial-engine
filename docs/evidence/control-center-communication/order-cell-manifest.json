@@ -1,0 +1,112 @@
+﻿{
+    "schemaVersion":  2,
+    "environment":  "local",
+    "service":  "order-cell",
+    "cell":  "order-cell",
+    "instance":  "unknown",
+    "epoch":  "2b4f11c4-eafc-43a9-9f8e-cc93716ca4ad",
+    "collectedAt":  "2026-11-10T15:36:16.189648Z",
+    "sourceMode":  "EFFECTIVE_DECLARATION",
+    "cluster":  "apex-local-kafka",
+    "publications":  [
+                         {
+                             "contract":  {
+                                              "type":  "ORDER_PLACED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.order.events.v1",
+                             "provenance":  "PUBLISHER_ROUTING"
+                         },
+                         {
+                             "contract":  {
+                                              "type":  "ORDER_CREATED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.order.legacy.events.v1",
+                             "provenance":  "PUBLISHER_ROUTING"
+                         },
+                         {
+                             "contract":  {
+                                              "type":  "ORDER_READY_FOR_PAYMENT",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.order.payment-requests.v1",
+                             "provenance":  "PUBLISHER_ROUTING"
+                         },
+                         {
+                             "contract":  {
+                                              "type":  "ORDER_CANCELLATION_REQUESTED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.order.inventory-release-requests.v1",
+                             "provenance":  "PUBLISHER_ROUTING"
+                         }
+                     ],
+    "subscriptions":  [
+                          "apex.inventory.events.v1",
+                          "apex.payment.events.v1"
+                      ],
+    "consumerGroup":  "order-cell-inventory-outcome-v1",
+    "eventHandlers":  [
+                          {
+                              "type":  "INVENTORY_RELEASED",
+                              "version":  1
+                          },
+                          {
+                              "type":  "INVENTORY_RESERVATION_REJECTED",
+                              "version":  1
+                          },
+                          {
+                              "type":  "INVENTORY_RESERVED",
+                              "version":  1
+                          },
+                          {
+                              "type":  "PAYMENT_AUTHORIZED",
+                              "version":  1
+                          },
+                          {
+                              "type":  "PAYMENT_DECLINED",
+                              "version":  1
+                          }
+                      ],
+    "grpcHandlers":  [
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "GET_ORDER",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "GET_ORDER_PERSPECTIVE",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  2
+                                          }
+                         },
+                         {
+                             "kind":  "REQUEST",
+                             "contract":  {
+                                              "type":  "CREATE_ORDER",
+                                              "version":  1
+                                          }
+                         }
+                     ],
+    "gaps":  [
+                 "GRPC_CALLER_DECLARATIONS_UNAVAILABLE"
+             ]
+}

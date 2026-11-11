@@ -1,0 +1,415 @@
+﻿{
+    "schemaVersion":  2,
+    "asOf":  "2026-11-10T13:46:50.068335700Z",
+    "coverage":  "PARTIAL_REGISTRY_AND_CONFIGURED_SOURCES_NO_TRAFFIC_HISTORY",
+    "capabilities":  {
+                         "declared":  "CONFIGURED_OWNER_QUERIES_ONLY",
+                         "instances":  "OWNER_SNAPSHOTS_PARTIAL",
+                         "observedInteractions":  "NOT_CONFIGURED",
+                         "messaging":  "DECLARATIONS_ONLY_NO_BROKER_METADATA",
+                         "traces":  "NOT_CONFIGURED",
+                         "runtimeHealth":  "NOT_CONFIGURED"
+                     },
+    "nodes":  [
+                  {
+                      "id":  "local:service:apex-api-gateway",
+                      "kind":  "SERVICE",
+                      "name":  "apex-api-gateway",
+                      "environment":  "local",
+                      "serviceId":  "local:service:apex-api-gateway",
+                      "instanceId":  null,
+                      "epoch":  null,
+                      "scope":  "SERVICE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "SERVICE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:apex-operations-console",
+                      "kind":  "SERVICE",
+                      "name":  "apex-operations-console",
+                      "environment":  "local",
+                      "serviceId":  "local:service:apex-operations-console",
+                      "instanceId":  null,
+                      "epoch":  null,
+                      "scope":  "SERVICE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "SERVICE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:inventory-cell",
+                      "kind":  "SERVICE",
+                      "name":  "inventory-cell",
+                      "environment":  "local",
+                      "serviceId":  "local:service:inventory-cell",
+                      "instanceId":  null,
+                      "epoch":  null,
+                      "scope":  "SERVICE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "SERVICE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:order-cell",
+                      "kind":  "SERVICE",
+                      "name":  "order-cell",
+                      "environment":  "local",
+                      "serviceId":  "local:service:order-cell",
+                      "instanceId":  null,
+                      "epoch":  null,
+                      "scope":  "SERVICE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "SERVICE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:payment-cell",
+                      "kind":  "SERVICE",
+                      "name":  "payment-cell",
+                      "environment":  "local",
+                      "serviceId":  "local:service:payment-cell",
+                      "instanceId":  null,
+                      "epoch":  null,
+                      "scope":  "SERVICE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "SERVICE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:apex-api-gateway:registry-instance:eureka-0b0f1e9c8cb364d79d0cff41",
+                      "kind":  "INSTANCE",
+                      "name":  "eureka-0b0f1e9c8cb364d79d0cff41",
+                      "environment":  "local",
+                      "serviceId":  "local:service:apex-api-gateway",
+                      "instanceId":  "eureka-0b0f1e9c8cb364d79d0cff41",
+                      "epoch":  null,
+                      "scope":  "INSTANCE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_NO_EPOCH",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "INSTANCE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:apex-operations-console:registry-instance:eureka-121010c4a0c53126c1838589",
+                      "kind":  "INSTANCE",
+                      "name":  "eureka-121010c4a0c53126c1838589",
+                      "environment":  "local",
+                      "serviceId":  "local:service:apex-operations-console",
+                      "instanceId":  "eureka-121010c4a0c53126c1838589",
+                      "epoch":  null,
+                      "scope":  "INSTANCE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_NO_EPOCH",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "INSTANCE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:inventory-cell:registry-instance:eureka-88d0047a022645d5f393173f",
+                      "kind":  "INSTANCE",
+                      "name":  "eureka-88d0047a022645d5f393173f",
+                      "environment":  "local",
+                      "serviceId":  "local:service:inventory-cell",
+                      "instanceId":  "eureka-88d0047a022645d5f393173f",
+                      "epoch":  null,
+                      "scope":  "INSTANCE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_NO_EPOCH",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "INSTANCE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:order-cell:registry-instance:eureka-aa2eb01e2a6cacc25b37ee1c",
+                      "kind":  "INSTANCE",
+                      "name":  "eureka-aa2eb01e2a6cacc25b37ee1c",
+                      "environment":  "local",
+                      "serviceId":  "local:service:order-cell",
+                      "instanceId":  "eureka-aa2eb01e2a6cacc25b37ee1c",
+                      "epoch":  null,
+                      "scope":  "INSTANCE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_NO_EPOCH",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "INSTANCE"
+                                       }
+                                   ]
+                  },
+                  {
+                      "id":  "local:service:payment-cell:registry-instance:eureka-53a235326731004c37b107f0",
+                      "kind":  "INSTANCE",
+                      "name":  "eureka-53a235326731004c37b107f0",
+                      "environment":  "local",
+                      "serviceId":  "local:service:payment-cell",
+                      "instanceId":  "eureka-53a235326731004c37b107f0",
+                      "epoch":  null,
+                      "scope":  "INSTANCE",
+                      "health":  "UNKNOWN",
+                      "freshness":  "FRESH",
+                      "uncertainty":  "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH",
+                      "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                      "evidence":  [
+                                       {
+                                           "kind":  "OBSERVED",
+                                           "source":  "EUREKA",
+                                           "reference":  "UP_REGISTRATION_NO_EPOCH",
+                                           "collectedAt":  "2026-11-10T13:46:50.068335700Z",
+                                           "lastSeen":  "2026-11-10T13:46:45.418335700Z",
+                                           "scope":  "INSTANCE"
+                                       }
+                                   ]
+                  }
+              ],
+    "connections":  [
+                        {
+                            "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                            "source":  "local:service:apex-api-gateway",
+                            "target":  "local:service:payment-cell",
+                            "environment":  "local",
+                            "protocol":  "HTTP",
+                            "scope":  "SERVICE",
+                            "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                            "health":  "UNKNOWN",
+                            "lastSeen":  null,
+                            "evidence":  [
+                                             {
+                                                 "kind":  "DECLARED",
+                                                 "source":  "SPRING_CLOUD_GATEWAY",
+                                                 "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                                                 "collectedAt":  "2026-11-10T13:46:46.467027800Z",
+                                                 "lastSeen":  null,
+                                                 "scope":  "SERVICE"
+                                             }
+                                         ]
+                        },
+                        {
+                            "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                            "source":  "local:service:apex-api-gateway",
+                            "target":  "local:service:apex-operations-console",
+                            "environment":  "local",
+                            "protocol":  "HTTP",
+                            "scope":  "SERVICE",
+                            "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                            "health":  "UNKNOWN",
+                            "lastSeen":  null,
+                            "evidence":  [
+                                             {
+                                                 "kind":  "DECLARED",
+                                                 "source":  "SPRING_CLOUD_GATEWAY",
+                                                 "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                                                 "collectedAt":  "2026-11-10T13:46:46.467027800Z",
+                                                 "lastSeen":  null,
+                                                 "scope":  "SERVICE"
+                                             }
+                                         ]
+                        },
+                        {
+                            "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                            "source":  "local:service:apex-api-gateway",
+                            "target":  "local:service:inventory-cell",
+                            "environment":  "local",
+                            "protocol":  "HTTP",
+                            "scope":  "SERVICE",
+                            "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                            "health":  "UNKNOWN",
+                            "lastSeen":  null,
+                            "evidence":  [
+                                             {
+                                                 "kind":  "DECLARED",
+                                                 "source":  "SPRING_CLOUD_GATEWAY",
+                                                 "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                                                 "collectedAt":  "2026-11-10T13:46:46.467027800Z",
+                                                 "lastSeen":  null,
+                                                 "scope":  "SERVICE"
+                                             }
+                                         ]
+                        },
+                        {
+                            "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                            "source":  "local:service:apex-api-gateway",
+                            "target":  "local:service:order-cell",
+                            "environment":  "local",
+                            "protocol":  "HTTP",
+                            "scope":  "SERVICE",
+                            "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                            "health":  "UNKNOWN",
+                            "lastSeen":  null,
+                            "evidence":  [
+                                             {
+                                                 "kind":  "DECLARED",
+                                                 "source":  "SPRING_CLOUD_GATEWAY",
+                                                 "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                                                 "collectedAt":  "2026-11-10T13:46:46.467027800Z",
+                                                 "lastSeen":  null,
+                                                 "scope":  "SERVICE"
+                                             }
+                                         ]
+                        },
+                        {
+                            "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                            "source":  "local:service:apex-api-gateway",
+                            "target":  "local:service:apex-api-gateway",
+                            "environment":  "local",
+                            "protocol":  "HTTP",
+                            "scope":  "SERVICE",
+                            "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                            "health":  "UNKNOWN",
+                            "lastSeen":  null,
+                            "evidence":  [
+                                             {
+                                                 "kind":  "DECLARED",
+                                                 "source":  "SPRING_CLOUD_GATEWAY",
+                                                 "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                                                 "collectedAt":  "2026-11-10T13:46:46.467027800Z",
+                                                 "lastSeen":  null,
+                                                 "scope":  "SERVICE"
+                                             }
+                                         ]
+                        }
+                    ],
+    "providers":  [
+                      {
+                          "name":  "contracts",
+                          "status":  "NO_VISIBLE_COVERAGE",
+                          "coverage":  "NO_VISIBLE_DECLARATIONS",
+                          "sourceMode":  "UNKNOWN",
+                          "collectedAt":  null
+                      },
+                      {
+                          "name":  "otel",
+                          "status":  "NOT_CONFIGURED",
+                          "coverage":  "NO_OBSERVED_INTERACTIONS",
+                          "sourceMode":  "UNKNOWN",
+                          "collectedAt":  null
+                      },
+                      {
+                          "name":  "kafka-admin",
+                          "status":  "NOT_CONFIGURED",
+                          "coverage":  "NO_BROKER_METADATA",
+                          "sourceMode":  "UNKNOWN",
+                          "collectedAt":  null
+                      },
+                      {
+                          "name":  "runtime-health",
+                          "status":  "NOT_CONFIGURED",
+                          "coverage":  "NO_HEALTH_PROVIDER",
+                          "sourceMode":  "UNKNOWN",
+                          "collectedAt":  null
+                      },
+                      {
+                          "name":  "eureka-local-inventory",
+                          "status":  "AVAILABLE",
+                          "coverage":  "UP_REGISTRATIONS_ONLY_LOCAL_SCOPE_NO_HEALTH_TRAFFIC_OR_VERIFIED_INSTANCES",
+                          "sourceMode":  "REGISTRY_OBSERVATION",
+                          "collectedAt":  "2026-11-10T13:46:45.418335700Z"
+                      },
+                      {
+                          "name":  "gateway-routes",
+                          "status":  "AVAILABLE",
+                          "coverage":  "REGISTERED_LOGICAL_ROUTES_ONLY_NOT_TRAFFIC_OR_HEALTH",
+                          "sourceMode":  "EFFECTIVE_DECLARATION",
+                          "collectedAt":  "2026-11-10T13:46:46.467027800Z"
+                      }
+                  ],
+    "unresolved":  [
+
+                   ],
+    "descriptors":  [
+
+                    ],
+    "memberships":  [
+
+                    ]
+}

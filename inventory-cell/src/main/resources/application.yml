@@ -1,11 +1,8 @@
-# Default runtime: Inventory HTTP + PostgreSQL + Kafka outbox + Eureka.
-# REQUIRED for startup: INVENTORY_DB_URL, INVENTORY_DB_USERNAME,
-# INVENTORY_DB_PASSWORD, and KAFKA_BOOTSTRAP_SERVERS.
 spring:
   application:
     name: inventory-cell
   datasource:
-    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/inventory}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/inventory_db}
     username: ${CELL_DB_USERNAME:apex}
     password: ${CELL_DB_PASSWORD:apex123}
   flyway:
@@ -30,97 +27,55 @@ spring:
         allow.auto.create.topics: false
     listener:
       ack-mode: manual_immediate
-      # Keep consumption paused until the handler coverage is verified.
-      auto-startup: false
-
-apex:
-  cell:
-    id: inventory-cell
-  messaging:
-    cell:
-      enabled: true
-    consumer:
-      enabled: true
-      topics: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
-    publisher:
-      topic: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
-    outbox:
-      publisher:
-        enabled: true
+      auto-startup: true
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:0}
+      shutdown:
+        grace-period: 5s
 
 server:
-  port: ${SERVER_PORT:8084}
+  port: ${SERVER_PORT:0}
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
 
----
-# Optional gRPC server: spring.profiles.active=grpc
-spring:
-  config:
-    activate:
-      on-profile: grpc
-  grpc:
-    server:
-      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
-      port: ${CELL_GRPC_PORT:9092}
-      shutdown:
-        grace-period: 5s
 apex:
+  cell:
+    id: inventory-cell
   grpc:
     server:
       enabled: true
-
----
-# Optional Kafka Saga processing. Activate only after verifying handler coverage.
-spring:
-  config:
-    activate:
-      on-profile: saga
-  kafka:
-    listener:
-      auto-startup: true
-apex:
+    # Local-only test mode; false by default. Production requires mTLS/PeerIdentityVerifier.
+    insecure-loopback-test-only: ${APEX_GRPC_INSECURE_LOOPBACK_TEST_ONLY:true}
+    test-clients:
+      - order-cell
+      - payment-cell
+      - sample-grpc-client
   messaging:
+    provisioning:
+      enabled: true
+      partitions: 1
+      replication-factor: -1
+      timeout: 10s
+    cell:
+      enabled: true
     consumer:
+      enabled: true
+      # Normal three-Cell Saga subscriptions. To include replay streams,
+      # override the complete comma-separated list via APEX_INVENTORY_CONSUMER_TOPICS.
+      topics: ${APEX_INVENTORY_CONSUMER_TOPICS:apex.order.events.v1,apex.order.inventory-release-requests.v1}
       reliability:
         enabled: true
-
----
-# Add release request topic when three-cell-saga is active.
-spring:
-  config:
-    activate:
-      on-profile: three-cell-saga
-apex:
-  messaging:
-    consumer:
-      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1
-
----
-# Two-cell Saga replay: profiles saga,replay (without three-cell-saga).
-spring:
-  config:
-    activate:
-      on-profile: saga & replay & !three-cell-saga
-apex:
-  messaging:
-    consumer:
-      topics: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1},${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1}
-      reliability:
+    publisher:
+      topic: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
+    outbox:
+      publisher:
         enabled: true
-
----
-# Three-cell Saga replay: profiles saga,three-cell-saga,replay.
-spring:
-  config:
-    activate:
-      on-profile: three-cell-saga & replay
-apex:
-  messaging:
-    consumer:
-      topics: apex.order.events.v1,apex.order.inventory-release-requests.v1,${APEX_INVENTORY_REPLAY_TOPIC:apex.inventory.order-placed.replay.v1},${APEX_INVENTORY_RELEASE_REPLAY_TOPIC:apex.inventory.release-request.replay.v1}

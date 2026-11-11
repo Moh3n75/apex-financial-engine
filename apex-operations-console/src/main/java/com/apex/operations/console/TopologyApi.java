@@ -18,14 +18,19 @@ public final class TopologyApi {
   private final ObjectProvider<RuntimeMembershipPoller> membership;
   private final String environment;
   private final ObjectProvider<LocalEurekaTopologyInventory> localInventory;
+  private final ObjectProvider<GatewayRouteTopology> gatewayRoutes;
+  private final ObjectProvider<LocalContractDiscoveryPoller> localContracts;
 
   public TopologyApi(OwnerPoller owners, ObjectProvider<OpsM36bResourceAuthorizer> authorizer,
       ObjectProvider<ContractDiscoveryPoller> discovery,ObjectProvider<RuntimeMembershipPoller> membership,
-      ObjectProvider<LocalEurekaTopologyInventory> localInventory, org.springframework.core.env.Environment env) {
+      ObjectProvider<LocalEurekaTopologyInventory> localInventory, ObjectProvider<GatewayRouteTopology> gatewayRoutes,
+      ObjectProvider<LocalContractDiscoveryPoller> localContracts,org.springframework.core.env.Environment env) {
     this.owners = owners;
     this.authorizer = authorizer;
     this.discovery = discovery;
     this.localInventory = localInventory;
+    this.gatewayRoutes = gatewayRoutes;
+    this.localContracts=localContracts;
     this.membership=membership;this.environment=env.getProperty("apex.ops.contract-discovery.environment","unknown");
   }
 
@@ -38,10 +43,18 @@ public final class TopologyApi {
     var provider = discovery.getIfAvailable();
     var runtime=membership.getIfAvailable();
     if (schemaVersion == 1) return base;
-    var graph = runtime != null ? RuntimeTopology.project(base,runtime.views(),environment,visible)
-        : ContractTopology.join(base, provider == null ? List.of() : provider.views(), visible);
+    var contractViews=new ArrayList<ContractDiscoveryPoller.View>(provider==null?List.of():provider.views());
+    var local=localContracts.getIfAvailable();if(local!=null)contractViews.addAll(local.views());
+    var graph = runtime != null ? RuntimeTopology.project(base,runtime.views(),environment,visible,contractViews)
+        : ContractTopology.join(base, contractViews, visible);
+    if(local!=null&&graph.providers().size()<32){
+      var providers=new ArrayList<>(graph.providers());providers.add(local.coverage());
+      graph=new TopologySnapshot(2,graph.asOf(),graph.coverage(),graph.capabilities(),graph.nodes(),graph.connections(),providers,graph.unresolved(),graph.descriptors(),graph.memberships());
+    }
     var inventory = localInventory.getIfAvailable();
-    return inventory == null ? graph : inventory.join(graph, visible);
+    if (inventory != null) graph = inventory.join(graph, visible);
+    var routes = gatewayRoutes.getIfAvailable();
+    return routes == null ? GatewayRouteTopology.notConfigured(graph) : routes.join(graph, visible);
   }
 
   static TopologySnapshot project(List<EvidenceCache.View> views, Instant now,

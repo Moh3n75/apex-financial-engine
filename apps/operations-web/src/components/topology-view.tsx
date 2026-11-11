@@ -3,22 +3,29 @@ import { EmptyState, Panel } from "@/components/panel";
 import { MetaRow } from "@/components/meta-row";
 import { formatUtc } from "@/lib/format";
 import type { Topology } from "@/lib/topology";
+import { TopologyGraph } from "./topology-graph";
 
 export function TopologyView({ graph }: { graph: Topology }) {
   const names = new Map(graph.nodes.map(n => [n.id, n.name]));
   return <Panel title="Service topology and contract evidence">
     <MetaRow asOf={graph.asOf} coverage={graph.coverage} uncertainty="PARTIAL_INVENTORY" />
+    <details className="my-3"><summary className="cursor-pointer text-xs font-medium">Provider coverage
+      {graph.providers.map(p => <span key={p.name} className="ml-3 inline-block font-normal">{p.name}: <Badge tone={p.status === "AVAILABLE" ? "neutral" : "warning"}>{p.status}</Badge></span>)}
+    </summary>
     <dl className="my-3 grid gap-2 text-xs sm:grid-cols-2">
       {Object.entries(graph.capabilities).map(([name, value]) => <div key={name}><dt className="font-medium">{name}</dt><dd>{value}</dd></div>)}
     </dl>
     {graph.providers.length ? <ul className="mb-3 space-y-1 text-xs" aria-label="Provider coverage">
       {graph.providers.map(p => <li key={p.name}>{p.name}: <Badge tone="neutral">{p.status}</Badge> · {p.sourceMode} · {p.coverage} · collected UTC {formatUtc(p.collectedAt)}</li>)}
     </ul> : <p className="my-3 text-sm">Legacy provider coverage: {graph.capabilities.declared}</p>}
+    </details>
     {graph.providers.some(p => p.name === "eureka-local-inventory") ? <p className="mb-3 text-sm">
       Eureka UP means registry presence, not confirmed health or traffic. Registry freshness follows the Console cache;
       refresh after registration or removal has propagated. Untagged services use the configured local registry scope.
     </p> : null}
     {graph.nodes.length === 0 ? <EmptyState>No visible discovered services or configured owners. Check provider coverage; this is a partial inventory.</EmptyState> : null}
+    {graph.nodes.length > 0 ? <TopologyGraph graph={graph} /> : null}
+    <details className="mt-4 text-xs"><summary className="cursor-pointer font-medium">Evidence inventory and accessible text view</summary>
     <div className="space-y-3">
       {graph.memberships.length>0?<div className="space-y-2" aria-label="Runtime membership">
         {graph.memberships.map(m=><p key={m.id} className="text-xs">{m.service} · {m.instanceId} · <Badge tone={m.membershipState==="DUPLICATE"?"danger":"neutral"}>{m.membershipState}</Badge>
@@ -46,5 +53,6 @@ export function TopologyView({ graph }: { graph: Topology }) {
         </div>
       </details>)}
     </div>
+    </details>
   </Panel>;
 }

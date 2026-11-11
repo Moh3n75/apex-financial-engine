@@ -1,11 +1,17 @@
 spring:
+  grpc:
+    server:
+      # Preserve HTTP/Kafka-only startup; deployment must explicitly enable secure gRPC.
+      enabled: ${apex.grpc.server.enabled:false}
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:0}
   application:
     name: customer-cell
 
   datasource:
-    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5434/customer_db}
-    username: ${CELL_DB_USERNAME:customer_user}
-    password: ${CELL_DB_PASSWORD:local_dev_only}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/customer_db}
+    username: ${CELL_DB_USERNAME:postgres}
+    password: ${CELL_DB_PASSWORD:123456789}
 
   flyway:
     enabled: true
@@ -48,4 +54,9 @@ management:
         enabled: true
 
 server:
+  # Discovery remains opt-in in these HTTP/Kafka reference cells.
   port: ${SERVER_PORT:8081}
+
+eureka:
+  client:
+    enabled: ${APEX_EUREKA_ENABLED:false}

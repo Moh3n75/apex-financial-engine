@@ -1,0 +1,48 @@
+﻿{
+    "schemaVersion":  2,
+    "environment":  "local",
+    "service":  "customer-cell",
+    "cell":  "customer-cell",
+    "instance":  "unknown",
+    "epoch":  "16d5eb06-0b68-494f-a565-cd7a788ae166",
+    "collectedAt":  "2026-11-10T15:36:16.172646700Z",
+    "sourceMode":  "EFFECTIVE_DECLARATION",
+    "cluster":  "apex-local-kafka",
+    "publications":  [
+                         {
+                             "contract":  {
+                                              "type":  "CUSTOMER_CREATED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.customer.events.v1",
+                             "provenance":  "PUBLISHED_CONTRACT_CATALOG"
+                         }
+                     ],
+    "subscriptions":  [
+
+                      ],
+    "consumerGroup":  "",
+    "eventHandlers":  [
+
+                      ],
+    "grpcHandlers":  [
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  2
+                                          }
+                         }
+                     ],
+    "gaps":  [
+                 "GRPC_SERVER_DISABLED",
+                 "GRPC_CALLER_DECLARATIONS_UNAVAILABLE"
+             ]
+}

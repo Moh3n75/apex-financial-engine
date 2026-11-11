@@ -1,0 +1,218 @@
+﻿{
+    "source":  "LIVE_EUREKA_JAVA_BFF_SERVER_RENDERED_PAGE",
+    "collectedAt":  "2026-11-10T12:50:28.7072886Z",
+    "asOf":  "2026-11-10T12:50:28.135168100Z",
+    "javaStatus":  200,
+    "bffStatus":  200,
+    "overviewStatus":  200,
+    "pageStatus":  200,
+    "registryConverged":  true,
+    "registryServices":  [
+                             "apex-api-gateway",
+                             "apex-operations-console",
+                             "inventory-cell",
+                             "order-cell",
+                             "payment-cell"
+                         ],
+    "renderedServices":  [
+                             "apex-api-gateway",
+                             "apex-operations-console",
+                             "inventory-cell",
+                             "order-cell",
+                             "payment-cell"
+                         ],
+    "nodeCount":  5,
+    "connectionCount":  0,
+    "membershipCount":  0,
+    "provider":  {
+                     "name":  "eureka-local-inventory",
+                     "status":  "AVAILABLE",
+                     "coverage":  "UP_REGISTRATIONS_ONLY_LOCAL_SCOPE_NO_HEALTH_TRAFFIC_OR_VERIFIED_INSTANCES",
+                     "sourceMode":  "REGISTRY_OBSERVATION",
+                     "collectedAt":  "2026-11-10T12:50:24.979168100Z"
+                 },
+    "topology":  {
+                     "schemaVersion":  2,
+                     "asOf":  "2026-11-10T12:50:28.135168100Z",
+                     "coverage":  "PARTIAL_REGISTRY_AND_CONFIGURED_SOURCES_NO_TRAFFIC_HISTORY",
+                     "capabilities":  {
+                                          "declared":  "CONFIGURED_OWNER_QUERIES_ONLY",
+                                          "instances":  "OWNER_SNAPSHOTS_PARTIAL",
+                                          "observedInteractions":  "NOT_CONFIGURED",
+                                          "messaging":  "DECLARATIONS_ONLY_NO_BROKER_METADATA",
+                                          "traces":  "NOT_CONFIGURED",
+                                          "runtimeHealth":  "NOT_CONFIGURED"
+                                      },
+                     "nodes":  [
+                                   {
+                                       "id":  "local:service:apex-api-gateway",
+                                       "kind":  "SERVICE",
+                                       "name":  "apex-api-gateway",
+                                       "environment":  "local",
+                                       "serviceId":  "local:service:apex-api-gateway",
+                                       "instanceId":  null,
+                                       "epoch":  null,
+                                       "scope":  "SERVICE",
+                                       "health":  "UNKNOWN",
+                                       "freshness":  "FRESH",
+                                       "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                                       "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                       "evidence":  [
+                                                        {
+                                                            "kind":  "OBSERVED",
+                                                            "source":  "EUREKA",
+                                                            "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                                            "collectedAt":  "2026-11-10T12:50:28.135168100Z",
+                                                            "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                                            "scope":  "SERVICE"
+                                                        }
+                                                    ]
+                                   },
+                                   {
+                                       "id":  "local:service:apex-operations-console",
+                                       "kind":  "SERVICE",
+                                       "name":  "apex-operations-console",
+                                       "environment":  "local",
+                                       "serviceId":  "local:service:apex-operations-console",
+                                       "instanceId":  null,
+                                       "epoch":  null,
+                                       "scope":  "SERVICE",
+                                       "health":  "UNKNOWN",
+                                       "freshness":  "FRESH",
+                                       "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                                       "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                       "evidence":  [
+                                                        {
+                                                            "kind":  "OBSERVED",
+                                                            "source":  "EUREKA",
+                                                            "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                                            "collectedAt":  "2026-11-10T12:50:28.135168100Z",
+                                                            "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                                            "scope":  "SERVICE"
+                                                        }
+                                                    ]
+                                   },
+                                   {
+                                       "id":  "local:service:inventory-cell",
+                                       "kind":  "SERVICE",
+                                       "name":  "inventory-cell",
+                                       "environment":  "local",
+                                       "serviceId":  "local:service:inventory-cell",
+                                       "instanceId":  null,
+                                       "epoch":  null,
+                                       "scope":  "SERVICE",
+                                       "health":  "UNKNOWN",
+                                       "freshness":  "FRESH",
+                                       "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                                       "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                       "evidence":  [
+                                                        {
+                                                            "kind":  "OBSERVED",
+                                                            "source":  "EUREKA",
+                                                            "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                                            "collectedAt":  "2026-11-10T12:50:28.135168100Z",
+                                                            "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                                            "scope":  "SERVICE"
+                                                        }
+                                                    ]
+                                   },
+                                   {
+                                       "id":  "local:service:order-cell",
+                                       "kind":  "SERVICE",
+                                       "name":  "order-cell",
+                                       "environment":  "local",
+                                       "serviceId":  "local:service:order-cell",
+                                       "instanceId":  null,
+                                       "epoch":  null,
+                                       "scope":  "SERVICE",
+                                       "health":  "UNKNOWN",
+                                       "freshness":  "FRESH",
+                                       "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                                       "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                       "evidence":  [
+                                                        {
+                                                            "kind":  "OBSERVED",
+                                                            "source":  "EUREKA",
+                                                            "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                                            "collectedAt":  "2026-11-10T12:50:28.135168100Z",
+                                                            "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                                            "scope":  "SERVICE"
+                                                        }
+                                                    ]
+                                   },
+                                   {
+                                       "id":  "local:service:payment-cell",
+                                       "kind":  "SERVICE",
+                                       "name":  "payment-cell",
+                                       "environment":  "local",
+                                       "serviceId":  "local:service:payment-cell",
+                                       "instanceId":  null,
+                                       "epoch":  null,
+                                       "scope":  "SERVICE",
+                                       "health":  "UNKNOWN",
+                                       "freshness":  "FRESH",
+                                       "uncertainty":  "LOCAL_REGISTRY_PRESENCE_NOT_HEALTH_OR_TRAFFIC",
+                                       "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                       "evidence":  [
+                                                        {
+                                                            "kind":  "OBSERVED",
+                                                            "source":  "EUREKA",
+                                                            "reference":  "UP_REGISTRATION_LOCAL_REGISTRY",
+                                                            "collectedAt":  "2026-11-10T12:50:28.135168100Z",
+                                                            "lastSeen":  "2026-11-10T12:50:24.979168100Z",
+                                                            "scope":  "SERVICE"
+                                                        }
+                                                    ]
+                                   }
+                               ],
+                     "connections":  [
+
+                                     ],
+                     "providers":  [
+                                       {
+                                           "name":  "contracts",
+                                           "status":  "NO_VISIBLE_COVERAGE",
+                                           "coverage":  "NO_VISIBLE_DECLARATIONS",
+                                           "sourceMode":  "UNKNOWN",
+                                           "collectedAt":  null
+                                       },
+                                       {
+                                           "name":  "otel",
+                                           "status":  "NOT_CONFIGURED",
+                                           "coverage":  "NO_OBSERVED_INTERACTIONS",
+                                           "sourceMode":  "UNKNOWN",
+                                           "collectedAt":  null
+                                       },
+                                       {
+                                           "name":  "kafka-admin",
+                                           "status":  "NOT_CONFIGURED",
+                                           "coverage":  "NO_BROKER_METADATA",
+                                           "sourceMode":  "UNKNOWN",
+                                           "collectedAt":  null
+                                       },
+                                       {
+                                           "name":  "runtime-health",
+                                           "status":  "NOT_CONFIGURED",
+                                           "coverage":  "NO_HEALTH_PROVIDER",
+                                           "sourceMode":  "UNKNOWN",
+                                           "collectedAt":  null
+                                       },
+                                       {
+                                           "name":  "eureka-local-inventory",
+                                           "status":  "AVAILABLE",
+                                           "coverage":  "UP_REGISTRATIONS_ONLY_LOCAL_SCOPE_NO_HEALTH_TRAFFIC_OR_VERIFIED_INSTANCES",
+                                           "sourceMode":  "REGISTRY_OBSERVATION",
+                                           "collectedAt":  "2026-11-10T12:50:24.979168100Z"
+                                       }
+                                   ],
+                     "unresolved":  [
+
+                                    ],
+                     "descriptors":  [
+
+                                     ],
+                     "memberships":  [
+
+                                     ]
+                 }
+}

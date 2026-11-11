@@ -1,12 +1,22 @@
 import { z } from "zod";
 
 const instant = z.string().refine((v) => !Number.isNaN(Date.parse(v)), "instant");
+const communication = z.object({
+  http: z.object({ routeId: z.string().max(80), destinationService: z.string().max(64),
+    predicates: z.array(z.string().max(400)).max(16), filters: z.array(z.string().max(200)).max(16) }).nullable(),
+  kafka: z.array(z.object({ cluster: z.string().max(64), eventType: z.string().max(64), eventVersion: z.number().int().min(1).max(10000),
+    publisherServiceId: z.string().max(200), topicId: z.string().max(600), consumerGroupId: z.string().max(600).nullable(),
+    consumerServiceId: z.string().max(200).nullable(), handlerContract: z.string().max(100).nullable(),
+    matchStatus: z.enum(["NO_VISIBLE_CONSUMER_MATCH", "EXACT_DECLARED_CONTRACT_MATCH"]) })).max(64),
+  grpc: z.object({ kind: z.enum(["QUERY", "REQUEST"]), callerServiceId: z.string().max(200), targetServiceId: z.string().max(200),
+    discoveryTarget: z.string().max(64), behavior: z.enum(["REQUEST_RESPONSE", "SYNCHRONOUS_REQUEST_RESPONSE", "ASYNC_REQUEST_RESPONSE"]), availability: z.string().max(80) }).nullable(),
+});
 const evidence = z.object({
   kind: z.enum(["DECLARED", "OBSERVED"]), source: z.string().min(1).max(80), reference: z.string().max(200),
   collectedAt: instant.nullable(), lastSeen: instant.nullable(), scope: z.enum(["SERVICE", "INSTANCE"]),
 }).superRefine((e, ctx) => {
   if (e.kind === "DECLARED" && e.lastSeen !== null) ctx.addIssue({ code: "custom", message: "Declaration is not an observation" });
-  if (e.kind === "OBSERVED" && ["CONFIGURATION", "CONTRACT_DISCOVERY"].includes(e.source)) ctx.addIssue({ code: "custom", message: "Contract discovery is not observed traffic" });
+  if (e.kind === "OBSERVED" && ["CONFIGURATION", "CONTRACT_DISCOVERY", "SPRING_CLOUD_GATEWAY"].includes(e.source)) ctx.addIssue({ code: "custom", message: "Route and contract declarations are not observed traffic" });
 });
 const schema = z.object({
   schemaVersion: z.union([z.literal(1), z.literal(2)]), asOf: instant, coverage: z.string().max(200),
@@ -26,6 +36,7 @@ const schema = z.object({
     id: z.string().max(1500), source: z.string().max(600), target: z.string().max(600), environment: z.string().max(64),
     protocol: z.enum(["HTTP", "GRPC", "KAFKA"]), scope: z.enum(["SERVICE", "INSTANCE"]), contract: z.string().max(100),
     health: z.enum(["UNKNOWN", "UP", "DEGRADED", "DOWN"]), lastSeen: instant.nullable(), evidence: z.array(evidence).min(1).max(16),
+    details: communication.nullable().optional(),
   })).max(400),
   providers: z.array(z.object({ name: z.string().max(200), status: z.string().max(40), coverage: z.string().max(200),
     sourceMode: z.string().max(40), collectedAt: instant.nullable() })).max(32).default([]),
@@ -47,11 +58,28 @@ export const topologySchema = schema.superRefine((graph, ctx) => {
     if (edge.lastSeen !== null && !edge.evidence.some(e => e.kind === "OBSERVED" && e.lastSeen !== null)) issue("Traffic requires observed evidence");
     if (edge.evidence.some(e => e.source === "OWNER_SNAPSHOT" && e.kind === "OBSERVED")) issue("Instance snapshot is not traffic");
     if (edge.evidence.some(e => e.source === "EUREKA" && e.kind === "OBSERVED")) issue("Registry presence is not traffic");
+    const d = edge.details;
+    if (d) {
+      if ((d.http && edge.protocol !== "HTTP") || (d.grpc && edge.protocol !== "GRPC") || (d.kafka.length && edge.protocol !== "KAFKA")) issue("Protocol details mismatch");
+      if (d.http && (d.http.destinationService !== nodes.get(edge.target)?.name || edge.contract !== `ROUTE:${d.http.routeId}`)) issue("HTTP route destination mismatch");
+      if (d.grpc && (d.grpc.callerServiceId !== edge.source || d.grpc.targetServiceId !== edge.target)) issue("Invalid caller scope");
+      for (const match of d.kafka) {
+        if (`${match.eventType}:${match.eventVersion}` !== edge.contract) issue("Event contract mismatch");
+        if (nodes.get(match.publisherServiceId)?.kind !== "SERVICE" || nodes.get(match.topicId)?.kind !== "KAFKA_TOPIC") issue("Invalid event publisher or topic");
+        if (match.topicId !== `${edge.environment}:topic:${match.cluster}:${nodes.get(match.topicId)?.name}`) issue("Kafka cluster mismatch");
+        for (const id of [match.publisherServiceId, match.topicId, match.consumerGroupId, match.consumerServiceId]) if (id && nodes.get(id)?.environment !== edge.environment) issue("Cross-environment match");
+        if (match.matchStatus === "EXACT_DECLARED_CONTRACT_MATCH" && (!match.consumerGroupId || nodes.get(match.consumerGroupId)?.kind !== "CONSUMER_GROUP"
+          || !match.consumerServiceId || nodes.get(match.consumerServiceId)?.kind !== "SERVICE" || match.handlerContract !== edge.contract)) issue("Incomplete exact event match");
+      }
+    }
   }
   for (const node of graph.nodes) {
     if (node.kind === "INSTANCE") {
       const parent = node.serviceId ? nodes.get(node.serviceId) : null;
-      if (parent?.kind !== "SERVICE" || parent.environment !== node.environment || !node.epoch || !node.instanceId) issue("Invalid instance scope");
+      const registryOnly = graph.schemaVersion === 2 && node.epoch === null && node.scope === "INSTANCE"
+        && node.uncertainty === "REGISTRY_INSTANCE_IDENTITY_UNVERIFIED_NO_EPOCH" && node.health === "UNKNOWN"
+        && node.evidence.some(e => e.kind === "OBSERVED" && e.source === "EUREKA" && e.reference === "UP_REGISTRATION_NO_EPOCH" && e.scope === "INSTANCE");
+      if (parent?.kind !== "SERVICE" || parent.environment !== node.environment || (!node.epoch && !registryOnly) || !node.instanceId) issue("Invalid instance scope");
     }
     if (node.health !== "UNKNOWN" && !node.evidence.some(e => e.kind === "OBSERVED" && ["ACTUATOR", "ORCHESTRATOR"].includes(e.source))) issue("Health requires runtime evidence");
   }

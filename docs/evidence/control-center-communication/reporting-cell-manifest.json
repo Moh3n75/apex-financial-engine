@@ -1,0 +1,44 @@
+﻿{
+    "schemaVersion":  2,
+    "environment":  "local",
+    "service":  "reporting-cell",
+    "cell":  "reporting-cell",
+    "instance":  "unknown",
+    "epoch":  "4fa1aa5e-ebe6-401c-9c11-671984e4b80d",
+    "collectedAt":  "2026-11-10T15:36:16.193228100Z",
+    "sourceMode":  "EFFECTIVE_DECLARATION",
+    "cluster":  "apex-local-kafka",
+    "publications":  [
+
+                     ],
+    "subscriptions":  [
+                          "apex.customer.events.v1"
+                      ],
+    "consumerGroup":  "reporting-cell-customer-created-v1",
+    "eventHandlers":  [
+                          {
+                              "type":  "CUSTOMER_CREATED",
+                              "version":  1
+                          }
+                      ],
+    "grpcHandlers":  [
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  2
+                                          }
+                         }
+                     ],
+    "gaps":  [
+                 "GRPC_SERVER_DISABLED",
+                 "GRPC_CALLER_DECLARATIONS_UNAVAILABLE"
+             ]
+}

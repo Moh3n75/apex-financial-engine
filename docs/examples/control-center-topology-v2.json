@@ -1,6 +1,6 @@
 {
   "schemaVersion" : 2,
-  "asOf" : "2026-11-09T13:33:54.429594Z",
+  "asOf" : "2026-11-10T14:45:08.004029100Z",
   "coverage" : "AUTHORIZED_DECLARATIONS_PARTIAL_NO_TRAFFIC_HISTORY",
   "capabilities" : {
     "declared" : "CONTRACT_DISCOVERY_PARTIAL",
@@ -469,7 +469,36 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:11.640270300Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_PLACED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_PLACED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:order-cell->repository-test:topic:test-cluster:apex.order.legacy.events.v1:ORDER_CREATED:1",
     "source" : "repository-test:service:order-cell",
@@ -487,7 +516,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_CREATED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.legacy.events.v1",
+        "consumerGroupId" : null,
+        "consumerServiceId" : null,
+        "handlerContract" : null,
+        "matchStatus" : "NO_VISIBLE_CONSUMER_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:order-cell->repository-test:topic:test-cluster:apex.order.payment-requests.v1:ORDER_READY_FOR_PAYMENT:1",
     "source" : "repository-test:service:order-cell",
@@ -505,7 +549,36 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:29.996085500Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_READY_FOR_PAYMENT",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.payment-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:payment-cell-authorization-v1",
+        "consumerServiceId" : "repository-test:service:payment-cell",
+        "handlerContract" : "ORDER_READY_FOR_PAYMENT:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:order-cell->repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1:ORDER_CANCELLATION_REQUESTED:1",
     "source" : "repository-test:service:order-cell",
@@ -523,7 +596,36 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:11.640270300Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:order-cell",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_CANCELLATION_REQUESTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_CANCELLATION_REQUESTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:inventory-cell->repository-test:topic:test-cluster:apex.inventory.events.v1:INVENTORY_RESERVED:1",
     "source" : "repository-test:service:inventory-cell",
@@ -541,7 +643,36 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T13:27:11.640270300Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:inventory-cell->repository-test:topic:test-cluster:apex.inventory.events.v1:INVENTORY_RESERVATION_REJECTED:1",
     "source" : "repository-test:service:inventory-cell",
@@ -559,7 +690,36 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T13:27:11.640270300Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVATION_REJECTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVATION_REJECTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:inventory-cell->repository-test:topic:test-cluster:apex.inventory.events.v1:INVENTORY_RELEASED:1",
     "source" : "repository-test:service:inventory-cell",
@@ -577,7 +737,36 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:inventory-cell",
+      "collectedAt" : "2026-11-09T13:27:11.640270300Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RELEASED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RELEASED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:payment-cell->repository-test:topic:test-cluster:apex.payment.events.v1:PAYMENT_AUTHORIZED:1",
     "source" : "repository-test:service:payment-cell",
@@ -595,7 +784,36 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T13:27:29.996085500Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_AUTHORIZED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_AUTHORIZED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:payment-cell->repository-test:topic:test-cluster:apex.payment.events.v1:PAYMENT_DECLINED:1",
     "source" : "repository-test:service:payment-cell",
@@ -613,7 +831,36 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:06.707861700Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:payment-cell",
+      "collectedAt" : "2026-11-09T13:27:29.996085500Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_DECLINED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_DECLINED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:service:customer-cell->repository-test:topic:test-cluster:apex.customer.events.v1:CUSTOMER_CREATED:1",
     "source" : "repository-test:service:customer-cell",
@@ -631,7 +878,36 @@
       "collectedAt" : "2026-11-09T13:27:33.972045Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+      "collectedAt" : "2026-11-09T13:27:45.324478400Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    }, {
+      "kind" : "DECLARED",
+      "source" : "CONTRACT_DISCOVERY",
+      "reference" : "EXACT_TOPIC_CONTRACT:customer-cell",
+      "collectedAt" : "2026-11-09T13:27:33.972045Z",
+      "lastSeen" : null,
+      "scope" : "SERVICE"
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "CUSTOMER_CREATED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:customer-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.customer.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:reporting-cell-customer-created-v1",
+        "consumerServiceId" : "repository-test:service:reporting-cell",
+        "handlerContract" : "CUSTOMER_CREATED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.inventory.events.v1->repository-test:group:test-cluster:order-cell-inventory-outcome-v1:INVENTORY_RELEASED:1",
     "source" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
@@ -656,7 +932,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RELEASED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RELEASED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1->repository-test:service:order-cell:INVENTORY_RELEASED:1",
     "source" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
@@ -681,7 +972,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RELEASED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RELEASED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.inventory.events.v1->repository-test:group:test-cluster:order-cell-inventory-outcome-v1:INVENTORY_RESERVATION_REJECTED:1",
     "source" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
@@ -706,7 +1012,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVATION_REJECTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVATION_REJECTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1->repository-test:service:order-cell:INVENTORY_RESERVATION_REJECTED:1",
     "source" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
@@ -731,7 +1052,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVATION_REJECTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVATION_REJECTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.inventory.events.v1->repository-test:group:test-cluster:order-cell-inventory-outcome-v1:INVENTORY_RESERVED:1",
     "source" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
@@ -756,7 +1092,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1->repository-test:service:order-cell:INVENTORY_RESERVED:1",
     "source" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
@@ -781,7 +1132,22 @@
       "collectedAt" : "2026-11-09T13:27:11.640270300Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "INVENTORY_RESERVED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:inventory-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.inventory.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "INVENTORY_RESERVED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.payment.events.v1->repository-test:group:test-cluster:order-cell-inventory-outcome-v1:PAYMENT_AUTHORIZED:1",
     "source" : "repository-test:topic:test-cluster:apex.payment.events.v1",
@@ -806,7 +1172,22 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_AUTHORIZED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_AUTHORIZED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1->repository-test:service:order-cell:PAYMENT_AUTHORIZED:1",
     "source" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
@@ -831,7 +1212,22 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_AUTHORIZED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_AUTHORIZED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.payment.events.v1->repository-test:group:test-cluster:order-cell-inventory-outcome-v1:PAYMENT_DECLINED:1",
     "source" : "repository-test:topic:test-cluster:apex.payment.events.v1",
@@ -856,7 +1252,22 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_DECLINED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_DECLINED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1->repository-test:service:order-cell:PAYMENT_DECLINED:1",
     "source" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
@@ -881,7 +1292,22 @@
       "collectedAt" : "2026-11-09T13:27:29.996085500Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "PAYMENT_DECLINED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:payment-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.payment.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:order-cell-inventory-outcome-v1",
+        "consumerServiceId" : "repository-test:service:order-cell",
+        "handlerContract" : "PAYMENT_DECLINED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1->repository-test:group:test-cluster:inventory-cell-order-placed-v1:ORDER_CANCELLATION_REQUESTED:1",
     "source" : "repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1",
@@ -906,7 +1332,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_CANCELLATION_REQUESTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_CANCELLATION_REQUESTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1->repository-test:service:inventory-cell:ORDER_CANCELLATION_REQUESTED:1",
     "source" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
@@ -931,7 +1372,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_CANCELLATION_REQUESTED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.inventory-release-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_CANCELLATION_REQUESTED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.order.events.v1->repository-test:group:test-cluster:inventory-cell-order-placed-v1:ORDER_PLACED:1",
     "source" : "repository-test:topic:test-cluster:apex.order.events.v1",
@@ -956,7 +1412,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_PLACED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_PLACED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1->repository-test:service:inventory-cell:ORDER_PLACED:1",
     "source" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
@@ -981,7 +1452,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_PLACED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:inventory-cell-order-placed-v1",
+        "consumerServiceId" : "repository-test:service:inventory-cell",
+        "handlerContract" : "ORDER_PLACED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.order.payment-requests.v1->repository-test:group:test-cluster:payment-cell-authorization-v1:ORDER_READY_FOR_PAYMENT:1",
     "source" : "repository-test:topic:test-cluster:apex.order.payment-requests.v1",
@@ -1006,7 +1492,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_READY_FOR_PAYMENT",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.payment-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:payment-cell-authorization-v1",
+        "consumerServiceId" : "repository-test:service:payment-cell",
+        "handlerContract" : "ORDER_READY_FOR_PAYMENT:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:payment-cell-authorization-v1->repository-test:service:payment-cell:ORDER_READY_FOR_PAYMENT:1",
     "source" : "repository-test:group:test-cluster:payment-cell-authorization-v1",
@@ -1031,7 +1532,22 @@
       "collectedAt" : "2026-11-09T13:27:06.707861700Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "ORDER_READY_FOR_PAYMENT",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:order-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.order.payment-requests.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:payment-cell-authorization-v1",
+        "consumerServiceId" : "repository-test:service:payment-cell",
+        "handlerContract" : "ORDER_READY_FOR_PAYMENT:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:topic:test-cluster:apex.customer.events.v1->repository-test:group:test-cluster:reporting-cell-customer-created-v1:CUSTOMER_CREATED:1",
     "source" : "repository-test:topic:test-cluster:apex.customer.events.v1",
@@ -1056,7 +1572,22 @@
       "collectedAt" : "2026-11-09T13:27:33.972045Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "CUSTOMER_CREATED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:customer-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.customer.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:reporting-cell-customer-created-v1",
+        "consumerServiceId" : "repository-test:service:reporting-cell",
+        "handlerContract" : "CUSTOMER_CREATED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   }, {
     "id" : "repository-test:group:test-cluster:reporting-cell-customer-created-v1->repository-test:service:reporting-cell:CUSTOMER_CREATED:1",
     "source" : "repository-test:group:test-cluster:reporting-cell-customer-created-v1",
@@ -1081,7 +1612,22 @@
       "collectedAt" : "2026-11-09T13:27:33.972045Z",
       "lastSeen" : null,
       "scope" : "SERVICE"
-    } ]
+    } ],
+    "details" : {
+      "http" : null,
+      "kafka" : [ {
+        "cluster" : "test-cluster",
+        "eventType" : "CUSTOMER_CREATED",
+        "eventVersion" : 1,
+        "publisherServiceId" : "repository-test:service:customer-cell",
+        "topicId" : "repository-test:topic:test-cluster:apex.customer.events.v1",
+        "consumerGroupId" : "repository-test:group:test-cluster:reporting-cell-customer-created-v1",
+        "consumerServiceId" : "repository-test:service:reporting-cell",
+        "handlerContract" : "CUSTOMER_CREATED:1",
+        "matchStatus" : "EXACT_DECLARED_CONTRACT_MATCH"
+      } ],
+      "grpc" : null
+    }
   } ],
   "providers" : [ {
     "name" : "contracts:repository-test:order-cell",
@@ -1132,7 +1678,31 @@
     "sourceMode" : "UNKNOWN",
     "collectedAt" : null
   } ],
-  "unresolved" : [ ],
+  "unresolved" : [ {
+    "serviceId" : "repository-test:service:order-cell",
+    "contract" : "GET_ORDER:1",
+    "reason" : "NO_VISIBLE_GRPC_CALLER_DECLARATION"
+  }, {
+    "serviceId" : "repository-test:service:order-cell",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "reason" : "NO_VISIBLE_GRPC_CALLER_DECLARATION"
+  }, {
+    "serviceId" : "repository-test:service:order-cell",
+    "contract" : "CREATE_ORDER:1",
+    "reason" : "NO_VISIBLE_GRPC_CALLER_DECLARATION"
+  }, {
+    "serviceId" : "repository-test:service:inventory-cell",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "reason" : "NO_VISIBLE_GRPC_CALLER_DECLARATION"
+  }, {
+    "serviceId" : "repository-test:service:payment-cell",
+    "contract" : "GET_ORDER_PERSPECTIVE:1",
+    "reason" : "NO_VISIBLE_GRPC_CALLER_DECLARATION"
+  }, {
+    "serviceId" : "repository-test:service:order-cell",
+    "contract" : "ORDER_CREATED:1",
+    "reason" : "PUBLICATION_WITHOUT_VISIBLE_CONSUMER_MATCH"
+  } ],
   "descriptors" : [ {
     "serviceId" : "repository-test:service:order-cell",
     "protocol" : "GRPC",
@@ -1315,5 +1885,6 @@
       "lastSeen" : null,
       "scope" : "SERVICE"
     } ]
-  } ]
+  } ],
+  "memberships" : [ ]
 }

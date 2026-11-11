@@ -3,6 +3,8 @@
   <parent><groupId>com.apex</groupId><artifactId>apex-financial-engine</artifactId><version>1.0-SNAPSHOT</version></parent>
   <artifactId>apex-platform-contract-discovery</artifactId>
   <dependencies>
+    <dependency><groupId>org.springframework</groupId><artifactId>spring-webmvc</artifactId><optional>true</optional></dependency>
+    <dependency><groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId><optional>true</optional></dependency>
     <dependency><groupId>com.apex</groupId><artifactId>apex-platform-discovery</artifactId><version>${project.version}</version></dependency>
     <dependency><groupId>com.apex</groupId><artifactId>apex-operations-contracts</artifactId><version>${project.version}</version></dependency>
     <dependency><groupId>com.apex</groupId><artifactId>apex-platform-messaging</artifactId><version>${project.version}</version></dependency>

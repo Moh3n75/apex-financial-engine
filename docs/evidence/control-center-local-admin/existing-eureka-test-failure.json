@@ -1,0 +1,13 @@
+﻿{
+    "exitCode":  1,
+    "collectedAt":  "2026-11-10T12:51:21.7981959Z",
+    "tests":  "8",
+    "source":  "REPOSITORY_ADAPTER_TEST_RUN_NOT_LIVE_REGISTRY",
+    "failures":  [
+                     {
+                         "message":  "\nExpecting actual not to be null",
+                         "type":  "java.lang.AssertionError",
+                         "test":  "realAutoAllocatedServerPublishesActualPortThroughLifecycleToEurekaInstanceInfo"
+                     }
+                 ]
+}

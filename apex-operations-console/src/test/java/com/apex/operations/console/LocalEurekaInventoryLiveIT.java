@@ -58,7 +58,11 @@ class LocalEurekaInventoryLiveIT {
         assertThat(node.path("epoch").isNull()).isTrue();
         assertThat(node.path("evidence").get(0).path("source").asText()).isEqualTo("EUREKA");
       }
-      assertThat(added.path("connections")).isEqualTo(baseline.path("connections"));
+      // Gateway discovery may register a real HTTP route to the probe as well. Registry nodes themselves are not edges.
+      for(var edge:added.path("connections")) {
+        assertThat(edge.path("lastSeen").isNull()).isTrue();
+        for(var proof:edge.path("evidence")) assertThat(proof.path("kind").asText()).isEqualTo("DECLARED");
+      }
       assertThat(added.path("memberships")).isEqualTo(baseline.path("memberships"));
     }
     var removed = await(false);
@@ -66,6 +70,9 @@ class LocalEurekaInventoryLiveIT {
     if (receipt != null) json.writerWithDefaultPrettyPrinter().writeValue(Path.of(receipt).toFile(), Map.of(
         "source", "LIVE_REAL_CONSOLE_REGISTRATION_AND_REMOVAL", "probeService", probe,
         "baseline", baseline, "registered", added, "removed", removed));
-    System.out.println("LIVE_LOCAL_INVENTORY: real Console probe registered and removed; final services=" + removed.path("nodes").size());
+    long serviceCount=java.util.stream.StreamSupport.stream(removed.path("nodes").spliterator(),false)
+        .filter(n->n.path("kind").asText().equals("SERVICE")).count();
+    System.out.println("LIVE_LOCAL_INVENTORY: real Console probe registered and removed; final services="+serviceCount
+        +", total evidence nodes="+removed.path("nodes").size());
   }
 }

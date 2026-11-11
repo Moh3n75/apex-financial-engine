@@ -20,11 +20,14 @@ public final class RuntimeMembershipPoller implements AutoCloseable {
   private final CellServiceDirectory directory;
   private final InstanceQueryGateway gateway;
   private final String environment;
+  private final int contractVersion;
   private final List<String> owners;
   private final Map<String,Owner> cache=new LinkedHashMap<>();
   private final ScheduledExecutorService timer=Executors.newSingleThreadScheduledExecutor(Thread.ofPlatform().daemon().name("ops-membership").factory());
   public RuntimeMembershipPoller(Environment env,CellServiceDirectory directory,InstanceQueryGateway gateway) {
     this.directory=directory;this.gateway=gateway;environment=env.getRequiredProperty("apex.ops.contract-discovery.environment");
+    contractVersion=env.getProperty("apex.ops.contract-discovery.contract-version",Integer.class,1);
+    if(contractVersion!=1&&contractVersion!=2)throw new IllegalArgumentException("CONTRACT_VERSION");
     owners=List.of(env.getRequiredProperty("apex.ops.contract-discovery.owners").split(","));
     if(owners.size()>8||environment.equals("unknown"))throw new IllegalArgumentException("MEMBERSHIP_SCOPE");
     owners.forEach(CellEndpoint::logicalName);
@@ -45,7 +48,7 @@ public final class RuntimeMembershipPoller implements AutoCloseable {
       for(var entry:before.members()) {
         ContractManifest manifest=null;String state="UNVERIFIED",transport="SOURCE_UNAVAILABLE";
         try {
-          manifest=gateway.queryInstance(owner,entry.registryId(),new ContractDiscoveryQuery(),ContractManifest.class,new QueryOptions(UUID.randomUUID(),Duration.ofMillis(1500)));
+          manifest=gateway.queryInstance(owner,entry.registryId(),contractVersion==2?new ContractDiscoveryQueryV2():new ContractDiscoveryQuery(),ContractManifest.class,new QueryOptions(UUID.randomUUID(),Duration.ofMillis(1500)));
           if(!manifest.service().equals(owner)||!manifest.cell().equals(entry.cellId())||!manifest.environment().equals(environment)
               ||!manifest.instance().equals(entry.instanceId())||!manifest.epoch().equals(entry.epoch())
               ||!manifest.sourceMode().equals("EFFECTIVE_DECLARATION")||manifest.collectedAt().isBefore(now.minusSeconds(30))

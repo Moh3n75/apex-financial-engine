@@ -27,6 +27,7 @@ import { toUpstreamSearchParams } from "./query";
 
 const FETCH_TIMEOUT_MS = 4_000;
 const MAX_RESPONSE_BYTES = 65_536;
+const MAX_TOPOLOGY_RESPONSE_BYTES = 262_144;
 const MAX_CONCURRENT = 4;
 let inFlight = 0;
 
@@ -40,7 +41,7 @@ export class OpsClientError extends Error {
   }
 }
 
-async function boundedFetch(path: string, init?: RequestInit): Promise<Response> {
+async function boundedFetch(path: string, init?: RequestInit, maxBytes = MAX_RESPONSE_BYTES): Promise<Response> {
   if (inFlight >= MAX_CONCURRENT) {
     throw new OpsClientError(429, "CONCURRENCY_BUDGET", "Server-side concurrency budget exceeded.");
   }
@@ -91,14 +92,14 @@ async function boundedFetch(path: string, init?: RequestInit): Promise<Response>
       const chunks: Uint8Array[] = [];
       let size = 0;
       const length = res.headers.get("content-length");
-      if (length && Number(length) > MAX_RESPONSE_BYTES) {
+      if (length && Number(length) > maxBytes) {
         throw new OpsClientError(502, "RESPONSE_TOO_LARGE", "Upstream response exceeded byte cap.");
       }
       while (reader) {
         const { done, value } = await reader.read();
         if (done) break;
         size += value.byteLength;
-        if (size > MAX_RESPONSE_BYTES) {
+        if (size > maxBytes) {
           throw new OpsClientError(502, "RESPONSE_TOO_LARGE", "Upstream response exceeded byte cap.");
         }
         chunks.push(value);
@@ -122,9 +123,9 @@ async function boundedFetch(path: string, init?: RequestInit): Promise<Response>
   }
 }
 
-async function readJsonBounded(res: Response): Promise<unknown> {
+async function readJsonBounded(res: Response, maxBytes = MAX_RESPONSE_BYTES): Promise<unknown> {
   const buf = await res.arrayBuffer();
-  if (buf.byteLength > MAX_RESPONSE_BYTES) {
+  if (buf.byteLength > maxBytes) {
     throw new OpsClientError(502, "RESPONSE_TOO_LARGE", "Upstream response exceeded byte cap.");
   }
   const text = new TextDecoder().decode(buf);
@@ -266,7 +267,7 @@ export async function getTopology(): Promise<Topology> {
       nodes: [], connections: [],
     });
   }
-  const res = await boundedFetch("/ops/v1/topology?schemaVersion=2");
+  const res = await boundedFetch("/ops/v1/topology?schemaVersion=2", undefined, MAX_TOPOLOGY_RESPONSE_BYTES);
   if (!res.ok) throw new OpsClientError(res.status, "UPSTREAM", "Topology unavailable.");
-  return topologySchema.parse(await readJsonBounded(res));
+  return topologySchema.parse(await readJsonBounded(res, MAX_TOPOLOGY_RESPONSE_BYTES));
 }

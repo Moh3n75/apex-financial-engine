@@ -7,11 +7,16 @@ import java.util.function.BiPredicate;
 final class RuntimeTopology {
   static TopologySnapshot project(TopologySnapshot base,List<RuntimeMembershipPoller.Owner> input,
       String environment,BiPredicate<String,String> visible) {
+    return project(base,input,environment,visible,List.of());
+  }
+  static TopologySnapshot project(TopologySnapshot base,List<RuntimeMembershipPoller.Owner> input,
+      String environment,BiPredicate<String,String> visible,List<ContractDiscoveryPoller.View> additional) {
     var owners=input.stream().filter(o->visible.test(environment,o.service())).toList();
     var samples=owners.stream().flatMap(o->o.samples().stream()).filter(s->s.member().environment().equals(environment)).toList();
     var declarations=samples.stream().filter(s->s.manifest()!=null&&!s.member().membershipState().equals("DISAPPEARED"))
         .map(s->new ContractDiscoveryPoller.View(environment,s.member().service(),s.manifest(),s.member().transportStatus())).toList();
-    var graph=ContractTopology.join(base,declarations,visible);
+    var combined=new ArrayList<>(declarations);combined.addAll(additional);
+    var graph=ContractTopology.join(base,combined,visible);
     var nodes=new LinkedHashMap<String,Node>();graph.nodes().forEach(n->nodes.put(n.id(),n));
     var providers=new ArrayList<>(graph.providers());
     var members=new ArrayList<RuntimeMember>();

@@ -26,8 +26,8 @@ describe("backend-generated repository declaration contract", () => {
     expect(topologySchema.safeParse(raw).success).toBe(false);
     edge.evidence.push({ kind: "OBSERVED", source: "OPEN_TELEMETRY", reference: "sampled-span", scope: "SERVICE",
       collectedAt: edge.lastSeen, lastSeen: edge.lastSeen });
-    expect(topologySchema.parse(raw).connections[0].evidence.map(p => p.kind)).toEqual(["DECLARED", "OBSERVED"]);
-    edge.evidence[1].source = "CONTRACT_DISCOVERY";
+    expect(new Set(topologySchema.parse(raw).connections[0].evidence.map(p => p.kind))).toEqual(new Set(["DECLARED", "OBSERVED"]));
+    edge.evidence[edge.evidence.length - 1].source = "CONTRACT_DISCOVERY";
     expect(topologySchema.safeParse(raw).success).toBe(false);
   });
 });

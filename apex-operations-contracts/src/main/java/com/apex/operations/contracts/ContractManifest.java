@@ -7,7 +7,22 @@ import java.util.*;
 public record ContractManifest(int schemaVersion, String environment, String service, String cell,
     String instance, UUID epoch, Instant collectedAt, String sourceMode, String cluster,
     List<Publication> publications, List<String> subscriptions, String consumerGroup,
-    List<Contract> eventHandlers, List<Rpc> grpcHandlers, List<String> gaps) {
+    List<Contract> eventHandlers, List<Rpc> grpcHandlers, List<String> gaps,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY) List<GrpcDependency> grpcDependencies) {
+  public ContractManifest(int schemaVersion,String environment,String service,String cell,String instance,UUID epoch,
+      Instant collectedAt,String sourceMode,String cluster,List<Publication> publications,List<String> subscriptions,
+      String consumerGroup,List<Contract> eventHandlers,List<Rpc> grpcHandlers,List<String> gaps) {
+    this(schemaVersion,environment,service,cell,instance,epoch,collectedAt,sourceMode,cluster,publications,subscriptions,
+        consumerGroup,eventHandlers,grpcHandlers,gaps,List.of());
+  }
+  public record GrpcDependency(String kind,Contract contract,String target,String discoveryTarget,String behavior,String availability) {
+    public GrpcDependency {
+      if(!Set.of("QUERY","REQUEST").contains(kind))throw new IllegalArgumentException("RPC_KIND");
+      Objects.requireNonNull(contract);token(target,"[A-Za-z0-9._-]{1,64}");token(discoveryTarget,"[A-Za-z0-9._-]{1,64}");
+      if(!Set.of("REQUEST_RESPONSE","SYNCHRONOUS_REQUEST_RESPONSE","ASYNC_REQUEST_RESPONSE").contains(behavior) || !Set.of("CONFIGURED","DISCOVERY_CONFIGURED","TRANSPORT_NOT_CONFIGURED").contains(availability))
+        throw new IllegalArgumentException("RPC_DECLARATION");
+    }
+  }
   public record Contract(String type, int version) {
     public Contract { token(type, "[A-Z][A-Z0-9_]{0,63}"); if (version < 1 || version > 10000) throw new IllegalArgumentException("VERSION"); }
     public String key() { return type + ":" + version; }
@@ -20,12 +35,13 @@ public record ContractManifest(int schemaVersion, String environment, String ser
     public Rpc { if (!Set.of("QUERY", "REQUEST").contains(kind)) throw new IllegalArgumentException("RPC_KIND"); Objects.requireNonNull(contract); }
   }
   public ContractManifest {
-    if (schemaVersion != 1 || collectedAt == null || epoch == null) throw new IllegalArgumentException("SCHEMA");
+    if ((schemaVersion != 1 && schemaVersion != 2) || collectedAt == null || epoch == null) throw new IllegalArgumentException("SCHEMA");
     for (String value : List.of(environment, service, cell, instance, cluster)) token(value, "[A-Za-z0-9._-]{1,64}");
     if (!Set.of("EFFECTIVE_DECLARATION", "STATIC_DECLARATION", "FIXTURE").contains(sourceMode)) throw new IllegalArgumentException("SOURCE_MODE");
     token(consumerGroup, "[A-Za-z0-9._-]{0,200}");
     publications = bounded(publications); subscriptions = bounded(subscriptions); eventHandlers = bounded(eventHandlers);
     grpcHandlers = bounded(grpcHandlers); gaps = bounded(gaps);
+    grpcDependencies = bounded(grpcDependencies==null?List.of():grpcDependencies);
     subscriptions.forEach(t -> token(t, "[A-Za-z0-9._-]{1,249}"));
     gaps.forEach(g -> token(g, "[A-Z_]{1,80}"));
   }

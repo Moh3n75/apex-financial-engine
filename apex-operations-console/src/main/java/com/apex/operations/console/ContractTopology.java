@@ -34,7 +34,7 @@ final class ContractTopology {
       var m = view.manifest();
       String providerName="contracts:"+view.environment()+":"+view.owner();
       if(providers.stream().noneMatch(p->p.name().equals(providerName)))providers.add(new Provider(providerName,view.status(),
-          "DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",m==null?"UNKNOWN":m.sourceMode(),m==null?null:m.collectedAt()));
+          view.transport().equals("LOCAL_HTTP")?"LOCAL_HTTP_EFFECTIVE_DECLARATIONS_NOT_ATTESTED_OR_TRAFFIC":"DECLARED_CONTRACTS_ONLY_NOT_TRAFFIC",m==null?"UNKNOWN":m.sourceMode(),m==null?null:m.collectedAt()));
       else if(!view.status().equals("AVAILABLE"))for(int i=0;i<providers.size();i++)if(providers.get(i).name().equals(providerName)) {
         var p=providers.get(i);providers.set(i,new Provider(p.name(),"PARTIAL",p.coverage(),p.sourceMode(),p.collectedAt()));
       }
@@ -51,7 +51,7 @@ final class ContractTopology {
             previous.freshness(), previous.uncertainty(), previous.lastSeen(), combined));
       }
       String cell = m.environment() + ":cell:" + m.cell();
-      nodes.putIfAbsent(cell, node(cell, "CELL", m.cell(), m, null, evidence, view.status()));
+      nodes.putIfAbsent(cell, node(cell, "CELL", m.cell(), m, service, evidence, view.status()));
       for (String gap : m.gaps()) unresolved.add(new Unresolved(service, "", gap));
       for (var rpc : m.grpcHandlers()) if(descriptors.stream().noneMatch(d->d.serviceId().equals(service)&&d.protocol().equals("GRPC")&&d.kind().equals(rpc.kind())&&d.contract().equals(rpc.contract().key())))descriptors.add(new Descriptor(service,"GRPC",rpc.kind(),rpc.contract().key(),List.of(evidence)));
       for (var handler : m.eventHandlers()) if(descriptors.stream().noneMatch(d->d.serviceId().equals(service)&&d.protocol().equals("KAFKA")&&d.contract().equals(handler.key())))descriptors.add(new Descriptor(service,"KAFKA","EVENT_HANDLER",handler.key(),List.of(evidence)));
@@ -63,7 +63,8 @@ final class ContractTopology {
         String topic = topicId(m, publication.topic());
         var routeEvidence = new Evidence("DECLARED", "CONTRACT_DISCOVERY", publication.provenance(), m.collectedAt(), null, "SERVICE");
         nodes.putIfAbsent(topic, node(topic, "KAFKA_TOPIC", publication.topic(), m, null, routeEvidence, view.status()));
-        addEdge(edges, service, topic, m, publication.contract().key(), List.of(routeEvidence));
+        addEdge(edges, service, topic, m, publication.contract().key(), List.of(routeEvidence),List.of(new KafkaMatch(m.cluster(),
+            publication.contract().type(),publication.contract().version(),service,topic,null,null,null,"NO_VISIBLE_CONSUMER_MATCH")));
       }
     }
     for (var consumer : manifests) {
@@ -82,8 +83,15 @@ final class ContractTopology {
           // Do not attach hidden publisher names or timestamps: all publishers were authorized above.
           for (var p : publishers) proof.add(new Evidence("DECLARED", "CONTRACT_DISCOVERY", "EXACT_TOPIC_CONTRACT:" + p.service(), p.collectedAt(), null, "SERVICE"));
           nodes.putIfAbsent(group, node(group, "CONSUMER_GROUP", consumer.consumerGroup(), consumer, null, proof.getFirst(), "DECLARED"));
-          addEdge(edges, topic, group, consumer, handler.key(), proof);
-          addEdge(edges, group, service, consumer, handler.key(), proof);
+          var paths=new ArrayList<KafkaMatch>();
+          for(var publisher:publishers) {
+            String source=publisher.environment()+":service:"+publisher.service();
+            var path=new KafkaMatch(consumer.cluster(),handler.type(),handler.version(),source,topic,group,service,handler.key(),"EXACT_DECLARED_CONTRACT_MATCH");
+            paths.add(path);
+            addEdge(edges,source,topic,publisher,handler.key(),proof,List.of(path));
+          }
+          addEdge(edges, topic, group, consumer, handler.key(), proof,paths);
+          addEdge(edges, group, service, consumer, handler.key(), proof,paths);
         }
         if (!matched) unresolved.add(new Unresolved(service, handler.key(), "NO_VISIBLE_EXACT_TOPIC_CONTRACT_MATCH"));
       }
@@ -93,6 +101,35 @@ final class ContractTopology {
         if (!matched) unresolved.add(new Unresolved(service, "", "SUBSCRIPTION_WITHOUT_VISIBLE_CONTRACT_MATCH"));
       }
     }
+    // Caller-side Java declarations AND matching target handlers establish a gRPC dependency.
+    var calledHandlers=new HashSet<String>();
+    for(var caller:manifests)for(var dependency:caller.grpcDependencies()) {
+      if(!visible.test(caller.environment(),dependency.target()))continue;
+      String source=caller.environment()+":service:"+caller.service(),target=caller.environment()+":service:"+dependency.target();
+      var proof=new Evidence("DECLARED","CONTRACT_DISCOVERY","JAVA_CALLER_DECLARATION:"+dependency.target()+":"+dependency.kind(),caller.collectedAt(),null,"SERVICE");
+      var descriptor=new Descriptor(source,"GRPC","CALLER_"+dependency.kind(),dependency.contract().key(),List.of(proof));
+      if(!descriptors.contains(descriptor))descriptors.add(descriptor);
+      var targets=manifests.stream().filter(t->t.environment().equals(caller.environment())&&t.service().equals(dependency.target())).toList();
+      var matching=targets.stream().filter(t->t.grpcHandlers().contains(new ContractManifest.Rpc(dependency.kind(),dependency.contract()))).toList();
+      if(matching.isEmpty()) {
+        unresolved.add(new Unresolved(source,dependency.contract().key(),targets.isEmpty()?"NO_VISIBLE_TARGET_GRPC_MANIFEST":"NO_MATCHING_TARGET_GRPC_HANDLER"));continue;
+      }
+      calledHandlers.add(target+":"+dependency.kind()+":"+dependency.contract().key());
+      String availability=matching.stream().allMatch(t->t.gaps().contains("GRPC_SERVER_DISABLED"))?"TARGET_SERVER_DISABLED":dependency.availability();
+      var proofs=new ArrayList<Evidence>(List.of(proof));
+      for(var t:matching)proofs.add(new Evidence("DECLARED","CONTRACT_DISCOVERY","MATCHING_TARGET_HANDLER:"+dependency.kind(),t.collectedAt(),null,"SERVICE"));
+      String id=source+"->"+target+":GRPC:"+dependency.kind()+":"+dependency.contract().key()+":"+dependency.behavior();
+      edges.putIfAbsent(id,new Connection(id,source,target,caller.environment(),"GRPC","SERVICE",dependency.contract().key(),"UNKNOWN",null,
+          proofs.stream().limit(16).toList(),new Communication(null,List.of(),new GrpcCall(dependency.kind(),source,target,dependency.discoveryTarget(),dependency.behavior(),availability))));
+    }
+    for(var target:manifests)for(var handler:target.grpcHandlers()) {
+      String service=target.environment()+":service:"+target.service();
+      if(!calledHandlers.contains(service+":"+handler.kind()+":"+handler.contract().key()))
+        unresolved.add(new Unresolved(service,handler.contract().key(),"NO_VISIBLE_GRPC_CALLER_DECLARATION"));
+    }
+    for(var edge:edges.values())if(edge.protocol().equals("KAFKA")&&edge.details()!=null
+        &&edge.details().kafka().stream().allMatch(p->p.consumerServiceId()==null))
+      unresolved.add(new Unresolved(edge.source(),edge.contract(),"PUBLICATION_WITHOUT_VISIBLE_CONSUMER_MATCH"));
     if (views.isEmpty()) providers.add(new Provider("contracts", "NO_VISIBLE_COVERAGE", "NO_VISIBLE_DECLARATIONS", "UNKNOWN", null));
     providers.add(new Provider("otel", "NOT_CONFIGURED", "NO_OBSERVED_INTERACTIONS", "UNKNOWN", null));
     providers.add(new Provider("kafka-admin", "NOT_CONFIGURED", "NO_BROKER_METADATA", "UNKNOWN", null));
@@ -101,13 +138,18 @@ final class ContractTopology {
     boolean truncated = nodes.size() > 200 || edges.size() > 400 || descriptors.size() > 512 || unresolved.size() > 256;
     var limitedNodes = nodes.values().stream().limit(200).toList();
     var ids = limitedNodes.stream().map(Node::id).collect(java.util.stream.Collectors.toSet());
-    var limitedEdges = edges.values().stream().filter(e -> ids.contains(e.source()) && ids.contains(e.target())).limit(400).toList();
+    var limitedEdges = edges.values().stream().filter(e -> ids.contains(e.source()) && ids.contains(e.target())).limit(400).map(e->{
+      if(e.details()==null||e.details().kafka().isEmpty())return e;
+      var matches=e.details().kafka().stream().filter(p->ids.contains(p.publisherServiceId())&&ids.contains(p.topicId())
+          &&(p.consumerGroupId()==null||ids.contains(p.consumerGroupId()))&&(p.consumerServiceId()==null||ids.contains(p.consumerServiceId()))).toList();
+      return new Connection(e.id(),e.source(),e.target(),e.environment(),e.protocol(),e.scope(),e.contract(),e.health(),e.lastSeen(),e.evidence(),new Communication(null,matches,null));
+    }).toList();
     if (truncated) providers.add(new Provider("graph-budget", "PARTIAL", "NODE_EDGE_DESCRIPTOR_LIMIT", "UNKNOWN", null));
     return new TopologySnapshot(2, base.asOf(), "AUTHORIZED_DECLARATIONS_PARTIAL_NO_TRAFFIC_HISTORY",
         new Capabilities(manifests.isEmpty() ? base.capabilities().declared() : "CONTRACT_DISCOVERY_PARTIAL",
             base.capabilities().instances(), "NOT_CONFIGURED", "DECLARATIONS_ONLY_NO_BROKER_METADATA", "NOT_CONFIGURED", "NOT_CONFIGURED"),
         limitedNodes, limitedEdges, providers, unresolved.stream().filter(u -> ids.contains(u.serviceId())).limit(256).toList(),
-        descriptors.stream().filter(d -> ids.contains(d.serviceId())).limit(512).toList());
+        descriptors.stream().filter(d -> ids.contains(d.serviceId())).limit(512).toList(),base.memberships());
   }
   private static Node node(String id, String kind, String name, ContractManifest m, String service,
       Evidence evidence, String freshness) {
@@ -116,8 +158,15 @@ final class ContractTopology {
   }
   private static String topicId(ContractManifest m, String topic) { return m.environment() + ":topic:" + m.cluster() + ":" + topic; }
   private static void addEdge(Map<String, Connection> edges, String source, String target,
-      ContractManifest m, String contract, List<Evidence> proof) {
+      ContractManifest m, String contract, List<Evidence> proof,List<KafkaMatch> matches) {
     String id = source + "->" + target + ":" + contract;
-    edges.putIfAbsent(id, new Connection(id, source, target, m.environment(), "KAFKA", "SERVICE", contract, "UNKNOWN", null, proof));
+    var previous=edges.get(id);
+    var combined=new LinkedHashSet<KafkaMatch>();
+    if(previous!=null&&previous.details()!=null)combined.addAll(previous.details().kafka());
+    combined.addAll(matches);
+    if(combined.stream().anyMatch(p->p.consumerServiceId()!=null))combined.removeIf(p->p.consumerServiceId()==null);
+    var evidence=new LinkedHashSet<Evidence>();if(previous!=null)evidence.addAll(previous.evidence());evidence.addAll(proof);
+    edges.put(id, new Connection(id, source, target, m.environment(), "KAFKA", "SERVICE", contract, "UNKNOWN", null,
+        evidence.stream().limit(16).toList(),new Communication(null,combined.stream().limit(64).toList(),null)));
   }
 }

@@ -17,6 +17,8 @@ public final class ContractDiscoveryProvider {
   private final HandlerRegistry grpc;
   private final List<PublishedContracts> catalogs;
   private UUID epoch = UUID.randomUUID();
+  private List<com.apex.platform.grpc.api.GrpcCallerDeclarations> callers=List.of();
+  ContractDiscoveryProvider withCallers(List<com.apex.platform.grpc.api.GrpcCallerDeclarations> value){callers=List.copyOf(value);return this;}
   ContractDiscoveryProvider withIdentity(com.apex.platform.discovery.CellRuntimeIdentity identity){if(identity!=null)epoch=identity.epoch();return this;}
 
   public ContractDiscoveryProvider(Environment env, PublisherRouting routing, EventHandlerRegistry events,
@@ -26,6 +28,13 @@ public final class ContractDiscoveryProvider {
 
   @CellQueryHandler(type = "OPS_CONTRACT_DISCOVERY", version = 1)
   public ContractManifest discover(ContractDiscoveryQuery query) {
+    return collect(1,false);
+  }
+  @CellQueryHandler(type="OPS_CONTRACT_DISCOVERY",version=2)
+  public ContractManifest discoverCommunication(ContractDiscoveryQueryV2 query) {
+    return collect(2,true);
+  }
+  private ContractManifest collect(int version,boolean includeCallers) {
     var publications = new ArrayList<Publication>();
     var gaps = new ArrayList<String>();
     boolean messaging = env.getProperty("apex.messaging.cell.enabled", Boolean.class, false);
@@ -50,13 +59,35 @@ public final class ContractDiscoveryProvider {
     if (consuming && events == null) gaps.add("EVENT_HANDLER_REGISTRY_UNAVAILABLE");
     if (consuming && !env.getProperty("spring.kafka.listener.auto-startup", Boolean.class, true)) gaps.add("LISTENER_AUTO_START_DISABLED");
     if (grpc == null) gaps.add("GRPC_HANDLER_REGISTRY_UNAVAILABLE");
+    if (!env.getProperty("apex.grpc.server.enabled",Boolean.class,false)) gaps.add("GRPC_SERVER_DISABLED");
+    if (callers.isEmpty()) gaps.add("GRPC_CALLER_DECLARATIONS_UNAVAILABLE");
+    if(!includeCallers)gaps.add("GRPC_CALLER_METADATA_REQUIRES_EXTENDED_MANIFEST");
     String cluster = env.getProperty("apex.contract-discovery.cluster", "unknown");
     if (cluster.equals("unknown")) gaps.add("KAFKA_CLUSTER_IDENTITY_UNKNOWN");
-    return new ContractManifest(1, env.getProperty("apex.contract-discovery.environment", "unknown"),
+    return new ContractManifest(version, env.getProperty("apex.contract-discovery.environment", "unknown"),
         env.getRequiredProperty("spring.application.name"), env.getRequiredProperty("apex.cell.id"),
         env.getProperty("apex.contract-discovery.instance", "unknown"), epoch, Instant.now(), "EFFECTIVE_DECLARATION",
         cluster, publications, subscriptions, consuming ? env.getRequiredProperty("spring.kafka.consumer.group-id") : "",
         handlers, grpc == null ? List.of() : grpc.descriptors().stream()
-            .map(d -> new Rpc(d.kind(), new Contract(d.type(), d.version()))).toList(), gaps);
+            .map(d -> new Rpc(d.kind(), new Contract(d.type(), d.version()))).toList(), gaps, includeCallers?dependencies():List.of());
+  }
+
+  private List<GrpcDependency> dependencies() {
+    var declarations=new ArrayList<GrpcDependency>();
+    for(var catalog:callers)for(var dependency:catalog.dependencies()) {
+      boolean query=dependency.contract().isAnnotationPresent(com.apex.platform.grpc.api.CellQuery.class);
+      var contract=com.apex.platform.grpc.internal.Contracts.inspect(dependency.contract(),query);
+      String prefix="apex.grpc.destinations."+dependency.destination();
+      boolean local=env.getProperty(prefix+".local",Boolean.class,false);
+      if(local)continue; // An in-process call is not a distributed gRPC dependency.
+      boolean client=env.getProperty("apex.grpc.client.enabled",Boolean.class,false);
+      boolean discovery=env.getProperty("apex.discovery.provider","static").equals("eureka")
+          || env.getProperty("apex.discovery.provider","static").equals("kubernetes")
+          || env.getProperty("apex.discovery.provider","static").equals("grpc");
+      String availability=client?(discovery?"DISCOVERY_CONFIGURED":env.containsProperty(prefix+".channel")?"CONFIGURED":"TRANSPORT_NOT_CONFIGURED"):"TRANSPORT_NOT_CONFIGURED";
+      declarations.add(new GrpcDependency(query?"QUERY":"REQUEST",new Contract(contract.type(),contract.version()),
+          dependency.destination(),dependency.destination(),dependency.behavior(),availability));
+    }
+    return declarations.stream().distinct().toList();
   }
 }

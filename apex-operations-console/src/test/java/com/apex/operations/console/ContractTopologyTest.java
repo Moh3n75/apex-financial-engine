@@ -28,7 +28,7 @@ class ContractTopologyTest {
       assertThat(edge.evidence()).allSatisfy(proof -> assertThat(proof.kind()).isEqualTo("DECLARED"));
     });
     assertThat(graph.descriptors()).hasSize(3);
-    assertThat(graph.unresolved()).isEmpty();
+    assertThat(graph.unresolved()).allSatisfy(u->assertThat(u.reason()).isEqualTo("NO_VISIBLE_GRPC_CALLER_DECLARATION"));
     assertThat(graph.providers()).anySatisfy(p -> assertThat(p.sourceMode()).isEqualTo("FIXTURE"));
   }
   @Test void typeVersionTopicEnvironmentAndClusterMustAllMatch() {

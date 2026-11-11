@@ -12,17 +12,22 @@ import org.springframework.stereotype.Component;
 /** Finite allowlisted reads over the existing gRPC transport. No request-time fan-out. */
 @Component
 public final class ContractDiscoveryPoller implements AutoCloseable {
-  public record View(String environment, String owner, ContractManifest manifest, String status) {}
+  public record View(String environment, String owner, ContractManifest manifest, String status,String transport) {
+    public View(String environment,String owner,ContractManifest manifest,String status){this(environment,owner,manifest,status,"GRPC");}
+  }
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
       Thread.ofPlatform().daemon().name("ops-contract-read").factory());
   private final Map<String, View> cache = new LinkedHashMap<>();
   private final QueryGateway gateway;
   private final String environment;
   private final boolean membershipEnabled;
+  private final int contractVersion;
 
   public ContractDiscoveryPoller(Environment env, ObjectProvider<QueryGateway> gateways) {
     gateway = gateways.getIfAvailable();
     membershipEnabled=env.getProperty("apex.ops.membership.enabled",Boolean.class,false);
+    contractVersion=env.getProperty("apex.ops.contract-discovery.contract-version",Integer.class,1);
+    if(contractVersion!=1&&contractVersion!=2)throw new IllegalArgumentException("CONTRACT_VERSION");
     environment = env.getProperty("apex.ops.contract-discovery.environment", "unknown");
     if (!environment.matches("[A-Za-z0-9._-]{1,64}")) throw new IllegalArgumentException("ENVIRONMENT");
     String owners = env.getProperty("apex.ops.contract-discovery.owners", "");
@@ -38,7 +43,7 @@ public final class ContractDiscoveryPoller implements AutoCloseable {
   void poll() {
     for (String owner : owners()) {
       try {
-        var manifest = gateway.query(owner, new ContractDiscoveryQuery(), ContractManifest.class,
+        var manifest = gateway.query(owner, contractVersion==2?new ContractDiscoveryQueryV2():new ContractDiscoveryQuery(), ContractManifest.class,
             new QueryOptions(UUID.randomUUID(), Duration.ofMillis(1000)));
         accept(owner, manifest, Instant.now());
       } catch (Exception unavailable) {

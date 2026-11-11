@@ -1,0 +1,216 @@
+﻿{
+    "source":  "ACTUAL_SCOPED_TEST_RUNS",
+    "backendSuites":  [
+                          {
+                              "name":  "com.apex.operations.console.CommunicationTopologyTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.ContractTopologyTest",
+                              "errors":  0,
+                              "tests":  5,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.EvidenceCacheTest",
+                              "errors":  0,
+                              "tests":  5,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.GatewayRouteTopologyTest",
+                              "errors":  0,
+                              "tests":  7,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.LocalContractDiscoveryPollerTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.LocalEurekaInventoryLiveIT",
+                              "errors":  0,
+                              "tests":  1,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  1
+                          },
+                          {
+                              "name":  "com.apex.operations.console.LocalEurekaTopologyHttpTest",
+                              "errors":  0,
+                              "tests":  1,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.LocalEurekaTopologyInventoryTest",
+                              "errors":  0,
+                              "tests":  9,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.Ops03bInputBoundsTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.OwnerRecentSearchClientTest",
+                              "errors":  0,
+                              "tests":  8,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.OwnerSearchClientTest",
+                              "errors":  0,
+                              "tests":  8,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.RepositoryTopologyIntegrationTest",
+                              "errors":  0,
+                              "tests":  1,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.RuntimeMembershipPollerTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.security.m36b.OpsM36bResourceAuthorizerTest",
+                              "errors":  0,
+                              "tests":  3,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.security.OpsM36aHttpSecurityIT",
+                              "errors":  0,
+                              "tests":  4,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.security.OpsM36aJwtValidatorTest",
+                              "errors":  0,
+                              "tests":  6,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.operations.console.TopologyApiTest",
+                              "errors":  0,
+                              "tests":  4,
+                              "failures":  0,
+                              "module":  "apex-operations-console",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.contracts.ContractDiscoveryProviderTest",
+                              "errors":  0,
+                              "tests":  4,
+                              "failures":  0,
+                              "module":  "apex-platform-contract-discovery",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.contracts.LocalContractHttpTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-platform-contract-discovery",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.grpc.internal.ContractValidationTest",
+                              "errors":  0,
+                              "tests":  8,
+                              "failures":  0,
+                              "module":  "apex-platform-grpc",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.grpc.internal.GrpcRuntimeTest",
+                              "errors":  0,
+                              "tests":  6,
+                              "failures":  0,
+                              "module":  "apex-platform-grpc",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.messaging.integration.ConsumerTopicsTest",
+                              "errors":  0,
+                              "tests":  10,
+                              "failures":  0,
+                              "module":  "apex-platform-messaging",
+                              "skipped":  0
+                          },
+                          {
+                              "name":  "com.apex.platform.messaging.integration.PublisherRoutingTest",
+                              "errors":  0,
+                              "tests":  2,
+                              "failures":  0,
+                              "module":  "apex-platform-messaging",
+                              "skipped":  0
+                          }
+                      ],
+    "frontend":  {
+                     "productionBuild":  "PASSED",
+                     "files":  13,
+                     "typecheck":  "PASSED",
+                     "vitestPassed":  43,
+                     "lint":  "PASSED_WITH_EXISTING_WARNING"
+                 },
+    "liveBrowser":  {
+                        "tests":  [
+                                      "live-communication-graph.spec.ts",
+                                      "live-local-inventory.spec.ts",
+                                      "live-relationship-graph.spec.ts"
+                                  ],
+                        "source":  "REAL_JAVA_BFF_CHROMIUM",
+                        "passed":  3
+                    },
+    "orderTestCompile":  "PASSED_NO_REVERT",
+    "sampleGrpcClientPackage":  "PASSED_NOT_STARTED",
+    "fullRepositoryCi":  "NOT_RUN_NOT_QUALIFIED",
+    "logs":  [
+                 "out/communication-full-scoped-tests.log",
+                 "out/communication-web-tests.log",
+                 "out/communication-web-build.log",
+                 "out/communication-browser.log",
+                 "out/communication-order-test-compile.log",
+                 "out/communication-sample-package.log"
+             ]
+}

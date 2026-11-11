@@ -19,6 +19,12 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @SpringBootApplication
 public class SampleGrpcClientApplication implements ApplicationRunner {
+  private static final String ORDER_TARGET="order-cell";
+  @org.springframework.context.annotation.Bean
+  GrpcCallerDeclarations callerDeclarations() {
+    return new GrpcCallerDeclarations(List.of(new GrpcCallerDeclarations.Dependency(ORDER_TARGET,GetOrderQuery.class,"SYNCHRONOUS_REQUEST_RESPONSE"),
+        new GrpcCallerDeclarations.Dependency(ORDER_TARGET,CreateOrderRequest.class)));
+  }
   private final RequestReplyGateway requests;
   private final QueryGateway queries;
   private final ExecutionContextProvider contexts;
@@ -177,7 +183,7 @@ public class SampleGrpcClientApplication implements ApplicationRunner {
       return pending.get(timeout.toMillis() + 500, TimeUnit.MILLISECONDS);
     }
     if (action.equals("perspective") || action.equals("perspective99")) {
-      String target = command.path("target").asText("order-cell");
+      String target = command.path("target").asText(ORDER_TARGET);
       UUID id = UUID.fromString(command.path("orderId").asText());
       if (action.equals("perspective99"))
         return queries.query(
@@ -195,12 +201,12 @@ public class SampleGrpcClientApplication implements ApplicationRunner {
       UUID order = UUID.fromString(command.path("orderId").asText());
       if (action.equals("query99"))
         return queries.query(
-            "order-cell",
+            ORDER_TARGET,
             new UnknownQuery(order),
             OrderView.class,
             new QueryOptions(requestId, timeout));
       return queries.query(
-          "order-cell",
+          ORDER_TARGET,
           new GetOrderQuery(order),
           OrderView.class,
           new QueryOptions(requestId, timeout));
@@ -217,28 +223,28 @@ public class SampleGrpcClientApplication implements ApplicationRunner {
                     command.path("quantity").asInt(1))));
     if (action.equals("version99"))
       return requests.request(
-          "order-cell",
+          ORDER_TARGET,
           new UnknownRequest(request.externalReference(), request.description(), request.items()),
           CreateOrderResponse.class,
           options);
     if (action.equals("version2"))
       return requests.request(
-          "order-cell",
+          ORDER_TARGET,
           new VersionTwoRequest(
               request.externalReference(), request.description(), request.items()),
           CreateOrderResponse.class,
           options);
     if (action.equals("mismatch"))
-      return requests.request("order-cell", request, OrderView.class, options);
+      return requests.request(ORDER_TARGET, request, OrderView.class, options);
     if (action.equals("concurrent")) {
       var first =
           requests
-              .requestAsync("order-cell", request, CreateOrderResponse.class, options)
+              .requestAsync(ORDER_TARGET, request, CreateOrderResponse.class, options)
               .toCompletableFuture();
       var second =
           requests
               .requestAsync(
-                  "order-cell",
+                  ORDER_TARGET,
                   request,
                   CreateOrderResponse.class,
                   options.withRequestId(UUID.randomUUID()))
@@ -249,18 +255,18 @@ public class SampleGrpcClientApplication implements ApplicationRunner {
     }
     if (action.equals("async"))
       return requests
-          .requestAsync("order-cell", request, CreateOrderResponse.class, options)
+          .requestAsync(ORDER_TARGET, request, CreateOrderResponse.class, options)
           .toCompletableFuture()
           .get(timeout.toMillis() + 500, TimeUnit.MILLISECONDS);
     if (action.equals("cancel")) {
       var future =
           requests
-              .requestAsync("order-cell", request, CreateOrderResponse.class, options)
+              .requestAsync(ORDER_TARGET, request, CreateOrderResponse.class, options)
               .toCompletableFuture();
       future.cancel(true);
       return future.get(1, TimeUnit.SECONDS);
     }
-    return requests.request("order-cell", request, CreateOrderResponse.class, options);
+    return requests.request(ORDER_TARGET, request, CreateOrderResponse.class, options);
   }
 
   @CellQuery(type = "GET_ORDER_PERSPECTIVE", version = 99, response = OrderPerspective.class)

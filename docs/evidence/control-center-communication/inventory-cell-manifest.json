@@ -1,0 +1,78 @@
+﻿{
+    "schemaVersion":  2,
+    "environment":  "local",
+    "service":  "inventory-cell",
+    "cell":  "inventory-cell",
+    "instance":  "unknown",
+    "epoch":  "0bef19f7-7bc5-4b12-93b5-4f2af9309b70",
+    "collectedAt":  "2026-11-10T15:36:16.185647800Z",
+    "sourceMode":  "EFFECTIVE_DECLARATION",
+    "cluster":  "apex-local-kafka",
+    "publications":  [
+                         {
+                             "contract":  {
+                                              "type":  "INVENTORY_RESERVED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.inventory.events.v1",
+                             "provenance":  "PUBLISHED_CONTRACT_CATALOG"
+                         },
+                         {
+                             "contract":  {
+                                              "type":  "INVENTORY_RESERVATION_REJECTED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.inventory.events.v1",
+                             "provenance":  "PUBLISHED_CONTRACT_CATALOG"
+                         },
+                         {
+                             "contract":  {
+                                              "type":  "INVENTORY_RELEASED",
+                                              "version":  1
+                                          },
+                             "topic":  "apex.inventory.events.v1",
+                             "provenance":  "PUBLISHED_CONTRACT_CATALOG"
+                         }
+                     ],
+    "subscriptions":  [
+                          "apex.order.events.v1",
+                          "apex.order.inventory-release-requests.v1"
+                      ],
+    "consumerGroup":  "inventory-cell-order-placed-v1",
+    "eventHandlers":  [
+                          {
+                              "type":  "ORDER_CANCELLATION_REQUESTED",
+                              "version":  1
+                          },
+                          {
+                              "type":  "ORDER_PLACED",
+                              "version":  1
+                          }
+                      ],
+    "grpcHandlers":  [
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "GET_ORDER_PERSPECTIVE",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  1
+                                          }
+                         },
+                         {
+                             "kind":  "QUERY",
+                             "contract":  {
+                                              "type":  "OPS_CONTRACT_DISCOVERY",
+                                              "version":  2
+                                          }
+                         }
+                     ],
+    "gaps":  [
+                 "GRPC_CALLER_DECLARATIONS_UNAVAILABLE"
+             ]
+}

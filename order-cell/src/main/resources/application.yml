@@ -1,9 +1,8 @@
-# Default runtime: HTTP Order + PostgreSQL/Kafka publisher + Eureka registration.
 spring:
   application:
     name: order-cell
   datasource:
-    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/order}
+    url: ${CELL_DB_URL:jdbc:postgresql://localhost:5432/order_db}
     username: ${CELL_DB_USERNAME:apex}
     password: ${CELL_DB_PASSWORD:apex123}
   flyway:
@@ -18,69 +17,6 @@ spring:
       acks: all
       properties:
         enable.idempotence: true
-
-apex:
-  cell:
-    id: ${CELL_ID:order-cell}
-  messaging:
-    cell:
-      enabled: true
-    publisher:
-      topic: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
-    outbox:
-      publisher:
-        enabled: true
-    consumer:
-      enabled: false
-server:
-  port: ${SERVER_PORT:8083}
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
-    register-with-eureka: true
-    fetch-registry: true
----
-# Optional gRPC server. Enable with spring.profiles.active=grpc.
-spring:
-  config:
-    activate:
-      on-profile: grpc
-  grpc:
-    server:
-      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
-      port: ${CELL_GRPC_PORT:9091}
-      shutdown:
-        grace-period: 5s
-apex:
-  grpc:
-    server:
-      enabled: true
----
-# Optional operator read endpoints. Enable with profile operations.
-spring:
-  config:
-    activate:
-      on-profile: operations
-apex:
-  order:
-    operations:
-      age-threshold: ${APEX_ORDER_STALLED_AGE_THRESHOLD:15m}
-      read-token: ${APEX_ORDER_OPERATIONS_READ_TOKEN}
----
-# Optional saga consumer. Enable with profile saga.
-spring:
-  config:
-    activate:
-      on-profile: saga
-  datasource:
-    url: ${ORDER_DB_URL}
-    username: ${ORDER_DB_USERNAME}
-    password: ${ORDER_DB_PASSWORD}
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-    admin:
-      auto-create: false
     consumer:
       group-id: ${APEX_ORDER_CONSUMER_GROUP:order-cell-inventory-outcome-v1}
       enable-auto-commit: false
@@ -92,24 +28,56 @@ spring:
     listener:
       ack-mode: manual_immediate
       auto-startup: true
+  grpc:
+    server:
+      address: ${CELL_GRPC_ADDRESS:127.0.0.1}
+      port: ${CELL_GRPC_PORT:0}
+      shutdown:
+        grace-period: 5s
+
+logging:
+  level:
+    com.apex.order: DEBUG
+    com.apex.platform.messaging: DEBUG
+    org.springframework.kafka: INFO
+
+server:
+  port: ${SERVER_PORT:0}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://127.0.0.1:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+
 apex:
-  messaging:
-    consumer:
+  cell:
+    id: ${CELL_ID:order-cell}
+  grpc:
+    server:
       enabled: true
-      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1}
-      reliability:
-        enabled: true
----
-# Optional three-cell saga routing. Combine saga,three-cell-saga.
-spring:
-  config:
-    activate:
-      on-profile: three-cell-saga
-apex:
+    # For local loopback testing only. Set the environment variable to true explicitly;
+    # production requires a trusted PeerIdentityVerifier and mTLS configuration.
+    insecure-loopback-test-only: ${APEX_GRPC_INSECURE_LOOPBACK_TEST_ONLY:true}
+    test-clients:
+      - inventory-cell
+      - payment-cell
+      - sample-grpc-client
   messaging:
-    consumer:
-      topics: apex.inventory.events.v1,apex.payment.events.v1
+    cell:
+      enabled: true
+    provisioning:
+      enabled: true
+      partitions: 1
+      replication-factor: -1
+      timeout: 10s
     publisher:
+      topic: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
       routing:
         enabled: true
         required-contracts:
@@ -120,7 +88,7 @@ apex:
         routes:
           - event-type: ORDER_PLACED
             event-version: 1
-            topic: apex.order.events.v1
+            topic: ${APEX_ORDER_EVENTS_TOPIC:apex.order.events.v1}
           - event-type: ORDER_CREATED
             event-version: 1
             topic: apex.order.legacy.events.v1
@@ -130,25 +98,12 @@ apex:
           - event-type: ORDER_CANCELLATION_REQUESTED
             event-version: 1
             topic: apex.order.inventory-release-requests.v1
----
-# Optional replay of two-cell saga. Combine saga,replay.
-spring:
-  config:
-    activate:
-      on-profile: saga & replay & !three-cell-saga
-apex:
-  messaging:
+    outbox:
+      publisher:
+        enabled: true
     consumer:
-      topics: ${APEX_INVENTORY_EVENTS_TOPIC:apex.inventory.events.v1},${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1}
+      enabled: true
+      # Replay topics are opt-in via this explicit full topic list; NOT subscribed by default.
+      topics: ${APEX_ORDER_CONSUMER_TOPICS:apex.inventory.events.v1,apex.payment.events.v1}
       reliability:
         enabled: true
----
-# Optional replay of three-cell saga. Combine saga,three-cell-saga,replay.
-spring:
-  config:
-    activate:
-      on-profile: three-cell-saga & replay
-apex:
-  messaging:
-    consumer:
-      topics: apex.inventory.events.v1,apex.payment.events.v1,${APEX_ORDER_REPLAY_TOPIC:apex.order.inventory-outcome.replay.v1},${APEX_ORDER_PAYMENT_REPLAY_TOPIC:apex.order.payment-outcome.replay.v1}

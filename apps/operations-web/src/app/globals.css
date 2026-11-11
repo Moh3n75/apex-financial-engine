@@ -1,3 +1,4 @@
+@import "@xyflow/react/dist/style.css";
 @import "tailwindcss";
 
 :root {
@@ -21,4 +22,23 @@ body {
 *:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
+}
+
+.topology-node { width: 244px; height: 104px; padding: 14px; border: 1px solid #d4d4d8; border-left: 4px solid #71717a; border-radius: 7px; background: #fff; color: #18181b; box-shadow: 0 2px 5px #00000006; }
+.topology-node--service { border-left-color: #2563eb; }
+.topology-node--instance { border-style: dashed; border-left-color: #71717a; }
+.topology-node--kafka_topic { border-left-color: #b45309; border-radius: 22px; background: #fffbeb; }
+.topology-node--consumer_group { border-left-color: #7c3aed; background: #faf5ff; }
+.topology-node--cell { border-left-color: #0f766e; background: #f0fdfa; }
+.topology-node.is-selected { outline: 2px solid #2563eb; outline-offset: 3px; }
+.topology-node .react-flow__handle { width: 6px; height: 6px; background: #a1a1aa; border: 0; }
+.topology-edge-label { position: absolute; padding: 2px 5px; background: #fafafa; border: 1px solid #e4e4e7; border-radius: 4px; font-size: 10px; color: #52525b; pointer-events: none; }
+.topology-button { border: 1px solid #d4d4d8; border-radius: 5px; padding: 6px 10px; cursor: pointer; }
+@media (prefers-color-scheme: dark) {
+  .topology-node { background: #18181b; color: #fafafa; border-color: #52525b; }
+  .topology-node--service { border-left-color: #60a5fa; }
+  .topology-node--kafka_topic { border-left-color: #fbbf24; background: #211d13; }
+  .topology-node--consumer_group { border-left-color: #c084fc; background: #211a2e; }
+  .topology-node--cell { border-left-color: #2dd4bf; background: #142321; }
+  .topology-edge-label { background: #18181b; border-color: #52525b; color: #d4d4d8; }
 }

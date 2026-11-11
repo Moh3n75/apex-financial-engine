@@ -13,6 +13,25 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 class ContractDiscoveryProviderTest {
+  @com.apex.platform.grpc.api.CellQuery(type="READ_SAMPLE",version=2,response=Answer.class)
+  public record ReadSample(String id) {}
+  @com.apex.platform.grpc.api.CellRequest(type="WRITE_SAMPLE",version=1,response=Answer.class)
+  public record WriteSample(String id) {}
+  public record Answer(String value) {}
+  @Test void callerDeclarationsUseJavaContractMetadataAndDoNotAssumeConfiguredTransport() {
+    var env=new MockEnvironment().withProperty("spring.application.name","caller-cell").withProperty("apex.cell.id","caller-cell");
+    var provider=new ContractDiscoveryProvider(env,new PublisherRouting(false,List.of()),null,null,List.of()).withCallers(List.of(
+        new com.apex.platform.grpc.api.GrpcCallerDeclarations(List.of(new com.apex.platform.grpc.api.GrpcCallerDeclarations.Dependency("target-cell",ReadSample.class),
+            new com.apex.platform.grpc.api.GrpcCallerDeclarations.Dependency("target-cell",WriteSample.class)))));
+    var manifest=provider.discoverCommunication(new ContractDiscoveryQueryV2());
+    assertThat(manifest.grpcDependencies()).extracting(ContractManifest.GrpcDependency::kind).containsExactly("QUERY","REQUEST");
+    assertThat(manifest.grpcDependencies()).allSatisfy(d->assertThat(d.availability()).isEqualTo("TRANSPORT_NOT_CONFIGURED"));
+    assertThat(manifest.grpcDependencies().getFirst().contract().key()).isEqualTo("READ_SAMPLE:2");
+    env.withProperty("apex.grpc.client.enabled","true").withProperty("apex.discovery.provider","eureka");
+    assertThat(provider.discoverCommunication(new ContractDiscoveryQueryV2()).grpcDependencies()).allSatisfy(d->assertThat(d.availability()).isEqualTo("DISCOVERY_CONFIGURED"));
+    env.withProperty("apex.grpc.destinations.target-cell.local","true");
+    assertThat(provider.discoverCommunication(new ContractDiscoveryQueryV2()).grpcDependencies()).isEmpty();
+  }
   @Test void optInAndActualGrpcRegistrationExposeSanitizedDescriptor() {
     new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ContractDiscoveryAutoConfiguration.class))
         .run(c -> assertThat(c).doesNotHaveBean(ContractDiscoveryProvider.class));
@@ -22,7 +41,7 @@ class ContractDiscoveryProviderTest {
           var provider = c.getBean(ContractDiscoveryProvider.class);
           var beans = new DefaultListableBeanFactory(); beans.registerSingleton("provider", provider);
           var registry = new HandlerRegistry(beans); registry.afterSingletonsInstantiated();
-          assertThat(registry.descriptors()).singleElement().satisfies(d -> {
+          assertThat(registry.descriptors()).hasSize(2).allSatisfy(d -> {
             assertThat(d.type()).isEqualTo("OPS_CONTRACT_DISCOVERY"); assertThat(d.kind()).isEqualTo("QUERY");
           });
           assertThat(provider.discover(new ContractDiscoveryQuery()).gaps()).contains("KAFKA_CLUSTER_IDENTITY_UNKNOWN");
@@ -30,6 +49,22 @@ class ContractDiscoveryProviderTest {
           var manifest = provider.discover(new ContractDiscoveryQuery());
           assertThat(codec.decode(codec.encode(manifest, ContractManifest.class), ContractManifest.class)).isEqualTo(manifest);
         });
+  }
+
+  public record LegacyManifest(int schemaVersion,String environment,String service,String cell,String instance,UUID epoch,
+      java.time.Instant collectedAt,String sourceMode,String cluster,List<ContractManifest.Publication> publications,List<String> subscriptions,
+      String consumerGroup,List<ContractManifest.Contract> eventHandlers,List<ContractManifest.Rpc> grpcHandlers,List<String> gaps) {}
+  @Test void strictLegacyGrpcShapeIsPreservedAndExtendedCallerMetadataIsVersioned() {
+    var env=new MockEnvironment().withProperty("spring.application.name","caller-cell").withProperty("apex.cell.id","caller-cell");
+    var provider=new ContractDiscoveryProvider(env,new PublisherRouting(false,List.of()),null,null,List.of()).withCallers(List.of(
+        new com.apex.platform.grpc.api.GrpcCallerDeclarations(List.of(new com.apex.platform.grpc.api.GrpcCallerDeclarations.Dependency("target-cell",ReadSample.class)))));
+    var codec=new RpcCodec(65536);
+    byte[] legacy=codec.encode(provider.discover(new ContractDiscoveryQuery()),ContractManifest.class);
+    assertThat(new String(legacy,java.nio.charset.StandardCharsets.UTF_8)).doesNotContain("grpcDependencies");
+    assertThat(codec.decode(legacy,LegacyManifest.class).schemaVersion()).isEqualTo(1);
+    var extended=provider.discoverCommunication(new ContractDiscoveryQueryV2());
+    assertThat(extended.schemaVersion()).isEqualTo(2);assertThat(extended.grpcDependencies()).hasSize(1);
+    assertThat(codec.decode(codec.encode(extended,ContractManifest.class),ContractManifest.class)).isEqualTo(extended);
   }
 
   @Test void effectiveOverridesAndDisabledPublisherAreHonored() {

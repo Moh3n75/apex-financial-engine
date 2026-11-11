@@ -14,8 +14,8 @@ for ($taskIndex = 0; $taskIndex -lt $Samples; $taskIndex++) {
   $taskExpected = @($taskRegistry.applications.application | Where-Object {
     @($_.instance | Where-Object {$_.status -eq 'UP' -and (-not $_.metadata.'apex.environment' -or $_.metadata.'apex.environment' -eq 'local')}).Count -gt 0
   } | ForEach-Object {$_.name.ToLowerInvariant()} | Sort-Object -Unique)
-  $taskJavaNames = @($taskJava.nodes | Where-Object {$_.evidence.source -contains 'EUREKA'} | ForEach-Object {$_.name} | Sort-Object)
-  $taskBffNames = @($taskBff.nodes | Where-Object {$_.evidence.source -contains 'EUREKA'} | ForEach-Object {$_.name} | Sort-Object)
+  $taskJavaNames = @($taskJava.nodes | Where-Object {$_.kind -eq 'SERVICE' -and $_.evidence.source -contains 'EUREKA'} | ForEach-Object {$_.name} | Sort-Object)
+  $taskBffNames = @($taskBff.nodes | Where-Object {$_.kind -eq 'SERVICE' -and $_.evidence.source -contains 'EUREKA'} | ForEach-Object {$_.name} | Sort-Object)
   if ($taskJava.schemaVersion -ne 2 -or $taskBff.schemaVersion -ne 2) { throw 'Expected schemaVersion=2' }
   $taskProvider = @($taskBff.providers | Where-Object {$_.name -eq 'eureka-local-inventory'})
   if ($taskProvider.Count -ne 1 -or $taskProvider[0].status -ne 'AVAILABLE') { throw 'Registry coverage is not AVAILABLE; inspect provider status, never use fixtures' }

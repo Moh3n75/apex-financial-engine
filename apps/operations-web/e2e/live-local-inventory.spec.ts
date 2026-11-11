@@ -14,13 +14,14 @@ test("local registry inventory survives Java to BFF to rendered Topology", async
   const bff = topologySchema.parse(await response.json());
   expect(bff.nodes.map(n => n.id).sort()).toEqual(java.nodes.map(n => n.id).sort());
   expect(bff.providers.find(p => p.name === "eureka-local-inventory")?.status).toBe("AVAILABLE");
-  const services = bff.nodes.filter(n => n.evidence.some(e => e.source === "EUREKA"));
+  const services = bff.nodes.filter(n => n.kind === "SERVICE" && n.evidence.some(e => e.source === "EUREKA"));
   expect(services.length).toBeGreaterThan(0);
   await page.goto("/topology");
+  await expect(page.getByTestId("topology-canvas")).toHaveAttribute("data-ready", "true");
   await expect(page.getByRole("heading", { name: "Topology", exact: true })).toBeVisible();
   await expect(page.getByText("Eureka UP means registry presence", { exact: false })).toBeVisible();
   for (const service of services) {
-    await expect(page.locator("summary").filter({ hasText: service.name })).toBeVisible();
+    await expect(page.getByRole("button", { name: `SERVICE ${service.name}`, exact: true })).toBeVisible();
     expect(service.kind).toBe("SERVICE"); expect(service.health).toBe("UNKNOWN");
     expect(service.epoch).toBeNull();
   }

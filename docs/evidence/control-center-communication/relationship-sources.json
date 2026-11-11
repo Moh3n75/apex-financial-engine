@@ -1,0 +1,1582 @@
+﻿{
+    "source":  "LIVE_REGISTRY_CELL_MANIFESTS_GATEWAY_JAVA_BFF_PAGE",
+    "collectedAt":  "2026-11-10T15:36:16.3087465Z",
+    "relationships":  [
+                          {
+                              "id":  "local:service:customer-cell-\u003elocal:topic:apex-local-kafka:apex.customer.events.v1:CUSTOMER_CREATED:1",
+                              "source":  "local:service:customer-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.customer.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "CUSTOMER_CREATED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.758109800Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.769110200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:customer-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.758109800Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "CUSTOMER_CREATED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:customer-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.customer.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1",
+                                                                "consumerServiceId":  "local:service:reporting-cell",
+                                                                "handlerContract":  "CUSTOMER_CREATED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:payment-cell-\u003elocal:topic:apex-local-kafka:apex.payment.events.v1:PAYMENT_AUTHORIZED:1",
+                              "source":  "local:service:payment-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_AUTHORIZED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_AUTHORIZED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_AUTHORIZED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:payment-cell-\u003elocal:topic:apex-local-kafka:apex.payment.events.v1:PAYMENT_DECLINED:1",
+                              "source":  "local:service:payment-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_DECLINED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_DECLINED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_DECLINED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:inventory-cell-\u003elocal:topic:apex-local-kafka:apex.inventory.events.v1:INVENTORY_RESERVED:1",
+                              "source":  "local:service:inventory-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:inventory-cell-\u003elocal:topic:apex-local-kafka:apex.inventory.events.v1:INVENTORY_RESERVATION_REJECTED:1",
+                              "source":  "local:service:inventory-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVATION_REJECTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVATION_REJECTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVATION_REJECTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:inventory-cell-\u003elocal:topic:apex-local-kafka:apex.inventory.events.v1:INVENTORY_RELEASED:1",
+                              "source":  "local:service:inventory-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RELEASED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHED_CONTRACT_CATALOG",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RELEASED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RELEASED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:order-cell-\u003elocal:topic:apex-local-kafka:apex.order.events.v1:ORDER_PLACED:1",
+                              "source":  "local:service:order-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.order.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_PLACED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHER_ROUTING",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_PLACED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_PLACED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:order-cell-\u003elocal:topic:apex-local-kafka:apex.order.legacy.events.v1:ORDER_CREATED:1",
+                              "source":  "local:service:order-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.order.legacy.events.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_CREATED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHER_ROUTING",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_CREATED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.legacy.events.v1",
+                                                                "consumerGroupId":  null,
+                                                                "consumerServiceId":  null,
+                                                                "handlerContract":  null,
+                                                                "matchStatus":  "NO_VISIBLE_CONSUMER_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:order-cell-\u003elocal:topic:apex-local-kafka:apex.order.payment-requests.v1:ORDER_READY_FOR_PAYMENT:1",
+                              "source":  "local:service:order-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_READY_FOR_PAYMENT:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHER_ROUTING",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_READY_FOR_PAYMENT",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:payment-cell-authorization-v1",
+                                                                "consumerServiceId":  "local:service:payment-cell",
+                                                                "handlerContract":  "ORDER_READY_FOR_PAYMENT:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:order-cell-\u003elocal:topic:apex-local-kafka:apex.order.inventory-release-requests.v1:ORDER_CANCELLATION_REQUESTED:1",
+                              "source":  "local:service:order-cell",
+                              "target":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_CANCELLATION_REQUESTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "PUBLISHER_ROUTING",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_CANCELLATION_REQUESTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_CANCELLATION_REQUESTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1-\u003elocal:group:apex-local-kafka:payment-cell-authorization-v1:ORDER_READY_FOR_PAYMENT:1",
+                              "source":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1",
+                              "target":  "local:group:apex-local-kafka:payment-cell-authorization-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_READY_FOR_PAYMENT:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_READY_FOR_PAYMENT",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:payment-cell-authorization-v1",
+                                                                "consumerServiceId":  "local:service:payment-cell",
+                                                                "handlerContract":  "ORDER_READY_FOR_PAYMENT:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:payment-cell-authorization-v1-\u003elocal:service:payment-cell:ORDER_READY_FOR_PAYMENT:1",
+                              "source":  "local:group:apex-local-kafka:payment-cell-authorization-v1",
+                              "target":  "local:service:payment-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_READY_FOR_PAYMENT:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_READY_FOR_PAYMENT",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.payment-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:payment-cell-authorization-v1",
+                                                                "consumerServiceId":  "local:service:payment-cell",
+                                                                "handlerContract":  "ORDER_READY_FOR_PAYMENT:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1-\u003elocal:group:apex-local-kafka:inventory-cell-order-placed-v1:ORDER_CANCELLATION_REQUESTED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1",
+                              "target":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_CANCELLATION_REQUESTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_CANCELLATION_REQUESTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_CANCELLATION_REQUESTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1-\u003elocal:service:inventory-cell:ORDER_CANCELLATION_REQUESTED:1",
+                              "source":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                              "target":  "local:service:inventory-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_CANCELLATION_REQUESTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_CANCELLATION_REQUESTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.inventory-release-requests.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_CANCELLATION_REQUESTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.order.events.v1-\u003elocal:group:apex-local-kafka:inventory-cell-order-placed-v1:ORDER_PLACED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.order.events.v1",
+                              "target":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_PLACED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_PLACED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_PLACED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1-\u003elocal:service:inventory-cell:ORDER_PLACED:1",
+                              "source":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                              "target":  "local:service:inventory-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "ORDER_PLACED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:order-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "ORDER_PLACED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:order-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.order.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:inventory-cell-order-placed-v1",
+                                                                "consumerServiceId":  "local:service:inventory-cell",
+                                                                "handlerContract":  "ORDER_PLACED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.inventory.events.v1-\u003elocal:group:apex-local-kafka:order-cell-inventory-outcome-v1:INVENTORY_RELEASED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "target":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RELEASED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RELEASED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RELEASED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1-\u003elocal:service:order-cell:INVENTORY_RELEASED:1",
+                              "source":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RELEASED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RELEASED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RELEASED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.inventory.events.v1-\u003elocal:group:apex-local-kafka:order-cell-inventory-outcome-v1:INVENTORY_RESERVATION_REJECTED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "target":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVATION_REJECTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVATION_REJECTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVATION_REJECTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1-\u003elocal:service:order-cell:INVENTORY_RESERVATION_REJECTED:1",
+                              "source":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVATION_REJECTED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVATION_REJECTED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVATION_REJECTED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.inventory.events.v1-\u003elocal:group:apex-local-kafka:order-cell-inventory-outcome-v1:INVENTORY_RESERVED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                              "target":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1-\u003elocal:service:order-cell:INVENTORY_RESERVED:1",
+                              "source":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "INVENTORY_RESERVED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:inventory-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.763108400Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "INVENTORY_RESERVED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:inventory-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.inventory.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "INVENTORY_RESERVED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.payment.events.v1-\u003elocal:group:apex-local-kafka:order-cell-inventory-outcome-v1:PAYMENT_AUTHORIZED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                              "target":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_AUTHORIZED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_AUTHORIZED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_AUTHORIZED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1-\u003elocal:service:order-cell:PAYMENT_AUTHORIZED:1",
+                              "source":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_AUTHORIZED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_AUTHORIZED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_AUTHORIZED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.payment.events.v1-\u003elocal:group:apex-local-kafka:order-cell-inventory-outcome-v1:PAYMENT_DECLINED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                              "target":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_DECLINED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_DECLINED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_DECLINED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1-\u003elocal:service:order-cell:PAYMENT_DECLINED:1",
+                              "source":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "PAYMENT_DECLINED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.766109200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:payment-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.761107900Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "PAYMENT_DECLINED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:payment-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.payment.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:order-cell-inventory-outcome-v1",
+                                                                "consumerServiceId":  "local:service:order-cell",
+                                                                "handlerContract":  "PAYMENT_DECLINED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:topic:apex-local-kafka:apex.customer.events.v1-\u003elocal:group:apex-local-kafka:reporting-cell-customer-created-v1:CUSTOMER_CREATED:1",
+                              "source":  "local:topic:apex-local-kafka:apex.customer.events.v1",
+                              "target":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "CUSTOMER_CREATED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.769110200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:customer-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.758109800Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "CUSTOMER_CREATED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:customer-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.customer.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1",
+                                                                "consumerServiceId":  "local:service:reporting-cell",
+                                                                "handlerContract":  "CUSTOMER_CREATED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1-\u003elocal:service:reporting-cell:CUSTOMER_CREATED:1",
+                              "source":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1",
+                              "target":  "local:service:reporting-cell",
+                              "environment":  "local",
+                              "protocol":  "KAFKA",
+                              "contract":  "CUSTOMER_CREATED:1",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "CONSUMER_SUBSCRIPTION_AND_REGISTERED_HANDLER",
+                                                   "collectedAt":  "2026-11-10T15:36:10.769110200Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               },
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "CONTRACT_DISCOVERY",
+                                                   "reference":  "EXACT_TOPIC_CONTRACT:customer-cell",
+                                                   "collectedAt":  "2026-11-10T15:36:10.758109800Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  null,
+                                              "kafka":  [
+                                                            {
+                                                                "cluster":  "apex-local-kafka",
+                                                                "eventType":  "CUSTOMER_CREATED",
+                                                                "eventVersion":  1,
+                                                                "publisherServiceId":  "local:service:customer-cell",
+                                                                "topicId":  "local:topic:apex-local-kafka:apex.customer.events.v1",
+                                                                "consumerGroupId":  "local:group:apex-local-kafka:reporting-cell-customer-created-v1",
+                                                                "consumerServiceId":  "local:service:reporting-cell",
+                                                                "handlerContract":  "CUSTOMER_CREATED:1",
+                                                                "matchStatus":  "EXACT_DECLARED_CONTRACT_MATCH"
+                                                            }
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_CUSTOMER-CELL",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:customer-cell",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_CUSTOMER-CELL",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_CUSTOMER-CELL",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_CUSTOMER-CELL",
+                                                           "destinationService":  "customer-cell",
+                                                           "predicates":  [
+                                                                              "Path: /customer-cell/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:payment-cell",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_PAYMENT-CELL",
+                                                           "destinationService":  "payment-cell",
+                                                           "predicates":  [
+                                                                              "Path: /payment-cell/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:apex-operations-console",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_APEX-OPERATIONS-CONSOLE",
+                                                           "destinationService":  "apex-operations-console",
+                                                           "predicates":  [
+                                                                              "Path: /apex-operations-console/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:inventory-cell",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_INVENTORY-CELL",
+                                                           "destinationService":  "inventory-cell",
+                                                           "predicates":  [
+                                                                              "Path: /inventory-cell/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:order-cell",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_ORDER-CELL",
+                                                           "destinationService":  "order-cell",
+                                                           "predicates":  [
+                                                                              "Path: /order-cell/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_REPORTING-CELL",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:reporting-cell",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_REPORTING-CELL",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_REPORTING-CELL",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_REPORTING-CELL",
+                                                           "destinationService":  "reporting-cell",
+                                                           "predicates":  [
+                                                                              "Path: /reporting-cell/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          },
+                          {
+                              "id":  "local:service:apex-api-gateway:route:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                              "source":  "local:service:apex-api-gateway",
+                              "target":  "local:service:apex-api-gateway",
+                              "environment":  "local",
+                              "protocol":  "HTTP",
+                              "contract":  "ROUTE:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                              "health":  "UNKNOWN",
+                              "lastSeen":  null,
+                              "evidence":  [
+                                               {
+                                                   "kind":  "DECLARED",
+                                                   "source":  "SPRING_CLOUD_GATEWAY",
+                                                   "reference":  "REGISTERED_ROUTE:ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                                                   "collectedAt":  "2026-11-10T15:36:08.545838600Z",
+                                                   "lastSeen":  null,
+                                                   "scope":  "SERVICE"
+                                               }
+                                           ],
+                              "details":  {
+                                              "http":  {
+                                                           "routeId":  "ReactiveCompositeDiscoveryClient_APEX-API-GATEWAY",
+                                                           "destinationService":  "apex-api-gateway",
+                                                           "predicates":  [
+                                                                              "Path: /apex-api-gateway/**"
+                                                                          ],
+                                                           "filters":  [
+                                                                           "RewritePath (registered; arguments redacted)"
+                                                                       ]
+                                                       },
+                                              "kafka":  [
+
+                                                        ],
+                                              "grpc":  null
+                                          }
+                          }
+                      ]
+}
