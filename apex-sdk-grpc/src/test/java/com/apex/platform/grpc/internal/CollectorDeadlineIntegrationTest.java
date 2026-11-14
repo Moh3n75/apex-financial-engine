@@ -35,6 +35,12 @@ class CollectorDeadlineIntegrationTest {
                 "--apex.grpc.collector.enabled=true",
                 "--apex.grpc.collector.allowed-responders=m31-server")) {
       var gateway = client.getBean(MultiResponderGateway.class);
+      var scheduler = (java.util.concurrent.ScheduledThreadPoolExecutor) client.getBean("grpcCollectorDeadlines");
+      var workers = (java.util.concurrent.ThreadPoolExecutor) client.getBean("grpcCollectorWorkers");
+      var heartbeat = new java.util.concurrent.atomic.AtomicLong(System.nanoTime());
+      var tick = scheduler.scheduleAtFixedRate(() -> heartbeat.set(System.nanoTime()), 0, 10, TimeUnit.MILLISECONDS);
+      var timings = new StringBuilder("iteration,elapsedMicros,clockAgeMicros,queued,activeWorkers\n");
+      try {
       for (int i = 0; i < 1000; i++) {
         long started = System.nanoTime();
         var invocation =
@@ -56,7 +62,12 @@ class CollectorDeadlineIntegrationTest {
                   .append(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started))
                   .append(" invocationDoneAtObservation=")
                   .append(invocation.isDone())
-                  .append(" configuredCollectionDeadlineMs=25 observationTimeoutMs=1000\n");
+                  .append(" configuredCollectionDeadlineMs=25 observationTimeoutMs=1000\n")
+                  .append("clockAgeMs=").append(TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-heartbeat.get()))
+                  .append(" deadlineQueue=").append(scheduler.getQueue().size())
+                  .append(" deadlineCompleted=").append(scheduler.getCompletedTaskCount())
+                  .append(" workerActive=").append(workers.getActiveCount())
+                  .append(" workerQueue=").append(workers.getQueue().size()).append('\n');
           for (var t :
               java.lang.management.ManagementFactory.getThreadMXBean().dumpAllThreads(true, true)) {
             dump.append(t.getThreadName())
@@ -74,6 +85,13 @@ class CollectorDeadlineIntegrationTest {
         assertThat(result.responders()).hasSize(1);
         assertThat(result.responders().getFirst().status())
             .isEqualTo(ResponderResult.Status.TIMED_OUT);
+        timings.append(i).append(',').append(TimeUnit.NANOSECONDS.toMicros(System.nanoTime()-started))
+                .append(',').append(TimeUnit.NANOSECONDS.toMicros(System.nanoTime()-heartbeat.get()))
+                .append(',').append(scheduler.getQueue().size()).append(',').append(workers.getActiveCount()).append('\n');
+      }
+      } finally {
+        tick.cancel(false);
+        java.nio.file.Files.writeString(java.nio.file.Path.of("target/sdk01-collector-timings.csv"), timings);
       }
     }
   }

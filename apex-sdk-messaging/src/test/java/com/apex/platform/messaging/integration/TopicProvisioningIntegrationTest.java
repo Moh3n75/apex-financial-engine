@@ -58,7 +58,23 @@ class TopicProvisioningIntegrationTest {
 
     private String topic() { return "provision-" + UUID.randomUUID(); }
     private TopicDescription describe(String topic) throws Exception {
-        return admin.describeTopics(List.of(topic)).allTopicNames().get(10, TimeUnit.SECONDS).get(topic);
+        // Setup creates topics independently of the SDK too. Create acknowledgement is
+        // not a metadata barrier; wait for the before-snapshot without masking context failures.
+        return org.awaitility.Awaitility.await().atMost(Duration.ofSeconds(10))
+                .pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(50))
+                .ignoreExceptionsMatching(failure -> {
+                    Throwable reason = failure;
+                    while (reason instanceof java.util.concurrent.ExecutionException && reason.getCause() != null) {
+                        reason = reason.getCause();
+                    }
+                    return reason instanceof org.apache.kafka.common.errors.UnknownTopicOrPartitionException
+                            || reason instanceof org.apache.kafka.common.errors.LeaderNotAvailableException
+                            || reason instanceof org.apache.kafka.common.errors.NotLeaderOrFollowerException;
+                }).until(() -> admin.describeTopics(List.of(topic)).allTopicNames()
+                        .get(1, TimeUnit.SECONDS).get(topic),
+                        description -> description != null && !description.partitions().isEmpty()
+                                && description.partitions().stream().allMatch(partition -> partition.leader() != null
+                                        && partition.leader().id() >= 0 && !partition.replicas().isEmpty()));
     }
 
     @Test void provisionsIncomingAndCustomDltBeforeUnchangedReliabilityPreflight() {

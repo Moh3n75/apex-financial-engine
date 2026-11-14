@@ -4,6 +4,7 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+/** Timeout is one total startup budget for all selected topics, including Admin cleanup. */
 @ConfigurationProperties("apex.messaging.provisioning")
 public record TopicProvisioningProperties(@DefaultValue("false") boolean enabled,
         @DefaultValue("1") int partitions, @DefaultValue("-1") short replicationFactor,

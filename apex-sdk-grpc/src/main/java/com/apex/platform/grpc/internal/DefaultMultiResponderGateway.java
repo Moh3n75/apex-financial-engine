@@ -15,6 +15,7 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
   private final RpcCodec codec;
   private final ExecutorService workers;
   private final ScheduledExecutorService clock;
+  private final ExecutorService cancellations;
   private final Semaphore calls, collections;
 
   DefaultMultiResponderGateway(
@@ -24,7 +25,8 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
       CollectorProperties policy,
       RpcCodec codec,
       ExecutorService workers,
-      ScheduledExecutorService clock) {
+      ScheduledExecutorService clock,
+      ExecutorService cancellations) {
     policy.validate(routes);
     this.queries = queries;
     this.contexts = contexts;
@@ -33,6 +35,7 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
     this.codec = codec;
     this.workers = workers;
     this.clock = clock;
+    this.cancellations = cancellations;
     calls = new Semaphore(policy.getMaxInFlight());
     collections = new Semaphore(policy.getMaxCollections());
   }
@@ -280,6 +283,19 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
           result.completeExceptionally(new CollectionFailedException(completion.snapshot));
         else result.complete(completion.snapshot);
       } finally {
+        // Native/custom cancellation may block or run callbacks. Never do it on the
+        // single deadline clock. Keep permits until cleanup finishes to bound its backlog.
+        Runnable cleanup = () -> cleanup(completion);
+        try {
+          cancellations.execute(cleanup);
+        } catch (RejectedExecutionException stopped) {
+          // Capacity covers every admitted collection. Rejection is only expected at shutdown.
+          cleanup.run();
+        }
+      }
+    }
+
+    void cleanup(Completion completion) {
         try {
           if (expiration != null) expiration.cancel(false);
           if (launch != null) launch.cancel(false);
@@ -291,7 +307,6 @@ final class DefaultMultiResponderGateway implements MultiResponderGateway {
           calls.release(ids.size());
           collections.release();
         }
-      }
     }
   }
 }

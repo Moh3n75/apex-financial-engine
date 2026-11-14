@@ -27,7 +27,7 @@ class TopicProvisioningSafetyTest {
                         "-dlt", true, Duration.ofSeconds(10)), environment);
         Admin admin = mock(Admin.class);
         DescribeTopicsResult result = mock(DescribeTopicsResult.class);
-        when(admin.describeTopics(List.of("authorized.source"))).thenReturn(result);
+        when(admin.describeTopics(eq(List.of("authorized.source")), any(org.apache.kafka.clients.admin.DescribeTopicsOptions.class))).thenReturn(result);
         var denied = new KafkaFutureImpl<Map<String, org.apache.kafka.clients.admin.TopicDescription>>();
         denied.completeExceptionally(new TopicAuthorizationException("private-credential-and-connection-details"));
         when(result.allTopicNames()).thenReturn(denied);
@@ -40,7 +40,7 @@ class TopicProvisioningSafetyTest {
                                 .hasMessageContaining("TopicAuthorizationException")
                                 .hasMessageNotContaining("private-credential").hasNoCause();
                     });
-            verify(admin, never()).createTopics(anyCollection());
+            verify(admin, never()).createTopics(anyCollection(), any(org.apache.kafka.clients.admin.CreateTopicsOptions.class));
         }
     }
 

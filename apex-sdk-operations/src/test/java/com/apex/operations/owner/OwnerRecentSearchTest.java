@@ -21,19 +21,24 @@ class OwnerRecentSearchTest {
     static class Time extends Clock {Instant now=BASE;public ZoneId getZone(){return ZoneOffset.UTC;}public Clock withZone(ZoneId z){return this;}public Instant instant(){return now;}}
     final Time clock=new Time();final AtomicLong nanos=new AtomicLong();
     @BeforeAll static void start()throws Exception {
-        pg=EmbeddedPostgres.builder().start();db=pg.getPostgresDatabase();
+        pg=EmbeddedPostgres.builder().start();db=OperationsTestDatabase.pooled(pg.getPostgresDatabase());
         new ResourceDatabasePopulator(new ClassPathResource("db/platform/V1001__platform_outbox_event.sql"),new ClassPathResource("db/platform/V1002__platform_processed_event.sql")).execute(db);
         try(var c=db.getConnection();var s=c.createStatement()) {
             s.execute("CREATE INDEX CONCURRENTLY ops03d_outbox_event_recent ON public.outbox_event(created_at DESC,id DESC)");
             s.execute("CREATE INDEX CONCURRENTLY ops03d_processed_event_recent ON public.processed_event(consumer_group,processed_at DESC,event_id DESC)");
         }
     }
-    @AfterAll static void stop()throws Exception{if(pg!=null)pg.close();}
+    @AfterAll static void stop()throws Exception{if(db instanceof com.zaxxer.hikari.HikariDataSource pool)pool.close();if(pg!=null)pg.close();}
     @BeforeEach void clear()throws Exception{try(var c=db.getConnection();var s=c.createStatement()){s.execute("TRUNCATE outbox_event,processed_event RESTART IDENTITY");}}
     Query query(Kind k,String scope,int limit){return new Query("test","owner",k,scope,BASE.minusSeconds(300),BASE,"ANY",limit,"");}
     Query cursor(Query q,String next){return new Query(q.environment(),q.owner(),q.kind(),q.scope(),q.fromInclusive(),q.toExclusive(),q.state(),q.limit(),next);}
     BoundedRecentSearch reader(DataSource database,BoundedRecentSearch.Source source){return new BoundedRecentSearch(database,"test","owner","one",Map.of(Kind.OUTBOX_EVENT,Set.of("owner"),Kind.KNOWN_GROUP_INBOX,Set.of("known")),Map.of(Kind.OUTBOX_EVENT,MessagingRecentSource.OUTBOX_STATES,Kind.KNOWN_GROUP_INBOX,Set.of("HANDLER_TRANSACTION_COMMITTED")),source,clock,()->nanos.addAndGet(2_000_000_000L));}
     BoundedRecentSearch reader(){return reader(db,MessagingRecentSource::read);}
+    @Test void slowConnectionAcquisitionStillExhaustsTheProductionReadBudget() {
+        assertThatThrownBy(() -> reader(OperationsTestDatabase.slowAcquisition(db),MessagingRecentSource::read)
+                .read(query(Kind.OUTBOX_EVENT,"owner",16)))
+                .isInstanceOfSatisfying(GatewayException.class,e -> assertThat(e.code()).isEqualTo(GatewayException.Code.DEADLINE_EXCEEDED));
+    }
     UUID insert(Connection c,Instant time)throws Exception {
         UUID id=UUID.randomUUID();try(var s=c.prepareStatement("INSERT INTO outbox_event(event_id,event_type,event_version,correlation_id,aggregate_id,aggregate_type,source_service,cell_id,occurred_at,payload,created_at) VALUES (?,'TEST',1,?,?,'TEST','owner','owner',?,'{\"private\":\"CANARY_PAYLOAD\"}',?)")) {
             s.setObject(1,id);s.setObject(2,UUID.randomUUID());s.setObject(3,UUID.randomUUID());s.setObject(4,time.atOffset(ZoneOffset.UTC));s.setObject(5,time.atOffset(ZoneOffset.UTC));s.executeUpdate();

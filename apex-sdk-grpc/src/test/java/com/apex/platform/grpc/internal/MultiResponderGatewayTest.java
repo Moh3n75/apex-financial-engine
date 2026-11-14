@@ -22,13 +22,16 @@ class MultiResponderGatewayTest {
 
   final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
   final ExecutorService workers = Executors.newFixedThreadPool(2);
+  final ExecutorService cancellations = Executors.newSingleThreadExecutor();
 
   @AfterEach
   void close() throws Exception {
     workers.shutdownNow();
     timer.shutdownNow();
+    cancellations.shutdownNow();
     assertThat(workers.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
     assertThat(timer.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
+    assertThat(cancellations.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
   }
 
   static final class FakeQueries implements QueryGateway {
@@ -64,6 +67,10 @@ class MultiResponderGatewayTest {
   }
 
   DefaultMultiResponderGateway gateway(FakeQueries fake, int maxCollections) {
+    return gateway(fake, maxCollections, timer);
+  }
+
+  DefaultMultiResponderGateway gateway(FakeQueries fake, int maxCollections, ScheduledExecutorService scheduler) {
     var routes = new GrpcProperties();
     routes.setCellId("client");
     routes.setDestinations(
@@ -78,7 +85,7 @@ class MultiResponderGatewayTest {
     limits.setMaxInFlight(2);
     limits.setMaxCollections(maxCollections);
     return new DefaultMultiResponderGateway(
-        fake, fake.ctx, routes, limits, new RpcCodec(65536), workers, timer);
+        fake, fake.ctx, routes, limits, new RpcCodec(65536), workers, scheduler, cancellations);
   }
 
   CollectionOptions options(boolean partial) {
@@ -195,6 +202,7 @@ class MultiResponderGatewayTest {
     await().atMost(Duration.ofSeconds(1)).until(() -> fake.options.size() == 2);
     fake.replies.get("a").complete(new View("done"));
     assertThat(result.cancel(true)).isTrue();
+    cancellations.submit(() -> {}).get(1, TimeUnit.SECONDS);
     assertThat(result.cancel(true)).isFalse();
     var failure = (CollectionCancelledException) catchThrowable(result::join);
     assertThat(failure.result().responders().getFirst().status())
@@ -220,6 +228,7 @@ class MultiResponderGatewayTest {
         .hasCauseInstanceOf(GatewayException.class);
     assertThat(fake.options).hasSize(2);
     first.cancel(true);
+    cancellations.submit(() -> {}).get(1, TimeUnit.SECONDS);
     fake.replies.clear();
     fake.options.clear();
     var next =
@@ -244,6 +253,51 @@ class MultiResponderGatewayTest {
       assertThatThrownBy(() -> stage.toCompletableFuture().join())
           .hasCauseInstanceOf(GatewayException.class);
     assertThat(fake.options).isEmpty();
+  }
+
+  @Test
+  void blockedCancellationDoesNotStrandTheNextDeadline() throws Exception {
+    var entered = new CountDownLatch(1);
+    var release = new CountDownLatch(1);
+    var expirations = new LinkedBlockingQueue<Runnable>();
+    var scheduler = org.mockito.Mockito.mock(ScheduledExecutorService.class);
+    org.mockito.Mockito.when(scheduler.schedule(org.mockito.ArgumentMatchers.any(Runnable.class),
+            org.mockito.ArgumentMatchers.anyLong(), org.mockito.ArgumentMatchers.eq(TimeUnit.MILLISECONDS)))
+        .thenAnswer(call -> { expirations.add(call.getArgument(0)); return org.mockito.Mockito.mock(ScheduledFuture.class); });
+    var clockThread = Executors.newSingleThreadExecutor(r -> new Thread(r, "test-collection-clock"));
+    var fake = new FakeQueries(context());
+    fake.replies.put("a", new CompletableFuture<>() {
+      @Override public boolean cancel(boolean interrupt) {
+        entered.countDown();
+        try { release.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        return super.cancel(interrupt);
+      }
+    });
+    var gateway = gateway(fake, 2, scheduler);
+    var options = new CollectionOptions(List.of("a"), Duration.ofSeconds(2), true);
+    try {
+      var first = gateway.collectQueries(new Query("first"), View.class, options).toCompletableFuture();
+      await().atMost(Duration.ofSeconds(1)).until(() -> fake.replies.get("a").getNumberOfDependents() > 0);
+      clockThread.submit(expirations.take());
+      first.get(1, TimeUnit.SECONDS);
+      assertThat(entered.await(1, TimeUnit.SECONDS)).isTrue();
+      fake.replies.put("a", new CompletableFuture<>());
+      var second = gateway.collectQueries(new Query("second"), View.class, options).toCompletableFuture();
+      clockThread.submit(expirations.take());
+      try {
+        assertThat(second.get(1, TimeUnit.SECONDS).responders().getFirst().status())
+            .isEqualTo(ResponderResult.Status.TIMED_OUT);
+      } catch (TimeoutException failure) {
+        var dump = new StringBuilder("secondDone=" + second.isDone() + " cancellationEntered=" + (entered.getCount()==0) + "\n");
+        for (var thread : java.lang.management.ManagementFactory.getThreadMXBean().dumpAllThreads(true, true))
+          dump.append(thread).append('\n');
+        java.nio.file.Files.writeString(java.nio.file.Path.of("target/sdk01-blocked-cancellation-threads.log"), dump);
+        throw failure;
+      }
+    } finally {
+      release.countDown(); clockThread.shutdownNow();
+      assertThat(clockThread.awaitTermination(2, TimeUnit.SECONDS)).isTrue();
+    }
   }
 
   @Test
@@ -278,7 +332,7 @@ class MultiResponderGatewayTest {
       var result = cancelled.result();
       assertThat(result.responders().getFirst().status()).isEqualTo(ResponderResult.Status.SUCCESS);
       assertThat(result.responders().get(1).status()).isEqualTo(ResponderResult.Status.CANCELLED);
-      assertThat(callback).isCancelled();
+      await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertThat(callback).isCancelled());
     } finally {
       notifications.shutdownNow();
       assertThat(notifications.awaitTermination(2, TimeUnit.SECONDS)).isTrue();

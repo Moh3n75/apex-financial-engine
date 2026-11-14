@@ -25,10 +25,10 @@ class OwnerSearchTest {
     }
     final Time clock=new Time();final AtomicLong nanos=new AtomicLong();
     @BeforeAll static void start() throws Exception {
-        pg=EmbeddedPostgres.builder().start();db=pg.getPostgresDatabase();
+        pg=EmbeddedPostgres.builder().start();db=OperationsTestDatabase.pooled(pg.getPostgresDatabase());
         new ResourceDatabasePopulator(new ClassPathResource("db/platform/V1001__platform_outbox_event.sql"),new ClassPathResource("db/platform/V1002__platform_processed_event.sql")).execute(db);
     }
-    @AfterAll static void stop() throws Exception {if(pg!=null)pg.close();}
+    @AfterAll static void stop() throws Exception {if(db instanceof com.zaxxer.hikari.HikariDataSource pool)pool.close();if(pg!=null)pg.close();}
     @BeforeEach void clear() throws Exception {try(var c=db.getConnection();var s=c.createStatement()){s.execute("TRUNCATE outbox_event,processed_event RESTART IDENTITY");}}
     Query query(Kind kind,String scope,int limit) {return new Query("test","owner",kind,scope,BASE.minusSeconds(1200),BASE.plusSeconds(1),"ANY",limit,"");}
     Query cursor(Query q,String cursor) {return new Query(q.environment(),q.owner(),q.kind(),q.scope(),q.fromInclusive(),q.toExclusive(),q.state(),q.limit(),cursor);}
@@ -37,6 +37,11 @@ class OwnerSearchTest {
                 Map.of(Kind.OUTBOX_EVENT,MessagingSearchSource.OUTBOX_STATES,Kind.KNOWN_GROUP_INBOX,Set.of("HANDLER_TRANSACTION_COMMITTED")),source,clock,()->nanos.addAndGet(2_000_000_000L));
     }
     BoundedOwnerSearch reader(){return reader(db,MessagingSearchSource::read);}
+    @Test void slowConnectionAcquisitionStillExhaustsTheProductionReadBudget() {
+        assertThatThrownBy(() -> reader(OperationsTestDatabase.slowAcquisition(db),MessagingSearchSource::read)
+                .read(query(Kind.OUTBOX_EVENT,"owner",16)))
+                .isInstanceOfSatisfying(GatewayException.class,e -> assertThat(e.code()).isEqualTo(GatewayException.Code.DEADLINE_EXCEEDED));
+    }
     UUID insert(Connection c,Instant time) throws Exception {
         UUID id=UUID.randomUUID();
         try(var s=c.prepareStatement("INSERT INTO outbox_event(event_id,event_type,event_version,correlation_id,aggregate_id,aggregate_type,source_service,cell_id,occurred_at,payload,created_at) VALUES (?,'TEST',1,?,?,'TEST','owner','owner',?,'{\"secret\":\"CANARY_PAYLOAD\"}',?)")) {
@@ -58,7 +63,9 @@ class OwnerSearchTest {
     @Test void cursorRejectsTamperingFiltersLimitsOwnerScopeExpiryAndNewBoot() throws Exception {
         var signer=new SearchCursor(clock);var q=query(Kind.OUTBOX_EVENT,"owner",1);
         String valid=signer.next(q,signer.read(q),"7");assertThat(signer.read(cursor(q,valid)).key()).isEqualTo("7");
-        assertThatThrownBy(()->signer.read(cursor(q,valid.substring(0,10)+"A"+valid.substring(11)))).isInstanceOf(IllegalArgumentException.class);
+        String tampered=valid.substring(0,10)+(valid.charAt(10)=='A'?'B':'A')+valid.substring(11);
+        assertThat(tampered).isNotEqualTo(valid);
+        assertThatThrownBy(()->signer.read(cursor(q,tampered))).isInstanceOf(IllegalArgumentException.class);
         for(var changed:List.of(query(Kind.OUTBOX_EVENT,"other",1),query(Kind.OUTBOX_EVENT,"owner",2),query(Kind.KNOWN_GROUP_INBOX,"known",1),
                 new Query("other","owner",q.kind(),q.scope(),q.fromInclusive(),q.toExclusive(),q.state(),q.limit(),""),
                 new Query("test","other",q.kind(),q.scope(),q.fromInclusive(),q.toExclusive(),q.state(),q.limit(),""),

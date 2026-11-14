@@ -39,6 +39,15 @@ public class GrpcCollectorAutoConfiguration {
     return scheduler;
   }
 
+  @Bean(destroyMethod = "shutdown")
+  ThreadPoolExecutor grpcCollectorCancellations(CollectorProperties policy) {
+    // At most one cleanup per admitted collection. Permits are held through cleanup.
+    return new ThreadPoolExecutor(4, 4, 30, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(policy.getMaxCollections()),
+        Thread.ofPlatform().daemon().name("apex-collection-cancel-", 0).factory(),
+        new ThreadPoolExecutor.AbortPolicy());
+  }
+
   @Bean
   @ConditionalOnMissingBean(MultiResponderGateway.class)
   MultiResponderGateway multiResponderGateway(
@@ -47,12 +56,13 @@ public class GrpcCollectorAutoConfiguration {
       GrpcProperties p,
       CollectorProperties limits,
       RpcCodec codec,
-      ThreadPoolExecutor grpcCollectorWorkers,
+      @Qualifier("grpcCollectorWorkers") ThreadPoolExecutor grpcCollectorWorkers,
       @Qualifier("grpcCollectorDeadlines") ScheduledExecutorService grpcCollectorDeadlines,
+      @Qualifier("grpcCollectorCancellations") ThreadPoolExecutor grpcCollectorCancellations,
       RpcObservation observations) {
     var delegate =
         new DefaultMultiResponderGateway(
-            q, c, p, limits, codec, grpcCollectorWorkers, grpcCollectorDeadlines);
+            q, c, p, limits, codec, grpcCollectorWorkers, grpcCollectorDeadlines, grpcCollectorCancellations);
     return new MultiResponderGateway() {
       public <R> java.util.concurrent.CompletionStage<CollectionResult<R>> collectQueries(
           Object query, Class<R> type, CollectionOptions options) {
