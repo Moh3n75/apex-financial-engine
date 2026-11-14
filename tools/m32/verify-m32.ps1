@@ -13,9 +13,9 @@ try {
     $options = @('-B','-ntp'); if ($Offline) { $options += '-o' }
     New-Item -ItemType Directory -Path out -Force | Out-Null
     $started = [DateTimeOffset]::UtcNow.ToString('o')
-    $modules = @('apex-platform-core','apex-spring-boot-starter','apex-platform-events',
-        'apex-platform-messaging','apex-platform-grpc-api','apex-platform-grpc',
-        'apex-starter-grpc-client','apex-starter-grpc-server','apex-starter-webmvc','apex-starter-cell-messaging',
+    $modules = @('apex-sdk-api','apex-sdk-spring-boot','apex-sdk-api',
+        'apex-sdk-messaging','apex-sdk-api','apex-sdk-grpc',
+        'apex-sdk-grpc-client','apex-sdk-grpc-server','apex-sdk-webmvc','apex-sdk-messaging',
         'apex-order-contracts','order-cell','inventory-cell','payment-cell','sample-grpc-client')
     function Source-Hashes {
         $paths = @('pom.xml','tools/m32/verify-m32.ps1')
@@ -33,7 +33,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "M32 Maven failure (exit $LASTEXITCODE)." }
     }
     $before = Source-Hashes
-    Invoke-M32Maven @('-pl','apex-starter-grpc-server,apex-starter-grpc-client,apex-order-contracts','-am','clean','install')
+    Invoke-M32Maven @('-pl','apex-sdk-grpc-server,apex-sdk-grpc-client,apex-order-contracts','-am','clean','install')
     if ($Focused) {
         # Development assembly + actual M32 E2E only. This explicitly does NOT
         # qualify the prior regression gate and is not the default acceptance.

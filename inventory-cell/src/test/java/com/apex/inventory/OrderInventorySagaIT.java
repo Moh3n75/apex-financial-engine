@@ -42,9 +42,9 @@ class OrderInventorySagaIT {
     static final String ORDER_TOPIC = "apex.order.events.v1";
     static final String INVENTORY_TOPIC = "apex.inventory.events.v1";
     static final String PERSIAN = "سفارش آزمایشی";
-    static final List<String> MODULES = List.of("apex-platform-core", "apex-platform-events",
-            "apex-spring-boot-starter", "apex-platform-grpc-api",  "apex-platform-messaging",
-            "apex-starter-webmvc", "apex-starter-cell-messaging", "order-cell");
+    static final List<String> MODULES = List.of("apex-sdk-api", "apex-sdk-api",
+            "apex-sdk-spring-boot", "apex-sdk-api",  "apex-sdk-messaging",
+            "apex-sdk-webmvc", "apex-sdk-messaging", "order-cell");
     static final JsonMapper JSON = JsonMapper.builder().build();
 
     @Test

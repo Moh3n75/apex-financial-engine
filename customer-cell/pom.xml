@@ -21,26 +21,26 @@
 
     <properties>
         <java.version>21</java.version>
-        <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
+        <apex.sdk.version>1.0-SNAPSHOT</apex.sdk.version>
         <testcontainers.version>1.20.4</testcontainers.version>
     </properties>
 
     <dependencies>
-        <dependency><groupId>com.apex</groupId><artifactId>apex-discovery-eureka</artifactId><version>${apex.platform.version}</version></dependency>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-discovery-eureka</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-grpc-server</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-grpc-server</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-contract-discovery</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-operations</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-webmvc</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-webmvc</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,8 +74,8 @@
 
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-cell-messaging</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-messaging</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
 
         <dependency>

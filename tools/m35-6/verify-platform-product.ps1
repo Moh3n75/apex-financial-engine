@@ -18,15 +18,16 @@ try {
     $archive=Join-Path $destination 'prior-junit'
     New-Item -ItemType Directory -Path $archive -Force|Out-Null
     foreach($module in Get-ChildItem -Directory){
+        if(-not (Test-Path -LiteralPath (Join-Path $module.FullName 'target') -PathType Container)){continue}
         Get-ChildItem (Join-Path $module.FullName 'target') -Filter TEST-*.xml -File -Recurse -ErrorAction SilentlyContinue|
             ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $archive ($module.Name+'-'+$_.Directory.Name+'-'+$_.Name))}
     }
     $options=@('-B','-ntp');if($Offline){$options+='-o'}
-    $bootstrapModules=@('apex-spring-boot-starter','apex-starter-webmvc')
+    $bootstrapModules=@('apex-sdk-spring-boot','apex-sdk-webmvc')
     if(-not $Fast){
         # Independent Cells resolve these before the later M22/M31 installs.
         # Do not rely on previously installed APEX SNAPSHOTs.
-        $bootstrapModules+=@('apex-starter-cell-messaging','apex-starter-grpc-server','apex-order-contracts','apex-starter-observability')
+        $bootstrapModules+=@('apex-sdk-messaging','apex-sdk-grpc-server','apex-order-contracts','apex-sdk-observability')
     }
     & $MavenCommand @options -pl ($bootstrapModules -join ',') -am clean install
     if($LASTEXITCODE -ne 0){throw 'SDK build failed.'}

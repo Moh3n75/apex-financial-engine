@@ -1,0 +1,859 @@
+{
+  "beforeArtifactCount": 18,
+  "afterArtifactCount": 13,
+  "dependencies": {
+    "apex-sdk-api": [
+      {
+        "artifact": "jackson-annotations",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-discovery": [
+      {
+        "artifact": "spring-cloud-commons",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-autoconfigure",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-discovery-eureka": [
+      {
+        "artifact": "spring-boot-web-server",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-discovery",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-cloud-starter-netflix-eureka-client",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-actuator",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-discovery-grpc": [
+      {
+        "artifact": "apex-sdk-discovery",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "grpc-util",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-discovery-kubernetes": [
+      {
+        "artifact": "apex-sdk-discovery",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "kubernetes-client",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-actuator",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-grpc": [
+      {
+        "artifact": "micrometer-observation",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "slf4j-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-spring-boot",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-autoconfigure",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-tx",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-aop",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-grpc-core",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-grpc-server",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "spring-boot-grpc-client",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "grpc-protobuf",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "grpc-stub",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "jackson-databind",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-grpc-server",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-grpc-client",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-grpc-client": [
+      {
+        "artifact": "apex-sdk-grpc",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-grpc-client",
+        "scope": "compile",
+        "optional": false
+      }
+    ],
+    "apex-sdk-grpc-server": [
+      {
+        "artifact": "apex-sdk-grpc",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-grpc-server",
+        "scope": "compile",
+        "optional": false
+      }
+    ],
+    "apex-sdk-messaging": [
+      {
+        "artifact": "micrometer-observation",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-spring-boot",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-kafka",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-jdbc",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-jackson",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "postgresql",
+        "scope": "runtime",
+        "optional": false
+      },
+      {
+        "artifact": "spring-kafka-test",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "embedded-postgres",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-observability": [
+      {
+        "artifact": "apex-sdk-spring-boot",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-micrometer-metrics",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-operations": [
+      {
+        "artifact": "spring-webmvc",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "jakarta.servlet-api",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "apex-sdk-discovery",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "apex-sdk-grpc",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-jdbc",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "spring-tx",
+        "scope": "compile",
+        "optional": true
+      },
+      {
+        "artifact": "embedded-postgres",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-spring-boot": [
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      }
+    ],
+    "apex-sdk-webmvc": [
+      {
+        "artifact": "spring-boot-starter-webmvc",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "apex-sdk-spring-boot",
+        "scope": "compile",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-test",
+        "scope": "test",
+        "optional": false
+      },
+      {
+        "artifact": "spring-boot-starter-webmvc-test",
+        "scope": "test",
+        "optional": false
+      }
+    ]
+  },
+  "consumersIncludingProfiles": {
+    "apex-api-gateway/pom.xml": [
+      {
+        "artifact": "apex-sdk-discovery",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      }
+    ],
+    "apex-application/pom.xml": [
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "version": "${project.version}"
+      }
+    ],
+    "apex-bootstrap/pom.xml": [],
+    "apex-cell-template/pom.xml": [],
+    "apex-discovery-server/pom.xml": [],
+    "apex-domain/pom.xml": [],
+    "apex-identity-server/pom.xml": [],
+    "apex-infrastructure/pom.xml": [
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "version": "${project.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${project.version}"
+      }
+    ],
+    "apex-operations-console/pom.xml": [
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "${project.version}"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${project.version}"
+      },
+      {
+        "artifact": "apex-sdk-discovery-grpc",
+        "scope": "compile",
+        "version": "${project.version}"
+      },
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "version": "${project.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "compile",
+        "version": "${project.version}"
+      }
+    ],
+    "apex-order-contracts/pom.xml": [
+      {
+        "artifact": "apex-sdk-api",
+        "scope": "compile",
+        "version": "${project.version}"
+      }
+    ],
+    "apex-replay-tool/pom.xml": [],
+    "customer-cell/pom.xml": [
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      }
+    ],
+    "inventory-cell/pom.xml": [
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "test",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-observability",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      }
+    ],
+    "order-cell/pom.xml": [
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-observability",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      }
+    ],
+    "payment-cell/pom.xml": [
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-observability",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      }
+    ],
+    "pom.xml": [],
+    "reporting-cell/pom.xml": [
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "${apex.sdk.version}"
+      }
+    ],
+    "sample-grpc-client/pom.xml": [
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-grpc",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-kubernetes",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-grpc",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      }
+    ],
+    "tools/m35-6/external-consumer/pom.xml": [
+      {
+        "artifact": "apex-sdk-spring-boot",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-operations",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-observability",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-messaging",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-grpc-client",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-grpc-server",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-discovery-eureka",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      },
+      {
+        "artifact": "apex-sdk-webmvc",
+        "scope": "compile",
+        "version": "1.0-SNAPSHOT"
+      }
+    ]
+  },
+  "autoConfigurations": {
+    "com.apex.discovery.eureka.EurekaCellAutoConfiguration": "apex-sdk-discovery-eureka",
+    "com.apex.discovery.grpc.DiscoveredGrpcAutoConfiguration": "apex-sdk-discovery-grpc",
+    "com.apex.discovery.kubernetes.KubernetesCellAutoConfiguration": "apex-sdk-discovery-kubernetes",
+    "com.apex.platform.grpc.internal.GrpcCommonAutoConfiguration": "apex-sdk-grpc",
+    "com.apex.platform.grpc.internal.GrpcServerAutoConfiguration": "apex-sdk-grpc",
+    "com.apex.platform.grpc.internal.GrpcClientAutoConfiguration": "apex-sdk-grpc",
+    "com.apex.platform.grpc.internal.GrpcCollectorAutoConfiguration": "apex-sdk-grpc",
+    "com.apex.platform.grpc.internal.GrpcPeerSecurityAutoConfiguration": "apex-sdk-grpc",
+    "com.apex.platform.messaging.jdbc.PlatformCellMessagingAutoConfiguration": "apex-sdk-messaging",
+    "com.apex.platform.messaging.jdbc.PlatformConsumerReliabilityAutoConfiguration": "apex-sdk-messaging",
+    "com.apex.platform.messaging.jdbc.PlatformTopicProvisioningAutoConfiguration": "apex-sdk-messaging",
+    "com.apex.observability.ObservabilityAutoConfiguration": "apex-sdk-observability",
+    "com.apex.platform.contracts.ContractDiscoveryAutoConfiguration": "apex-sdk-operations",
+    "com.apex.platform.contracts.LocalContractHttpAutoConfiguration": "apex-sdk-operations",
+    "com.apex.platform.context.autoconfigure.ApexExecutionContextAutoConfiguration": "apex-sdk-spring-boot",
+    "com.apex.platform.webmvc.ApexWebMvcAutoConfiguration": "apex-sdk-webmvc"
+  },
+  "runtimeClosures": {
+    "apex-sdk-api": [
+      "apex-sdk-api",
+      "jackson-annotations"
+    ],
+    "apex-sdk-discovery": [
+      "apex-sdk-discovery",
+      "spring-boot-autoconfigure",
+      "spring-cloud-commons"
+    ],
+    "apex-sdk-discovery-eureka": [
+      "apex-sdk-api",
+      "apex-sdk-discovery",
+      "apex-sdk-discovery-eureka",
+      "jackson-annotations",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter-actuator",
+      "spring-boot-web-server",
+      "spring-cloud-commons",
+      "spring-cloud-starter-netflix-eureka-client"
+    ],
+    "apex-sdk-discovery-grpc": [
+      "apex-sdk-api",
+      "apex-sdk-discovery",
+      "apex-sdk-discovery-grpc",
+      "apex-sdk-grpc",
+      "apex-sdk-grpc-client",
+      "apex-sdk-spring-boot",
+      "grpc-protobuf",
+      "grpc-stub",
+      "grpc-util",
+      "jackson-annotations",
+      "jackson-databind",
+      "micrometer-observation",
+      "slf4j-api",
+      "spring-aop",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter",
+      "spring-boot-starter-grpc-client",
+      "spring-cloud-commons",
+      "spring-grpc-core",
+      "spring-tx"
+    ],
+    "apex-sdk-discovery-kubernetes": [
+      "apex-sdk-discovery",
+      "apex-sdk-discovery-kubernetes",
+      "kubernetes-client",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter-actuator",
+      "spring-cloud-commons"
+    ],
+    "apex-sdk-grpc": [
+      "apex-sdk-api",
+      "apex-sdk-grpc",
+      "apex-sdk-spring-boot",
+      "grpc-protobuf",
+      "grpc-stub",
+      "jackson-annotations",
+      "jackson-databind",
+      "micrometer-observation",
+      "slf4j-api",
+      "spring-aop",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter",
+      "spring-grpc-core",
+      "spring-tx"
+    ],
+    "apex-sdk-grpc-client": [
+      "apex-sdk-api",
+      "apex-sdk-grpc",
+      "apex-sdk-grpc-client",
+      "apex-sdk-spring-boot",
+      "grpc-protobuf",
+      "grpc-stub",
+      "jackson-annotations",
+      "jackson-databind",
+      "micrometer-observation",
+      "slf4j-api",
+      "spring-aop",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter",
+      "spring-boot-starter-grpc-client",
+      "spring-grpc-core",
+      "spring-tx"
+    ],
+    "apex-sdk-grpc-server": [
+      "apex-sdk-api",
+      "apex-sdk-grpc",
+      "apex-sdk-grpc-server",
+      "apex-sdk-spring-boot",
+      "grpc-protobuf",
+      "grpc-stub",
+      "jackson-annotations",
+      "jackson-databind",
+      "micrometer-observation",
+      "slf4j-api",
+      "spring-aop",
+      "spring-boot-autoconfigure",
+      "spring-boot-starter",
+      "spring-boot-starter-grpc-server",
+      "spring-grpc-core",
+      "spring-tx"
+    ],
+    "apex-sdk-messaging": [
+      "apex-sdk-api",
+      "apex-sdk-messaging",
+      "apex-sdk-spring-boot",
+      "jackson-annotations",
+      "micrometer-observation",
+      "postgresql",
+      "spring-boot-starter",
+      "spring-boot-starter-jackson",
+      "spring-boot-starter-jdbc",
+      "spring-boot-starter-kafka"
+    ],
+    "apex-sdk-observability": [
+      "apex-sdk-api",
+      "apex-sdk-observability",
+      "apex-sdk-spring-boot",
+      "jackson-annotations",
+      "spring-boot-starter",
+      "spring-boot-starter-micrometer-metrics"
+    ],
+    "apex-sdk-operations": [
+      "apex-sdk-api",
+      "apex-sdk-discovery",
+      "apex-sdk-operations",
+      "jackson-annotations",
+      "spring-boot-autoconfigure",
+      "spring-cloud-commons"
+    ],
+    "apex-sdk-spring-boot": [
+      "apex-sdk-api",
+      "apex-sdk-spring-boot",
+      "jackson-annotations",
+      "spring-boot-starter"
+    ],
+    "apex-sdk-webmvc": [
+      "apex-sdk-api",
+      "apex-sdk-spring-boot",
+      "apex-sdk-webmvc",
+      "jackson-annotations",
+      "spring-boot-starter",
+      "spring-boot-starter-webmvc"
+    ]
+  }
+}

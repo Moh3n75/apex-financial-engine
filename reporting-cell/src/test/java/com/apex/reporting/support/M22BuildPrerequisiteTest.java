@@ -37,7 +37,7 @@ class M22BuildPrerequisiteTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"apex-starter-webmvc", "apex-starter-cell-messaging"})
+    @ValueSource(strings = {"apex-sdk-webmvc", "apex-sdk-messaging"})
     void rejectsChangedStarterPomEvenWithoutMainSources(String module) throws Exception {
         fixture();
         Files.writeString(root.resolve(module + "/pom.xml"), "changed dependency graph");
@@ -45,7 +45,7 @@ class M22BuildPrerequisiteTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"apex-spring-boot-starter", "apex-starter-webmvc"})
+    @ValueSource(strings = {"apex-sdk-spring-boot", "apex-sdk-webmvc"})
     void rejectsChangedHttpOrContextSource(String module) throws Exception {
         fixture();
         Files.writeString(root.resolve(module + "/src/main/changed.txt"), "changed source");
@@ -58,9 +58,9 @@ class M22BuildPrerequisiteTest {
         Files.writeString(root.resolve("tools/m22/verify-cells.ps1"), "build script");
         Properties evidence = new Properties();
         evidence.setProperty("schemaVersion", "1");
-        for (String module : List.of("apex-platform-core", "apex-platform-events", "apex-spring-boot-starter", "apex-platform-grpc-api",
-                 "apex-platform-messaging", "apex-starter-webmvc",
-                "apex-starter-cell-messaging", "customer-cell")) {
+        for (String module : List.of("apex-sdk-api", "apex-sdk-api", "apex-sdk-spring-boot", "apex-sdk-api",
+                 "apex-sdk-messaging", "apex-sdk-webmvc",
+                "apex-sdk-messaging", "customer-cell")) {
             Files.createDirectories(root.resolve(module + "/src/main"));
             Files.createDirectories(root.resolve(module + "/target"));
             Files.writeString(root.resolve(module + "/pom.xml"), module);

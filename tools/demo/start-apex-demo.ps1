@@ -45,7 +45,7 @@ function Build([string[]]$Arguments, [string]$Name) {
         if ($LASTEXITCODE -ne 0) { throw "Build $Name failed, exit $LASTEXITCODE. See $run\$Name.log" }
     } finally { Pop-Location }
 }
-Build @('-pl','apex-starter-webmvc,apex-operations-console,apex-operations-owner-jdbc,apex-starter-observability,apex-starter-grpc-server,apex-starter-cell-messaging,apex-order-contracts','-am','install','-DskipTests') 'sdk'
+Build @('-pl','apex-sdk-webmvc,apex-operations-console,apex-sdk-operations,apex-sdk-observability,apex-sdk-grpc-server,apex-sdk-messaging,apex-order-contracts','-am','install','-DskipTests') 'sdk'
 foreach ($cell in @('order-cell','inventory-cell','payment-cell')) { Build @('-f',"$cell/pom.xml",'package','-DskipTests') $cell }
 Build @('-f','inventory-cell/pom.xml','dependency:build-classpath','-DincludeScope=test',"-Dmdep.outputFile=$run\classpath.txt") 'classpath'
 $web = Join-Path $source 'apps\operations-web'

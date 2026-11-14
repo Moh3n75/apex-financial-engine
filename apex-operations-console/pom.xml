@@ -22,27 +22,27 @@
         <!-- APEX-standard Servlet Cell context -->
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-webmvc</artifactId>
+            <artifactId>apex-sdk-webmvc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-discovery-eureka</artifactId>
+            <artifactId>apex-sdk-discovery-eureka</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-discovery-grpc</artifactId>
+            <artifactId>apex-sdk-discovery-grpc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-operations-contracts</artifactId>
+            <artifactId>apex-sdk-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-grpc-client</artifactId>
+            <artifactId>apex-sdk-grpc-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

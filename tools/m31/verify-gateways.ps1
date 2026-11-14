@@ -15,7 +15,7 @@ try {
         & $MavenCommand @options @goals
         if ($LASTEXITCODE -ne 0) { throw "M31 Maven failed (exit $LASTEXITCODE)." }
     }
-    Invoke-M31Maven @('-pl','apex-starter-grpc-server,apex-starter-grpc-client,apex-order-contracts','-am','clean','install')
+    Invoke-M31Maven @('-pl','apex-sdk-grpc-server,apex-sdk-grpc-client,apex-order-contracts','-am','clean','install')
     Invoke-M31Maven @('-f','sample-grpc-client/pom.xml','clean','verify')
     Invoke-M31Maven @('-f','order-cell/pom.xml','-Pgrpc-acceptance','clean','verify')
     # The old regression runner correctly rebuilds Order. Preserve the completed

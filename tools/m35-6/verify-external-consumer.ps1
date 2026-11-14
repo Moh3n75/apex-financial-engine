@@ -14,7 +14,7 @@ try {
     if(-not $env:JAVA_HOME){throw 'Set JAVA_HOME to Java 21.'}
     $options=@('-B','-ntp');if($Offline){$options+='-o'}
     $receipts=@()
-    $modes=@('default','http');if(-not $Minimal){$modes+=@('capabilities','observability')}
+    $modes=@('default','http');if(-not $Minimal){$modes+=@('capabilities','observability','rpc-client','rpc-server','operations')}
     foreach($mode in $modes) {
         $profileArgs=@();if($mode -ne 'default'){$profileArgs+= "-P$mode"}
         if($mode -eq 'capabilities'){$profileArgs+="-Dexternal.registry.jar=$root/out/m34-artifacts/apex-discovery-server.jar"}
@@ -26,13 +26,16 @@ try {
         if($LASTEXITCODE -ne 0){throw 'Dependency audit failed.'}
         $tree=Get-Content (Join-Path $evidence "$mode-tree.txt") -Raw
         if($tree -match '(apex-platform-context-autoconfigure|apex-platform-webmvc|apex-(api-gateway|discovery-server|identity-server|bootstrap|cell-template|order-contracts|replay-tool)|com.apex:(order|inventory|payment|customer|reporting)-cell|oauth2-authorization-server)'){throw 'Executable or removed artifact leaked into consumer.'}
-        if($mode -ne 'capabilities' -and $tree -match '(spring-kafka|kafka-clients|spring-jdbc|grpc-netty|eureka|fabric8)'){throw 'Unselected capability leaked into consumer.'}
+        if($mode -ne 'capabilities' -and $tree -match '(spring-kafka|kafka-clients|spring-jdbc|eureka|fabric8)'){throw 'Unselected capability leaked into consumer.'}
+        if($mode -notin @('capabilities','rpc-client','rpc-server') -and $tree -match 'grpc-netty'){throw 'RPC transport leaked into consumer.'}
+        if($mode -eq 'rpc-client' -and $tree -match 'spring-boot-(starter-)?grpc-server'){throw 'Server leaked into client.'}
+        if($mode -eq 'rpc-server' -and $tree -match 'spring-boot-(starter-)?grpc-client'){throw 'Client leaked into server.'}
         if($mode -eq 'capabilities'){
             $receipts+=[ordered]@{mode=$mode;jarSha256=(Get-FileHash target/sdk-consumer.jar -Algorithm SHA256).Hash;bootExit='In JUnit: owned PostgreSQL/Kafka and real gRPC';testExit=0}
             continue
         }
         $args=@('-jar','target/sdk-consumer.jar','--spring.config.location=optional:classpath:/absent.properties','--spring.main.banner-mode=off','--spring.application.name=external-consumer','--apex.cell.id=external-consumer')
-        if($mode -in @('default','observability')){$args+='--spring.main.web-application-type=none'}else{$args+=@('--server.address=127.0.0.1','--server.port=0')}
+        if($mode -in @('default','observability','rpc-client','rpc-server','operations')){$args+=@('--spring.main.web-application-type=none','--spring.grpc.server.enabled=false')}else{$args+=@('--server.address=127.0.0.1','--server.port=0')}
         if($mode -eq 'observability'){$args+='--apex.observability.enabled=true'}
         & (Join-Path $env:JAVA_HOME 'bin/java') @args *> (Join-Path $evidence "$mode-boot.log")
         if($LASTEXITCODE -ne 0 -or -not (Select-String -LiteralPath (Join-Path $evidence "$mode-boot.log") -Pattern 'SDK_CONSUMER_ACCEPTED')){throw "External $mode packaged boot failed."}

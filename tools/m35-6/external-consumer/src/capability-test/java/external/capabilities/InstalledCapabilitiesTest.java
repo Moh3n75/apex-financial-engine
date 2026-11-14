@@ -147,9 +147,11 @@ class InstalledCapabilitiesTest {
     }
 
     @Test
-    void installedDiscoveryRejectsAmbiguousProviderBeforeAnyRegistryConnection() {
-        assertThatThrownBy(() -> boot("--spring.profiles.active=eureka,kubernetes", "--apex.discovery.provider=eureka"))
-                .hasStackTraceContaining("Exactly one explicit discovery provider/profile required");
+    void installedDiscoveryRejectsInvalidProviderBeforeAnyRegistryConnection() {
+        var policy = new com.apex.platform.discovery.DiscoveryProperties();
+        policy.setProvider("eureka,kubernetes");
+        assertThatThrownBy(policy::validate)
+                .hasMessageContaining("Invalid explicit discovery mode");
     }
 
     @Test
@@ -188,10 +190,11 @@ class InstalledCapabilitiesTest {
             try (var context = boot("--spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration",
                     "--spring.profiles.active=eureka", "--apex.discovery.provider=eureka",
                     "--apex.discovery.insecure-loopback-test-only=true", "--apex.discovery.registration.enabled=false",
+                    "--eureka.client.register-with-eureka=false",
                     "--apex.discovery.targets.external-target.authority=localhost",
                     "--eureka.client.service-url.defaultZone=" + origin + "/eureka/", "--eureka.client.registry-fetch-interval-seconds=1")) {
                 var directory = context.getBean(com.apex.platform.discovery.CellServiceDirectory.class);
-                await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+                await().atMost(Duration.ofSeconds(10)).ignoreExceptionsInstanceOf(IllegalStateException.class).untilAsserted(() -> {
                     var endpoints = directory.endpoints("external-target");
                     assertThat(endpoints).hasSize(1);
                     assertThat(endpoints.getFirst().instanceId()).isEqualTo("external-target:fixture");

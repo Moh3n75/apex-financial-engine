@@ -6,9 +6,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $evidencePath = Join-Path $repositoryRoot 'out/m22-build-evidence.properties'
-$modules = @('apex-platform-core', 'apex-platform-events', 'apex-spring-boot-starter', 'apex-platform-grpc-api',
-     'apex-platform-messaging', 'apex-starter-webmvc',
-    'apex-starter-cell-messaging', 'customer-cell')
+$modules = @('apex-sdk-api', 'apex-sdk-api', 'apex-sdk-spring-boot', 'apex-sdk-api',
+     'apex-sdk-messaging', 'apex-sdk-webmvc',
+    'apex-sdk-messaging', 'customer-cell')
 
 function Get-SourceFingerprint {
     $paths = [System.Collections.Generic.List[string]]::new()
@@ -59,7 +59,7 @@ try {
     if ($LASTEXITCODE -ne 0 -or $javaVersion -notmatch '(?m)^(java|openjdk) 21[\. ]') { throw 'Verification requires Java 21.' }
     New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
     $fingerprint = Get-SourceFingerprint
-    Invoke-CellMaven $repositoryRoot @('-pl', 'apex-starter-webmvc,apex-starter-cell-messaging', '-am', 'clean', 'install')
+    Invoke-CellMaven $repositoryRoot @('-pl', 'apex-sdk-webmvc,apex-sdk-messaging', '-am', 'clean', 'install')
     Invoke-CellMaven (Join-Path $repositoryRoot 'customer-cell') @('clean', 'verify')
     if ((Get-SourceFingerprint) -ne $fingerprint) { throw 'Source changed during the build; rerun verification.' }
     $evidence = @('schemaVersion=1', "sourceSha256=$fingerprint")

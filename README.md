@@ -4,10 +4,10 @@ APEX is one product: a Java/Spring Boot SDK and independently deployed infrastru
 Cells (Gateway, Eureka Registry, Identity/SSO/Authorization). Business/demo Cells
 qualify the SDK and illustrate integration; they are not SDK dependencies.
 
-Start with [the default SDK dependency](APEX_M35_6_PUBLIC_SDK_API.md),
+Start with [the consolidated SDK guide](docs/apex-sdk.md),
 [architecture](APEX_M35_6_PLATFORM_ARCHITECTURE.md), and
 [infrastructure roles and deployment order](APEX_M35_6_INFRASTRUCTURE_CELL_MATRIX.md).
-The default `com.apex:apex-spring-boot-starter:1.0-SNAPSHOT` starts without a DB,
+The default `com.apex:apex-sdk-spring-boot:1.0-SNAPSHOT` starts without a DB,
 broker, HTTP/gRPC listener, discovery provider or authorization server.
 
 Full isolated product verification: `tools/m35-6/verify-platform-product.ps1`.
@@ -105,14 +105,14 @@ apex-domain
 apex-application
 apex-infrastructure
 apex-bootstrap
-apex-platform-core
-apex-platform-events
-apex-platform-messaging
+apex-sdk-api
+apex-sdk-api
+apex-sdk-messaging
 ```
 
 Notes:
-- Kafka + Outbox were consolidated into `apex-platform-messaging`.
-- Consumer abstractions should also live in `apex-platform-messaging`; avoid separate permanent `apex-platform-consumer` module.
+- Kafka + Outbox were consolidated into `apex-sdk-messaging`.
+- Consumer abstractions should also live in `apex-sdk-messaging`; avoid separate permanent `apex-platform-consumer` module.
 - Only `apex-bootstrap` is the runtime application.
 - Avoid Maven module explosion.
 
@@ -128,7 +128,7 @@ com.apex.platform.messaging
 ## 4. Event model already completed
 
 ### `IntegrationEvent`
-Exists in `apex-platform-events`.
+Exists in `apex-sdk-api`.
 
 ### `EventMetadata`
 
@@ -181,7 +181,7 @@ Critical invariant:
 
 ## 5. Execution context
 
-`apex-platform-core` contains `ExecutionContext`:
+`apex-sdk-api` contains `ExecutionContext`:
 
 ```text
 correlationId
@@ -290,7 +290,7 @@ Preserve the public aggregate identifier independently. This matters for partiti
 
 ## 9. Outbox messaging contracts
 
-Inside `apex-platform-messaging`:
+Inside `apex-sdk-messaging`:
 
 ### `OutboxRecord`
 Contains delivery fields approximately:
@@ -479,7 +479,7 @@ OutboxMetricsCollector
 Consumer platform contracts live under:
 
 ```text
-apex-platform-messaging
+apex-sdk-messaging
 com.apex.platform.messaging.consumer
 ```
 

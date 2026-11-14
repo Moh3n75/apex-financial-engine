@@ -26,7 +26,7 @@ try {
   $taskReceipt.phase='PREREQUISITES'
   Invoke-LiveMaven -MavenArgs @('-o','-q','-f','inventory-cell/pom.xml','test','-Dtest=ControlCenterLivePrerequisitesIT',"-Dsaga.repositoryRoot=$taskRoot") -LogName 'prerequisites.log'
   $taskReceipt.phase='BUILD'
-  Invoke-LiveMaven -MavenArgs @('-o','-q','-pl','apex-discovery-eureka,apex-discovery-grpc,apex-platform-contract-discovery,apex-starter-grpc-server,apex-starter-cell-messaging,apex-starter-webmvc,apex-operations-owner-jdbc,apex-starter-observability,apex-order-contracts','-am','install','-DskipTests') -LogName 'install-platform.log'
+  Invoke-LiveMaven -MavenArgs @('-o','-q','-pl','apex-sdk-discovery-eureka,apex-sdk-discovery-grpc,apex-sdk-operations,apex-sdk-grpc-server,apex-sdk-messaging,apex-sdk-webmvc,apex-sdk-operations,apex-sdk-observability,apex-order-contracts','-am','install','-DskipTests') -LogName 'install-platform.log'
   # Record the known full test-compilation problem separately, without deleting or editing it.
   & $MavenCommand -o -q -f order-cell/pom.xml test-compile *> (Join-Path $taskOut 'order-full-test-compile.log')
   $taskReceipt.orderFullTestCompileExit=$LASTEXITCODE

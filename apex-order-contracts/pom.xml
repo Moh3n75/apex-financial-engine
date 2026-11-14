@@ -11,7 +11,7 @@
     <dependencies>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-grpc-api</artifactId>
+            <artifactId>apex-sdk-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

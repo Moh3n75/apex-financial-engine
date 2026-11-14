@@ -13,8 +13,8 @@ Push-Location $root
 try {
  [pscustomobject]@{head=(git rev-parse HEAD);phase=$Phase;performance='INCONCLUSIVE: no agreed numeric budget';policy='16 event IDs; 16 workflow IDs; 8 logical owners; serial polling; 1s RPC; 5s poll; <=80s backoff; one owner read connection; 300ms pool wait; 1s SQL statement timeout';started=[DateTimeOffset]::UtcNow.ToString('o')}|ConvertTo-Json|Set-Content (Join-Path $out 'policy.json')
  # Install current prerequisites; do not trust previously installed SNAPSHOTs.
- RunMaven @('-pl','apex-operations-owner-jdbc,apex-operations-console,apex-starter-observability','-am','install','-DskipTests') 'prerequisites.log'
- RunMaven @('-pl','apex-operations-owner-jdbc,apex-operations-console','test') 'focused.log'
+ RunMaven @('-pl','apex-sdk-operations,apex-operations-console,apex-sdk-observability','-am','install','-DskipTests') 'prerequisites.log'
+ RunMaven @('-pl','apex-sdk-operations,apex-operations-console','test') 'focused.log'
  RunMaven @('-f','order-cell/pom.xml','-Pops03','package','-DskipTests') 'owner-package.log'
  RunMaven @('-f','order-cell/pom.xml','-Pops03','test','-Dtest=Ops03ProcessIT') 'packaged.log'
  if($Phase -eq 'Full'){
@@ -23,7 +23,7 @@ try {
   if($code -ne 0){throw 'OPS-02 full chain failed; no OPS-03 full PASS.'}
  }
  # Fresh OPS-03 identities only; full regression remains independently counted by its gate.
- $cases=@();foreach($dir in @('apex-operations-owner-jdbc/target/surefire-reports','apex-operations-console/target/surefire-reports','order-cell/target/ops03-build/surefire-reports')){
+ $cases=@();foreach($dir in @('apex-sdk-operations/target/surefire-reports','apex-operations-console/target/surefire-reports','order-cell/target/ops03-build/surefire-reports')){
   Get-ChildItem $dir -Filter 'TEST-*.xml'|ForEach-Object {Copy-Item $_.FullName $out;[xml]$xml=Get-Content $_.FullName;foreach($c in $xml.testsuite.testcase){$cases+=($c.classname+'#'+$c.name)}}
  }
  $cases|Sort-Object -Unique|Set-Content (Join-Path $out 'distinct-cases.txt')

@@ -34,11 +34,11 @@ try {
   & java --version *> (Join-Path $evidence 'java-version.log')
   if($LASTEXITCODE -ne 0){throw 'Java version probe failed'}
   Maven @('-version') 'maven-version.log'
-  Maven @('-pl','apex-starter-webmvc,apex-operations-console,apex-operations-owner-jdbc,apex-starter-observability,apex-starter-grpc-server,apex-starter-cell-messaging,apex-order-contracts','-am','install','-DskipTests') 'install.log'
-  Maven @('-pl','apex-operations-contracts,apex-operations-owner-jdbc,apex-operations-console','dependency:tree') 'operations-dependency-tree.log'
+  Maven @('-pl','apex-sdk-webmvc,apex-operations-console,apex-sdk-operations,apex-sdk-observability,apex-sdk-grpc-server,apex-sdk-messaging,apex-order-contracts','-am','install','-DskipTests') 'install.log'
+  Maven @('-pl','apex-sdk-api,apex-sdk-operations,apex-operations-console','dependency:tree') 'operations-dependency-tree.log'
   foreach($cell in @('order-cell','inventory-cell','payment-cell')){Maven @('-f',"$cell/pom.xml",'package','-DskipTests') "$cell-package.log"}
   if($Phase -ne 'Build') {
-   Maven @('-pl','apex-operations-console,apex-operations-owner-jdbc','test') 'native-contract-console.log'
+   Maven @('-pl','apex-operations-console,apex-sdk-operations','test') 'native-contract-console.log'
    foreach($cell in @('order-cell','inventory-cell','payment-cell')){Maven @('-f',"$cell/pom.xml",'test','-Dtest=*SearchTest,*EvidenceTest') "$cell-native.log"}
    Maven @('-f','order-cell/pom.xml','-Pops03','package','-DskipTests') 'ops03-owner-package.log'
    Maven @('-f','order-cell/pom.xml','-Pops03','test','-Dtest=Ops03ProcessIT') 'ops03-v1.log'

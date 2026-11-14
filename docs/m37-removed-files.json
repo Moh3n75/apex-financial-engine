@@ -1,0 +1,1157 @@
+[
+  {
+    "path": "apex-discovery-eureka/pom.xml",
+    "replacement": "apex-sdk-discovery-eureka/pom.xml",
+    "sha256": "30806f6bc279bbfcd71930894b4bb50bfb5477a96b272b62973116f160c24579"
+  },
+  {
+    "path": "apex-discovery-eureka/src/main/java/com/apex/discovery/eureka/EurekaCellAutoConfiguration.java",
+    "replacement": "apex-sdk-discovery-eureka/src/main/java/com/apex/discovery/eureka/EurekaCellAutoConfiguration.java",
+    "sha256": "e0d178092bff522b7d61e094ed1aab44ac2e9ced363177e0a9904246b2d7c7f5"
+  },
+  {
+    "path": "apex-discovery-eureka/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-discovery-eureka/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "90e75c377fb9488ffb2a99872b072566f4172eb4a33d665a6a9ff1feebf5394d"
+  },
+  {
+    "path": "apex-discovery-eureka/src/test/java/com/apex/discovery/eureka/EurekaMetadataTest.java",
+    "replacement": "apex-sdk-discovery-eureka/src/test/java/com/apex/discovery/eureka/EurekaMetadataTest.java",
+    "sha256": "5e5500765300e18fca261112938347ab415d3db68d51d368f7b490aa80247455"
+  },
+  {
+    "path": "apex-discovery-grpc/pom.xml",
+    "replacement": "apex-sdk-discovery-grpc/pom.xml",
+    "sha256": "2e529584e327e77ab1c9944b59810f29bd0249ee4cfcac624bb034d24e3c162c"
+  },
+  {
+    "path": "apex-discovery-grpc/src/main/java/com/apex/discovery/grpc/DirectoryNameResolverFactory.java",
+    "replacement": "apex-sdk-discovery-grpc/src/main/java/com/apex/discovery/grpc/DirectoryNameResolverFactory.java",
+    "sha256": "eca5c0c06c5a5e84c0198e24fef27f54ae1cfb3cfee79be1e8563af7599d8f4f"
+  },
+  {
+    "path": "apex-discovery-grpc/src/main/java/com/apex/discovery/grpc/DiscoveredGrpcAutoConfiguration.java",
+    "replacement": "apex-sdk-discovery-grpc/src/main/java/com/apex/discovery/grpc/DiscoveredGrpcAutoConfiguration.java",
+    "sha256": "f861fb97ca877086720221685e2311e6e33ffd4d47cfe0c77404a5696cd8ce1b"
+  },
+  {
+    "path": "apex-discovery-grpc/src/main/java/com/apex/discovery/grpc/DiscoveryFreshnessInterceptor.java",
+    "replacement": "apex-sdk-discovery-grpc/src/main/java/com/apex/discovery/grpc/DiscoveryFreshnessInterceptor.java",
+    "sha256": "c9a2302b5897b83053be5b3ca36589ecb747d7e40e68ab7389b82522f4f6beef"
+  },
+  {
+    "path": "apex-discovery-grpc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-discovery-grpc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "81cb25728ba0507dd72138240e47b1f5a73f654b875ee3f26f4de8ebda07e816"
+  },
+  {
+    "path": "apex-discovery-grpc/src/test/java/com/apex/discovery/grpc/DirectoryRoundRobinTest.java",
+    "replacement": "apex-sdk-discovery-grpc/src/test/java/com/apex/discovery/grpc/DirectoryRoundRobinTest.java",
+    "sha256": "31139c48415341a952a0f8e213454df8bef78fe7a5be5f5c59f87269fcb38f42"
+  },
+  {
+    "path": "apex-discovery-grpc/src/test/java/com/apex/discovery/grpc/DynamicCellChannelsTest.java",
+    "replacement": "apex-sdk-discovery-grpc/src/test/java/com/apex/discovery/grpc/DynamicCellChannelsTest.java",
+    "sha256": "7989f36263c4f124e95031b9d326c21a198c86c79ba837cc08831a35a8fa5be9"
+  },
+  {
+    "path": "apex-discovery-kubernetes/pom.xml",
+    "replacement": "apex-sdk-discovery-kubernetes/pom.xml",
+    "sha256": "5fb444922ee160ae99905b1f68e0d3f8fe758ac2495f3cae5787343df1b97505"
+  },
+  {
+    "path": "apex-discovery-kubernetes/src/main/java/com/apex/discovery/kubernetes/EndpointSliceDiscoveryClient.java",
+    "replacement": "apex-sdk-discovery-kubernetes/src/main/java/com/apex/discovery/kubernetes/EndpointSliceDiscoveryClient.java",
+    "sha256": "42840d2754636ee02cf05efc047bee2dae075546cf66d3fb15874570873ed2c0"
+  },
+  {
+    "path": "apex-discovery-kubernetes/src/main/java/com/apex/discovery/kubernetes/KubernetesCellAutoConfiguration.java",
+    "replacement": "apex-sdk-discovery-kubernetes/src/main/java/com/apex/discovery/kubernetes/KubernetesCellAutoConfiguration.java",
+    "sha256": "4942d97683babdfb4f0e123f4757fa2fe8d01191afcf630588f60e207f3ed180"
+  },
+  {
+    "path": "apex-discovery-kubernetes/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-discovery-kubernetes/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "a04e240080db2c6dfea63c98d5a52b365414683807c0d85fc574161ed0b7f0e2"
+  },
+  {
+    "path": "apex-discovery-kubernetes/src/test/java/com/apex/discovery/kubernetes/EndpointSliceApiTest.java",
+    "replacement": "apex-sdk-discovery-kubernetes/src/test/java/com/apex/discovery/kubernetes/EndpointSliceApiTest.java",
+    "sha256": "8c401c6e866b7a0f61e95d276fa6df4b562276ba068e5fc69dfb60e4aac49c9d"
+  },
+  {
+    "path": "apex-operations-contracts/pom.xml",
+    "replacement": "apex-sdk-api/pom.xml",
+    "sha256": "e4aee25b150dfae5ff07aea3999e00bfcff3b7fbc298716ceadfe26bd2b0f7dd"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/ContractDiscoveryQuery.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/ContractDiscoveryQuery.java",
+    "sha256": "9d7ef1b85a099b3134e726e6664417a45a0f3d53359d35675bfac000b43ef820"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/ContractDiscoveryQueryV2.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/ContractDiscoveryQueryV2.java",
+    "sha256": "665c2479ffbb23a7afd6ba0b61b9fb9e0f76dc5c960d1d53c3ae08bce70bc0d6"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/ContractManifest.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/ContractManifest.java",
+    "sha256": "2c5356dc67f1fcf476ba566ffdeafb16e3711c346328cf2f16af4e7b56d05738"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/EvidenceQuery.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/EvidenceQuery.java",
+    "sha256": "00ee108265ba6ba3cc029a6b50e19601717f040edd058d67e34894207ad3c831"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerRecentSearch.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/OwnerRecentSearch.java",
+    "sha256": "e6adb15c0faf8c0adf031a7effdc105bc8c2b66a437854a4e99eb1ca98bab044"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerSearch.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/OwnerSearch.java",
+    "sha256": "2bb09d311e433ac2ab67f7ff5ea5ef26412ea1e85315b46385c7528d43462f63"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/OwnerSnapshot.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/OwnerSnapshot.java",
+    "sha256": "8e5f6d63b8e8f36c2d6e7b49a87309d6265193db0ede77007340c22131d520c8"
+  },
+  {
+    "path": "apex-operations-contracts/src/main/java/com/apex/operations/contracts/TopologySnapshot.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/operations/contracts/TopologySnapshot.java",
+    "sha256": "084a30b9aaf6d7fabc6ed364c886c858042be5bc3c2d2063d8aa1f7258fae61c"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/pom.xml",
+    "replacement": "apex-sdk-operations/pom.xml",
+    "sha256": "2c4838bddc01129f81cbeaa9995540b6254f5c63d248a8bb4f70419795853a49"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/BoundedOwnerSearch.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/BoundedOwnerSearch.java",
+    "sha256": "711ff6240436cfe3607b5b5d7afca7b86309a4ea876b4d0ddd3eaf7192627a18"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/BoundedRecentSearch.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/BoundedRecentSearch.java",
+    "sha256": "cd7fd2d1a3a0e00c74f158bbac1390161017c7ae69cd69f5991cf5e84fdd9b11"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingEvidenceReader.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/MessagingEvidenceReader.java",
+    "sha256": "e1fd118a242b37cdebde29d9a4967122f4efa1f8250566d81f1d82f5d210af99"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingRecentSource.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/MessagingRecentSource.java",
+    "sha256": "5146513abce4f96614bf5f1fffa036047c121bef1eb9bacd2ba085dde70a44bf"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/MessagingSearchSource.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/MessagingSearchSource.java",
+    "sha256": "e2f8d37bf8460ae1d8e859fb2c26be278360b3e0111353a17f4d409af75ca625"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/RecentCursor.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/RecentCursor.java",
+    "sha256": "e86a3623c31ccf9fb9f51b628b6e136efdaf08463cb7a0d1f4b77f9bda1cee2f"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/RecentIndex.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/RecentIndex.java",
+    "sha256": "b68a92e75846eafe5e5cafb8a9254b0dfc7de19645fb396c3a13a673e9a22925"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/main/java/com/apex/operations/owner/SearchCursor.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/operations/owner/SearchCursor.java",
+    "sha256": "e9100430eac1709a687c025baac9f727bf72ef84208c32c50fac343e815e1eaa"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/MessagingEvidenceReaderTest.java",
+    "replacement": "apex-sdk-operations/src/test/java/com/apex/operations/owner/MessagingEvidenceReaderTest.java",
+    "sha256": "3ecaa1767a8c8bd8922db38ec28b36887c1128d1cdf74dc37b06c07cbb947fc9"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/OwnerRecentSearchTest.java",
+    "replacement": "apex-sdk-operations/src/test/java/com/apex/operations/owner/OwnerRecentSearchTest.java",
+    "sha256": "d7bd5773759c12aecd25c42f69096b94ce8752097861781fe2b6982235dbdd90"
+  },
+  {
+    "path": "apex-operations-owner-jdbc/src/test/java/com/apex/operations/owner/OwnerSearchTest.java",
+    "replacement": "apex-sdk-operations/src/test/java/com/apex/operations/owner/OwnerSearchTest.java",
+    "sha256": "8d148ff5f2e1c3df6bdb4d69ff9fa8b1d44628a86d942c205544610af25795f7"
+  },
+  {
+    "path": "apex-platform-contract-discovery/pom.xml",
+    "replacement": "apex-sdk-operations/pom.xml",
+    "sha256": "38625cd0343ce83379839c557655431720ba7192d478c78cecb678757c643b48"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/java/com/apex/platform/contracts/ContractDiscoveryAutoConfiguration.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/platform/contracts/ContractDiscoveryAutoConfiguration.java",
+    "sha256": "7dd07d7d31ead55c2abe24205286028a9921a01544401382138cf155647525db"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/java/com/apex/platform/contracts/ContractDiscoveryProvider.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/platform/contracts/ContractDiscoveryProvider.java",
+    "sha256": "d50f2ddeb069a19ec294b5bf38ab9c21ac4f0a08cfd02deb9dbc4fd4459eb48d"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/java/com/apex/platform/contracts/LocalContractHttpAutoConfiguration.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/platform/contracts/LocalContractHttpAutoConfiguration.java",
+    "sha256": "50d860ee24d6efb2a712b41a9b6a6b540ad449206fb5a6a66c8d6a74a890cdf6"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/java/com/apex/platform/contracts/LocalContractRead.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/platform/contracts/LocalContractRead.java",
+    "sha256": "78985e56b209bd2dea46fc0829a9af4b1e3e92938bab5b253fd79ee15107a637"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/java/com/apex/platform/contracts/PublishedContracts.java",
+    "replacement": "apex-sdk-operations/src/main/java/com/apex/platform/contracts/PublishedContracts.java",
+    "sha256": "6ef5534baa1a464fb817cc37ff2b2f5844488512fe754cf9e4eaa4d6fe6102ba"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-operations/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "ed95bb2ed2df0e9ad926c10d833b8bb2db1c258c0d3ec70a17d5d71e8819a165"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/main/resources/application-local-ops.properties",
+    "replacement": "apex-sdk-operations/src/main/resources/application-local-ops.properties",
+    "sha256": "6847b5177d95adc5e619d258745f0c002043eb9b505fb6d41478e5e9aa66dfe8"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/test/java/com/apex/platform/contracts/ContractDiscoveryProviderTest.java",
+    "replacement": "apex-sdk-operations/src/test/java/com/apex/platform/contracts/ContractDiscoveryProviderTest.java",
+    "sha256": "8956e313668d27bdc0aa857e0e09ba6447367a26b88f39434894dddc385a3687"
+  },
+  {
+    "path": "apex-platform-contract-discovery/src/test/java/com/apex/platform/contracts/LocalContractHttpTest.java",
+    "replacement": "apex-sdk-operations/src/test/java/com/apex/platform/contracts/LocalContractHttpTest.java",
+    "sha256": "1fda1578590968eef3dcd76286dd21bfd892692a3a659ad4e147086aa2c5f192"
+  },
+  {
+    "path": "apex-platform-core/pom.xml",
+    "replacement": "apex-sdk-api/pom.xml",
+    "sha256": "1d4a59dd9a748393df925c095aa539b623ede48c0b59e345dfdfd6621dede15a"
+  },
+  {
+    "path": "apex-platform-core/src/main/java/com/apex/platform/core/context/ExecutionContext.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/core/context/ExecutionContext.java",
+    "sha256": "08b0a1597c901a843498d456e529efa7bfc49ec88208e8cbc38194223d128d00"
+  },
+  {
+    "path": "apex-platform-core/src/main/java/com/apex/platform/core/context/ExecutionContextProvider.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/core/context/ExecutionContextProvider.java",
+    "sha256": "0d8c2b9d2fea230e6625af80c7a637980bbb0feb55a10c2377ffa765f5c5f4ce"
+  },
+  {
+    "path": "apex-platform-core/src/main/java/com/apex/platform/core/context/ThreadLocalExecutionContextProvider.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/core/context/ThreadLocalExecutionContextProvider.java",
+    "sha256": "b4f111321fa98f8953cf5a43f4c1458dac1b59bcdc8c46f641306e92044563a3"
+  },
+  {
+    "path": "apex-platform-discovery/pom.xml",
+    "replacement": "apex-sdk-discovery/pom.xml",
+    "sha256": "44a3c779c4451325ad38da573b85c53241d38e5a3d0d896f50f9db6f71f6ee3f"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/CellEndpoint.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/CellEndpoint.java",
+    "sha256": "6ab2a3746c348f3963e41c929164bbdc5619111b884e1189cdf88d9f0f9749d3"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/CellMembership.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/CellMembership.java",
+    "sha256": "d877050ed2ca52ab6af6354a897e7c6abbb2bec1de338ee541b982808fb51870"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/CellRuntimeIdentity.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/CellRuntimeIdentity.java",
+    "sha256": "3f429878e83deabdd5c3ff2ffc1b9ad99dc83b9c4f1238e0d3e1fb3667b557a8"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/CellServiceDirectory.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/CellServiceDirectory.java",
+    "sha256": "aacd85d82f4d61eb0573a17c161a577cb488248e9105ae70c71c1996f4e188f7"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/CloudCellServiceDirectory.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/CloudCellServiceDirectory.java",
+    "sha256": "a232dc633a27743ad156ac21363f96d45a1a1979f5cd5bd8554eb9fb5c9fb5ad"
+  },
+  {
+    "path": "apex-platform-discovery/src/main/java/com/apex/platform/discovery/DiscoveryProperties.java",
+    "replacement": "apex-sdk-discovery/src/main/java/com/apex/platform/discovery/DiscoveryProperties.java",
+    "sha256": "e7665eef0b69b49c5f495b6a4c47c83fe67fbfe074440d450d64e9a2a8b1e00f"
+  },
+  {
+    "path": "apex-platform-discovery/src/test/java/com/apex/platform/discovery/DiscoveryTest.java",
+    "replacement": "apex-sdk-discovery/src/test/java/com/apex/platform/discovery/DiscoveryTest.java",
+    "sha256": "ced205cd87d8c6fe898610f665fa375ea72b881d9454dca1bcd104aacf6a62fc"
+  },
+  {
+    "path": "apex-platform-events/pom.xml",
+    "replacement": "apex-sdk-api/pom.xml",
+    "sha256": "4cd22c4fe575a67120a7493e86346b5ba6bc6592d178993d977b67bfaae3f29a"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/EventEnvelope.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/EventEnvelope.java",
+    "sha256": "22adf408c4ecac12682c1b0ddc2fc1fba92010aa78a1d6e6d97dcb44979164dd"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/EventEnvelopeFactory.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/EventEnvelopeFactory.java",
+    "sha256": "7962904d25a1fbdc1d6872fd690c19e8f6aeb26e6c999496aaeeb20bf4438dab"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/EventMetadata.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/EventMetadata.java",
+    "sha256": "abb51e13471f4e204127cbe8a3addc1fa48e795978c1f956daddb8a569d8665f"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/IntegrationEvent.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/IntegrationEvent.java",
+    "sha256": "4bde399b8a4b7872dc21ad014986d6b895477a1f2e01e1a2d19d9a19b0b1346e"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/api/CellEvents.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/api/CellEvents.java",
+    "sha256": "b9bf85812ffa6dd814c4bd762ee3d00ccf33716faed8421be917d547b67631d5"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/api/EventContract.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/api/EventContract.java",
+    "sha256": "ede7f4888d40fb787ceb11f3ea1d98b7a8952924f0a147727f3f49826d96ffe6"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/api/EventContracts.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/api/EventContracts.java",
+    "sha256": "971a074fddd60b1cc85137d165d8c4d59e5be3643757dfd96044d13d8275faac"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/saga/SagaEvent.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/saga/SagaEvent.java",
+    "sha256": "c8d54d7f7b8e13dde2927c9b38eee437f7ca30dcbc49b608b5ce1b1565b7e29f"
+  },
+  {
+    "path": "apex-platform-events/src/main/java/com/apex/platform/events/saga/SagaTimeoutDetectedEvent.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/events/saga/SagaTimeoutDetectedEvent.java",
+    "sha256": "587495bddf91867a9f6b7eacbcd8e03e01f21faecbf71bafc3926672de8cde17"
+  },
+  {
+    "path": "apex-platform-grpc-api/pom.xml",
+    "replacement": "apex-sdk-api/pom.xml",
+    "sha256": "e02e836692593704b795fc68307d2bcf0f02e49acd00e0fb14bec7d8a11a03e9"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CellQuery.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CellQuery.java",
+    "sha256": "fca449936ea0b096e6223d6ea71b26f42928b0ffa679a2b9fa78a76a169d7a08"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CellQueryHandler.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CellQueryHandler.java",
+    "sha256": "f4c6ffb0ed11de19d98b0d6073b1009e864c77de4e4cc0609f87907dcea42200"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CellRequest.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CellRequest.java",
+    "sha256": "962cd658d0b0d1f30143065b5d46d9f2b467116d7101e200498a40d24ac108a9"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CellRequestHandler.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CellRequestHandler.java",
+    "sha256": "07b4301b41f970438fb73db249b75cb9d0744d6bc909bff030440118cc4b3553"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CollectionCancelledException.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CollectionCancelledException.java",
+    "sha256": "c1fc0689e626965a24d13a1cb8da1168bfe2e6b01230b74db35d660b653a08b8"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CollectionFailedException.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CollectionFailedException.java",
+    "sha256": "3df140a61d8a0dc596515dbc403ce50abb83aea38827984a1160cc0369c46964"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CollectionOptions.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CollectionOptions.java",
+    "sha256": "d73aae3072412f1ba8fc9675d14c816fce64f66d7e5b82246fdd103cf562c305"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/CollectionResult.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/CollectionResult.java",
+    "sha256": "bfb73d7303f36c0efee09f0aaa015d580f6bbf3231cc7d783088e573b150282c"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/GatewayCancellationException.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/GatewayCancellationException.java",
+    "sha256": "3a8f70a85def34603cc4e23a501cb282a1b81578be61f9852f386e6b7c9916c3"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/GatewayException.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/GatewayException.java",
+    "sha256": "d3155de1b04ef7ff151c232263eaa6aad3ee47d5a7f7c1bd3fdd2e8ce62e6710"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/GrpcCallerDeclarations.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/GrpcCallerDeclarations.java",
+    "sha256": "a0f3022c30a0568dc1b4ba2c589d8625ba36cca06ed8633e71fd6b6b8686e461"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/GrpcServerEndpoint.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/GrpcServerEndpoint.java",
+    "sha256": "f1e6913a1b52691c2aa2c75e2f7099cfb32124d40b43ab22be54c24ffccf0973"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/InstanceQueryGateway.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/InstanceQueryGateway.java",
+    "sha256": "79be2b3859a73d2b673b0cdb0f6555e393ebb7097e2b762c949a6abcf7a4e33a"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/MultiResponderGateway.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/MultiResponderGateway.java",
+    "sha256": "67c598440a0f11a05630f69c8d061830b05a2a36c3fd63294c47997628ecdb7c"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/QueryGateway.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/QueryGateway.java",
+    "sha256": "f7c9254a1c4f0e3d7cd8d5d7a9f108751f5481900342d16c21c88eb45c9a4f29"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/QueryOptions.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/QueryOptions.java",
+    "sha256": "7fe67e179bfb4bb1f24d314992d1317ef5bbf42239b9d87e76c7e1d7faab2543"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/RequestContext.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/RequestContext.java",
+    "sha256": "a3dfcccc7bd4a0f9accce601ac3e63e655d22457cb8d013fc8f55e16847a065f"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/RequestOptions.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/RequestOptions.java",
+    "sha256": "f5cc6097c8fa79b3c5c1cb599986e9429db09c0271b435e9f64e558ec6d11bc7"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/RequestReplyGateway.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/RequestReplyGateway.java",
+    "sha256": "ff426519224e54e5a02e63c99cb082aa66fb0c3eb97c5adccef903125c8c40fb"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/ResponderResult.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/ResponderResult.java",
+    "sha256": "c384a4259f561bef3a73876d8aa24e85fb37080d0dd2e401e652b2c3c100edfb"
+  },
+  {
+    "path": "apex-platform-grpc-api/src/main/java/com/apex/platform/grpc/api/TransactionalRequestExecutor.java",
+    "replacement": "apex-sdk-api/src/main/java/com/apex/platform/grpc/api/TransactionalRequestExecutor.java",
+    "sha256": "0defe03be715e07fe6fc81ca1eafdb57cbd59f79224e19b4cf920705a13b4f2f"
+  },
+  {
+    "path": "apex-platform-grpc/pom.xml",
+    "replacement": "apex-sdk-grpc/pom.xml",
+    "sha256": "db450b219194dd524f1cd4058dc043c12ba809cd8b22cf8e352c94cb4095fcf1"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/CellGrpcChannelProvider.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/CellGrpcChannelProvider.java",
+    "sha256": "2d43865799b3ae8b5055c6455fa3a976ee4a6c0710bcd0ff6f72e7cd59f34b39"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/CertificatePeerPolicy.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/CertificatePeerPolicy.java",
+    "sha256": "6f77e0208e12541a64423ac47f21e2d6c0270c13c5d92973ecab0d2253e7461d"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/CollectorProperties.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/CollectorProperties.java",
+    "sha256": "46a198ff08bda295388df31412f6ef4ff2f670f31f80c5ed8afc9f84981660d6"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/Contracts.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/Contracts.java",
+    "sha256": "22a74b251edaed25052f3ee65625023d5de85515e5c89007dc51d5d0b6e9502f"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/DefaultMultiResponderGateway.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/DefaultMultiResponderGateway.java",
+    "sha256": "74ac1f0414aec2cf6cc986013b2fbd7ccf110c62789c091deb6b44d300b51112"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/DefaultQueryGateway.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/DefaultQueryGateway.java",
+    "sha256": "8aa6ff6f4a741d021e545629dac931929b2a197914ab612cfaa4e6265d8bf17d"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/DiscoveredCellChannelFactory.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/DiscoveredCellChannelFactory.java",
+    "sha256": "7943c7204690a99e3c110efc3d91ac0a85f007b577dfdd3d3594bb717f73edf0"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GenericGrpcService.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GenericGrpcService.java",
+    "sha256": "d5ed3d61d847915816a28ccdbf3391d0b82ae5cabf35819018920dbe70a6a031"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcClientAutoConfiguration.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcClientAutoConfiguration.java",
+    "sha256": "5ee3ef5ff57271bd9837ee805aca9ca1c37bb674151045c721eadef19a38cc6e"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcCollectorAutoConfiguration.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcCollectorAutoConfiguration.java",
+    "sha256": "dcaf7720d45badedcc3b62dfeeb82ec8379879d13338b81ba62a50227047f3aa"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcCommonAutoConfiguration.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcCommonAutoConfiguration.java",
+    "sha256": "ea193095f3622a65c69dfd8541c4c0b74ee07c5584bbb3e7e685075f0090f5ed"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcEnabled.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcEnabled.java",
+    "sha256": "f8baade6153879530b26710990f58c0dc1dc3f432ef6fdd5deb55b2983b356f3"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcInvocationClient.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcInvocationClient.java",
+    "sha256": "a14f13c1fb2ceb1a56104d88eb87bcc136527568a1712d1dde964030042bab1e"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcPeerSecurityAutoConfiguration.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcPeerSecurityAutoConfiguration.java",
+    "sha256": "3d1ed9ed47316d34ad8059b982ca9f611a84d045cfd34f7950cdffc636cf4ae4"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcProperties.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcProperties.java",
+    "sha256": "77e736c3e23c169ac653318bb3ee8a2e4ba0c8e138e943f2ed08b323a4792c55"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcServerAutoConfiguration.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/GrpcServerAutoConfiguration.java",
+    "sha256": "ca687c1fce4462de094541150812f3f98041b7d6c1d1b4fa3a7c33d8d4a9888c"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/HandlerRegistry.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/HandlerRegistry.java",
+    "sha256": "eedf3b605b99441c9105cf887f4075856976aca189bfe0b4bfd48193cb643f47"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/ObservedQueryGateway.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/ObservedQueryGateway.java",
+    "sha256": "3c573bd291b34beb6088e51a04e7490d49411d84e8f917227a647ee400e77a90"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/PeerSecurityProperties.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/PeerSecurityProperties.java",
+    "sha256": "56957c167dc1fca6503ebb03fe3f47382613f5b58488f40d2e413186f83b07fb"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcCodec.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcCodec.java",
+    "sha256": "ab1cda0cdb2721a3a3888b26b2d47ce2ba3d6162337c4bde16f8f66ac16f6fc0"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcContexts.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcContexts.java",
+    "sha256": "cdb7c001900a10f1afba493c50b721aced1409dcea7a4e6d6ef6675e616cf312"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcDispatcher.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcDispatcher.java",
+    "sha256": "042062b93b36d98e1b2bd22956ddbd1779bb34e0775541c627fcd0fc62a356e3"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcErrors.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcErrors.java",
+    "sha256": "c43ed6d528d6dbbb4740930984dcfb166c7829e8c0a071a19af3f4b81d7a7036"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcFuture.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcFuture.java",
+    "sha256": "22fb34c83e8ac366720ce66215243c35c5f39238703fbfb29909e7407e437619"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcObservation.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcObservation.java",
+    "sha256": "5624cebdef180346975330d1f962f73801867cc3f71aa98db495798eb76482e0"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/internal/RpcServerAuth.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/internal/RpcServerAuth.java",
+    "sha256": "164333cf552a6c0173d5b5ed1efd7a9aecd178b98c8eaf0d334a40734a92ba8e"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/security/InvocationAuthorizer.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/security/InvocationAuthorizer.java",
+    "sha256": "f3d0d1e59aedb73e4235497f81233b30f7cec8c934fc0499d3fb30a83a83d1e4"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/java/com/apex/platform/grpc/security/PeerIdentityVerifier.java",
+    "replacement": "apex-sdk-grpc/src/main/java/com/apex/platform/grpc/security/PeerIdentityVerifier.java",
+    "sha256": "cf9f8d878407ecf62f9eed724dfaa100c201438c28b65df4a3f487b0839c4a5b"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/proto/cell_gateway.proto",
+    "replacement": "apex-sdk-grpc/src/main/proto/cell_gateway.proto",
+    "sha256": "e7805924d0e88cbb0fc6a22b50db62274105cdc67201d0efadd7695418775f59"
+  },
+  {
+    "path": "apex-platform-grpc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-grpc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "ef7bcd1ca0e2b7f544dfce6a60c80c2df69e53ecdb2d4279d3b480f6fffce0eb"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/CellGrpcChannelProviderTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/CellGrpcChannelProviderTest.java",
+    "sha256": "485ffe78b8a0844a59e66949de7d1f1f57f485b6bcd4c1406cb3533d87d33d8a"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/CollectorDeadlineIntegrationTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/CollectorDeadlineIntegrationTest.java",
+    "sha256": "3e2d7696547c6994a400617ce28aa6a953b401f2cbfd9c3ceaf5133a179d2a0d"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/CollectorWiringTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/CollectorWiringTest.java",
+    "sha256": "f6c75c3771efae780092730b3aff7146c87da76d9a7217b2b2dfe44d54a8b3b7"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/ContractValidationTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/ContractValidationTest.java",
+    "sha256": "bfee2e7c7cc079289ed2330259f2eb3ba29d30a93e0e09b98540ad752869384a"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/GrpcRuntimeTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/GrpcRuntimeTest.java",
+    "sha256": "1a1107f6735bf0776af493889e7b471a125b3a1f85fde79d520a45ffda2f2d78"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/MultiResponderGatewayTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/MultiResponderGatewayTest.java",
+    "sha256": "caee6259afebdd2f2587a502fb23deec98d356bf5ed30b703f1ce3a1ec813358"
+  },
+  {
+    "path": "apex-platform-grpc/src/test/java/com/apex/platform/grpc/internal/RpcObservationTest.java",
+    "replacement": "apex-sdk-grpc/src/test/java/com/apex/platform/grpc/internal/RpcObservationTest.java",
+    "sha256": "efc84afbfe3543c4345b43238a893eb9c5f1fd12b51f6ef59ab2060bf339a2fa"
+  },
+  {
+    "path": "apex-platform-messaging/README.md",
+    "replacement": "apex-sdk-messaging/README.md",
+    "sha256": "b1048528049dcfa0361396dabf4dfc57d5e16ddb64537aee781bf14001c65b62"
+  },
+  {
+    "path": "apex-platform-messaging/TOPIC-PROVISIONING.md",
+    "replacement": "apex-sdk-messaging/TOPIC-PROVISIONING.md",
+    "sha256": "46728799a413f9cddc0e6e15765895ee9f038458157b1e2a2e9ff489b61b3b18"
+  },
+  {
+    "path": "apex-platform-messaging/pom.xml",
+    "replacement": "apex-sdk-messaging/pom.xml",
+    "sha256": "eaa50d11d7ae9ae3b68b2e022d7fa505860001a4e5109c0504a4a8a14b94de76"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerContext.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerContext.java",
+    "sha256": "1a8e47319a495647f253b13157a18e16107a7775c9eb10acc8b76df34b850b1d"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureRecoveryStore.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureRecoveryStore.java",
+    "sha256": "a7b15751e05d8c8afde2850a74d320a539e26fddcbc53e9e861824cc377928a8"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureReplay.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureReplay.java",
+    "sha256": "855576fefb71ec961a40edd90ca9a039dc7962c674f55f142acb373f22bc501a"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureStatistics.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureStatistics.java",
+    "sha256": "91d97e998fa6afc4ae8d665c4838ad94a4c4f4a49bf72e25ec54134313e0db79"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureStatus.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ConsumerFailureStatus.java",
+    "sha256": "88313d0042a511de0a0eb993d7537c4572fcdb26f083d6bf9be6f6ad9ab41778"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ContractEventHandler.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ContractEventHandler.java",
+    "sha256": "afe07465278459c5ad37eecef5efb0ab31b9b8484b52fc85a45107d7ca70dfe0"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/DefaultEventHandlerRegistry.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/DefaultEventHandlerRegistry.java",
+    "sha256": "0beadd074459f759e68cf43fe9609ed9effac7ece6b45b26c8877e09a729dea2"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/DispatchResult.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/DispatchResult.java",
+    "sha256": "ff4a2d07ae814aa0464b7ef1f36f44c3b11feec35738b463f6d9feaef98a03a5"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandler.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandler.java",
+    "sha256": "428908d27f31a4a8208473d6a9ab5d8919ee859835f15846960d20fab2820f12"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerExecutor.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerExecutor.java",
+    "sha256": "ee623856891bd150342ec494a067f3796739a776e687ac9789a71bb7e3d69c91"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerKey.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerKey.java",
+    "sha256": "b267d91f1b896ecd72ee122e05417e57b9d85e26d58dae8556c4f5bb18bf54f6"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerRegistry.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/EventHandlerRegistry.java",
+    "sha256": "f89db768e9dff5687484d52e494d26b616d4659de0177e8a28c52b2b66baea6a"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/EventMessageDispatcher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/EventMessageDispatcher.java",
+    "sha256": "ca46a857aef2b9ac06d9fc0ff576ccb61b2f29b21bda4b45d04cc8d655c4577c"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/MalformedEventException.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/MalformedEventException.java",
+    "sha256": "087928afeef403c2e6fc4e5f7d9b47524c77acf114e2d01d3fe40f0208ae903e"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/NonRetryableEventException.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/NonRetryableEventException.java",
+    "sha256": "d2d1ce18bbc9fe3f9006144897b28c400db90592e29cd8ef6b241b1634698296"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/OnCellEvent.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/OnCellEvent.java",
+    "sha256": "5945dcfde19c6a533af6abf7c141ed3b9c0b3f69e9bf5cb22b682e2193fcfc8e"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/ProcessedEventStore.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/ProcessedEventStore.java",
+    "sha256": "2b1480b8b2ca96aa38b060cec9727867f7838237791e0e675e1f4600c40c8a42"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/UnsupportedEventContractException.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/UnsupportedEventContractException.java",
+    "sha256": "cfd3a9cb88fcedf734273a99c4a7861cbf40890f0737bd94e402248dbdbf5582"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/AnnotatedEventHandlerDiscovery.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/AnnotatedEventHandlerDiscovery.java",
+    "sha256": "5db878abd66ae2e13de4079621ac2e38036ae0e37723c925452effdb8602de70"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/DiscoveringEventHandlerRegistry.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/DiscoveringEventHandlerRegistry.java",
+    "sha256": "52d71a8868f3956470dfc98f75f029aeab9d77543f0f1a38e53382e01779743f"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/ReflectiveEventHandlerAdapter.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/consumer/internal/ReflectiveEventHandlerAdapter.java",
+    "sha256": "cc70ecb173902bb93b14307b4a1a9d2415e0f17673a330ede662368a043dbee4"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/internal/DefaultCellEvents.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/internal/DefaultCellEvents.java",
+    "sha256": "479372290dfed4c4384dbed7ecfaca69b0fd92ffc38d6a73a32f83e5bebedfca"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ApexTopicProvisioner.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ApexTopicProvisioner.java",
+    "sha256": "718b3b0f588a9c45da2fb04b9887dffa952c158bba16efbdd418af04297e6284"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConfigurableKafkaEventConsumer.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConfigurableKafkaEventConsumer.java",
+    "sha256": "f1e3fdfc64c0cb6367d92a447b8ece508bcc2572cfb6800670ecb66cf9365425"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConfigurableOutboxPublisher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConfigurableOutboxPublisher.java",
+    "sha256": "97f1a1cff987b96921fd696196e58a5fe58b7899cc9888e625663dab8bfb9081"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConsumerReliabilityProperties.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConsumerReliabilityProperties.java",
+    "sha256": "b0da93073679d242fa2e43f4b7cde27e969e9f71e57732b6185818ff51761297"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConsumerTopics.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ConsumerTopics.java",
+    "sha256": "2f6402104dc69c7ddabc1fe567fe9aafbdee126c747e5b4337ed7d033c774efc"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/JacksonEventMessageDispatcher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/JacksonEventMessageDispatcher.java",
+    "sha256": "48d4c44413b79da6550291259631b553990fa512006f684cd340ea3b9d259707"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/JacksonOutboxEventMapper.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/JacksonOutboxEventMapper.java",
+    "sha256": "fdeace55c079df47bd25e8cad53c1b6d7f0801f959b2342a6443c512727ab344"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcOutboxAppender.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcOutboxAppender.java",
+    "sha256": "b8293a7a0ee2da15116804c6acb74cdbafcf0e5cecbc5912a8977924eb78be02"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcOutboxStore.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcOutboxStore.java",
+    "sha256": "84119ddd26113aeb2e205f2e90a48cb65975699a7d488af16c308934bac73c6c"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcProcessedEventStore.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/JdbcProcessedEventStore.java",
+    "sha256": "a1a0eaadd6fb17af6b233bbdff0bb75281d2b970f155d496b022854e40a828c5"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/OutboxPublisherScheduler.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/OutboxPublisherScheduler.java",
+    "sha256": "1c479ea861fe6d81d7eaa21a4c4eaf7b07267f518bb04472deff2bd6d8ae7ad6"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformCellMessagingAutoConfiguration.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformCellMessagingAutoConfiguration.java",
+    "sha256": "690cc12e1b360235debacd9b734436366a026cc00d404ec8a19ac55c1aad59f3"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformConsumerReliabilityAutoConfiguration.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformConsumerReliabilityAutoConfiguration.java",
+    "sha256": "395f9cfcc46dc2679172d84ae908f773d6325f2f2003375fff45ed3ca3422a3f"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformTopicProvisioningAutoConfiguration.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/PlatformTopicProvisioningAutoConfiguration.java",
+    "sha256": "857a40219f1c21e3e050ca621cf74b7f8be8fc506a42bf1857b9f5271da382a1"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/PublisherRouting.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/PublisherRouting.java",
+    "sha256": "d193d4c9c321fbe3dc7fa4b83fd53dd81baa1b7cbac6521c4227ef6773a5f1b0"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/ReliableKafkaConsumerRuntime.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/ReliableKafkaConsumerRuntime.java",
+    "sha256": "270ca6f857e7601878d4f1fc71b50a3a0379ce6828648e875bc7bfeb35d18b30"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/SimpleTransactionalEventHandlerExecutor.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/SimpleTransactionalEventHandlerExecutor.java",
+    "sha256": "82f5a72f6ceee249087041f1c2c731b904f42af87541d2a9dfb3df64ac1653f3"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/jdbc/TopicProvisioningProperties.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/jdbc/TopicProvisioningProperties.java",
+    "sha256": "8cf36f9e93a338c9c9becab35079facd0350dae9a626691c4eb9b5020533cb9e"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/kafka/KafkaMessagePublisher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/kafka/KafkaMessagePublisher.java",
+    "sha256": "4f54588b2d96cac69c6aa5767c869ba5d1767ecf8af625d57e3621fc02559081"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/kafka/SpringKafkaMessagePublisher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/kafka/SpringKafkaMessagePublisher.java",
+    "sha256": "4c6037d01378216baaaf636256d53cfc873f7733fe943a1a1a5e820c4627766f"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/observation/MessagingObservation.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/observation/MessagingObservation.java",
+    "sha256": "cbdc5ba67d9ed5ad7f6796bb73c5c13af8193568d2fc36c2c5e5d6609d86689a"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxAppender.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxAppender.java",
+    "sha256": "b944dff194e56b15dafbff847edbae3e089722699219cb97a83f69df14667720"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxEventMapper.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxEventMapper.java",
+    "sha256": "78ca1813dea5b0c572eb364fcf0b3fe078ef64510a2c499e7597a60d6457bcae"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxPublisher.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxPublisher.java",
+    "sha256": "4b7490395ad0d0924f4ed1e34b6e3fbaa0a3069c8bd5ce38dbb6fe3eff9c7d39"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxRecord.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxRecord.java",
+    "sha256": "7452bf2f67beffa8ec0ac4fbf5cebe64baba584b944591d60bf1aa81cabeeeba"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxStatistics.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxStatistics.java",
+    "sha256": "66ffa9c709facac723907ae60c493bc4a9f6eb0363af423dc8e4e63eddb7eb81"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxStore.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/OutboxStore.java",
+    "sha256": "b54f5bd76babc6e02987e27618dd1a36e2e07b39bd3201497130cda4bd453a5d"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/java/com/apex/platform/messaging/outbox/RetryPolicy.java",
+    "replacement": "apex-sdk-messaging/src/main/java/com/apex/platform/messaging/outbox/RetryPolicy.java",
+    "sha256": "20715fb1f99039c03c8fbeff5ed99f15083e5625145c7b01c612b67a4ff3a9d1"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-messaging/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "a3be990f5dc891fc7e0493f6aad06f44975366b66e64692ff553a71969bcaa81"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/resources/db/platform/V1001__platform_outbox_event.sql",
+    "replacement": "apex-sdk-messaging/src/main/resources/db/platform/V1001__platform_outbox_event.sql",
+    "sha256": "96c69ff2091915055c56bfa7d3868c4d06f893669010d271b14a9b345ab39b7c"
+  },
+  {
+    "path": "apex-platform-messaging/src/main/resources/db/platform/V1002__platform_processed_event.sql",
+    "replacement": "apex-sdk-messaging/src/main/resources/db/platform/V1002__platform_processed_event.sql",
+    "sha256": "51b4e1e0115594f231633f9c8dca623e545d4fa38b8b5763ccfee91ae2199f64"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/consumer/internal/AnnotatedEventHandlerDiscoveryTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/consumer/internal/AnnotatedEventHandlerDiscoveryTest.java",
+    "sha256": "053e656b1f4daee95271f931423a484890fa4b6af47f4724927e77ef3d7e824c"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/consumer/internal/ReflectiveEventHandlerAdapterTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/consumer/internal/ReflectiveEventHandlerAdapterTest.java",
+    "sha256": "7c64daf36dd42b4550d811d6ae18f82e46d97425e69c5b078490d2cf62e1b816"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/AnnotatedConsumerIntegrationTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/AnnotatedConsumerIntegrationTest.java",
+    "sha256": "de07425e475124b3f11a0767b3717d503042d750d1a8ab5c37f79e965b35ac33"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/ConsumerReliabilityWiringTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/ConsumerReliabilityWiringTest.java",
+    "sha256": "d5b526eda5d8661fbb0e97c608c97ffa3f13011985f5fbaefd73df4d21d08378"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/ConsumerTopicsTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/ConsumerTopicsTest.java",
+    "sha256": "7a480466471ebe70694ec6e9e0872b801b34347bf2c7b188e3c673813669b4e9"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/ObservationTransactionTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/ObservationTransactionTest.java",
+    "sha256": "4d9c71301a673230fa91aef50dcc2d6353c4e998d21137ea7e9f0ee11a9430fd"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/PlatformCellMessagingAutoConfigurationTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/PlatformCellMessagingAutoConfigurationTest.java",
+    "sha256": "f8b5a8586e595b6e907bc0f373e578b5eb64a5e7f85bac900c4bdb54572229ec"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/PublisherRoutingTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/PublisherRoutingTest.java",
+    "sha256": "666ac6d7ea22e9e732da943bf175450672ff3a93e876f069e64a098da40e4e29"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/ReliableConsumerIntegrationTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/ReliableConsumerIntegrationTest.java",
+    "sha256": "d3ba97ba9e241e30e69c1664cc528ae1e1d4adb0ed47b688beaf92415b514f34"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/TopicProvisioningIntegrationTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/TopicProvisioningIntegrationTest.java",
+    "sha256": "5909c9e3973f4d234c2f67946d291de4593cadcccb7198985d92e3922d03a216"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/integration/TopicProvisioningSafetyTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/integration/TopicProvisioningSafetyTest.java",
+    "sha256": "3dfd932b2209861a4f394673d9845712abde34af9583054c1424854926ca04f8"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/unit/DefaultCellEventsTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/unit/DefaultCellEventsTest.java",
+    "sha256": "93cd30104c44ab1830715582537d5e6946863441dbb228494027194bd9982f04"
+  },
+  {
+    "path": "apex-platform-messaging/src/test/java/com/apex/platform/messaging/unit/SimpleTransactionalEventHandlerExecutorTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/platform/messaging/unit/SimpleTransactionalEventHandlerExecutorTest.java",
+    "sha256": "4fce5799d47e48ea5d32b1d0ae80c2834aed0f4bb619d0002819a7304950b253"
+  },
+  {
+    "path": "apex-spring-boot-starter/pom.xml",
+    "replacement": "apex-sdk-spring-boot/pom.xml",
+    "sha256": "5e440e6e9d69ee5fa9b4c63ffbb18f2b59b4b60b8a87aeffa1b8fe1ba3cf66ad"
+  },
+  {
+    "path": "apex-spring-boot-starter/src/main/java/com/apex/platform/context/autoconfigure/ApexExecutionContextAutoConfiguration.java",
+    "replacement": "apex-sdk-spring-boot/src/main/java/com/apex/platform/context/autoconfigure/ApexExecutionContextAutoConfiguration.java",
+    "sha256": "f8001d8fc1fe62c958453212f2caca60b252d34c3313fd5b0b075b02f04cd754"
+  },
+  {
+    "path": "apex-spring-boot-starter/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-spring-boot/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "19ad51a1445708d8aa19b366f0667d79e9ff5ef6c49586ca1210cc31b7892ac6"
+  },
+  {
+    "path": "apex-spring-boot-starter/src/test/java/com/apex/platform/context/autoconfigure/ApexExecutionContextAutoConfigurationTest.java",
+    "replacement": "apex-sdk-spring-boot/src/test/java/com/apex/platform/context/autoconfigure/ApexExecutionContextAutoConfigurationTest.java",
+    "sha256": "70994b49666eaa740c3aefa5f98545026e5758e5922788cc0ffc1c61228d3840"
+  },
+  {
+    "path": "apex-spring-boot-starter/src/test/java/com/apex/platform/context/autoconfigure/DefaultSdkBoundaryTest.java",
+    "replacement": "apex-sdk-spring-boot/src/test/java/com/apex/platform/context/autoconfigure/DefaultSdkBoundaryTest.java",
+    "sha256": "eeb3fbeff9b3753adf2024855fad30f11a7156b94edf055daea8529b3833efa1"
+  },
+  {
+    "path": "apex-starter-cell-messaging/README.md",
+    "replacement": "apex-sdk-messaging/README.md",
+    "sha256": "e8f2e6f1fd7ce995a87af3054fc0136dd7bb3c7603ff7fb3bde302e6b6a98add"
+  },
+  {
+    "path": "apex-starter-cell-messaging/pom.xml",
+    "replacement": "apex-sdk-messaging/pom.xml",
+    "sha256": "dfe3f106a92e9f88d7698bb5b79c7fdefad194f620b16fd2e5093961a846b07a"
+  },
+  {
+    "path": "apex-starter-cell-messaging/src/test/java/com/apex/starter/messaging/architecture/MessagingStarterBoundaryTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/starter/messaging/architecture/MessagingStarterBoundaryTest.java",
+    "sha256": "6a26305e3d7232151308de5bd78b171a9a737ca1ad13d65391c64dad5340404d"
+  },
+  {
+    "path": "apex-starter-cell-messaging/src/test/java/com/apex/starter/messaging/integration/CellMessagingStarterTest.java",
+    "replacement": "apex-sdk-messaging/src/test/java/com/apex/starter/messaging/integration/CellMessagingStarterTest.java",
+    "sha256": "4924976e302bb67f0100928f194eb26644f26593533d8cc665bd7060aa819a49"
+  },
+  {
+    "path": "apex-starter-grpc-client/pom.xml",
+    "replacement": "apex-sdk-grpc-client/pom.xml",
+    "sha256": "0edbef714bdd6908da9f8f988340e51a53b2a40d5c6f3d78a23de39504981101"
+  },
+  {
+    "path": "apex-starter-grpc-server/pom.xml",
+    "replacement": "apex-sdk-grpc-server/pom.xml",
+    "sha256": "f96873dfdf4ac1c04d8ac194c52f91978422f402a01073b9fa3ce30c24213bbe"
+  },
+  {
+    "path": "apex-starter-observability/README.md",
+    "replacement": "apex-sdk-observability/README.md",
+    "sha256": "43eb69f9fa0b622c2048d44340081db93428eefd60d870a0e4c6aed4d75de086"
+  },
+  {
+    "path": "apex-starter-observability/pom.xml",
+    "replacement": "apex-sdk-observability/pom.xml",
+    "sha256": "81d1f5ee252526f358334189fcedce2e4ea32c09fc459ab4dd52522d8f0273b1"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/ActiveOperations.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/ActiveOperations.java",
+    "sha256": "f1e5e819235e63087e3f11ac40913adbe746b7fef1674b4da719a8bab3bd017f"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/BoundedOperationalObserver.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/BoundedOperationalObserver.java",
+    "sha256": "12a2221143b5033d9dc77c3efc1fd5866ae9f576b76797d4f403cb1d794ab7d7"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/ObservabilityAutoConfiguration.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/ObservabilityAutoConfiguration.java",
+    "sha256": "fbf55803078c11f2907b196dc2372d57d4fbb6f39cf0ca04e2c06622f8d91ca5"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/ObservabilityProperties.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/ObservabilityProperties.java",
+    "sha256": "c20c3439f893c45e2c9d64b1407d07aef82b7edabe2bd6a721656da9f7776eac"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/ObservationBatchExporter.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/ObservationBatchExporter.java",
+    "sha256": "64197a7867df47f2d6dd08609ddcd3e82789fc4bd013127b863bcea11494b0c6"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/OperationalObservationHandler.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/OperationalObservationHandler.java",
+    "sha256": "c9c2639379683e07ea0a9e3bf907046548a0f5fead135bd1dc6c83ad68e026fa"
+  },
+  {
+    "path": "apex-starter-observability/src/main/java/com/apex/observability/OperationalObserver.java",
+    "replacement": "apex-sdk-observability/src/main/java/com/apex/observability/OperationalObserver.java",
+    "sha256": "8846108913dcbf67b11bc9d72884e0cfc044fea481508d97744da79795e56378"
+  },
+  {
+    "path": "apex-starter-observability/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-observability/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "72140799cc6ddc634420f862a3b04967f0400ab2d012329c58e1d97fb502ef17"
+  },
+  {
+    "path": "apex-starter-observability/src/test/java/com/apex/observability/FixtureExportConfiguration.java",
+    "replacement": "apex-sdk-observability/src/test/java/com/apex/observability/FixtureExportConfiguration.java",
+    "sha256": "6c8335c3b63e6e2490088c9c1b78af8a036f227966ae02313fdcb6f9d0a62f82"
+  },
+  {
+    "path": "apex-starter-observability/src/test/java/com/apex/observability/ObservabilityTest.java",
+    "replacement": "apex-sdk-observability/src/test/java/com/apex/observability/ObservabilityTest.java",
+    "sha256": "610ece3f619f858a7d24bbaa307f5bb241d0518a6580070c42d2e7a62107d812"
+  },
+  {
+    "path": "apex-starter-observability/src/test/java/com/apex/observability/ObservationCostTest.java",
+    "replacement": "apex-sdk-observability/src/test/java/com/apex/observability/ObservationCostTest.java",
+    "sha256": "ee0c59affeb6d99d0d0dc36f92263a634968f2940e5ccde6ccb71147ac7930d7"
+  },
+  {
+    "path": "apex-starter-observability/src/test/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-observability/src/test/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "752f255b1e9d26daca85b4a6088ca0605dc6127fe30fc92453b4019b9983de39"
+  },
+  {
+    "path": "apex-starter-webmvc/README.md",
+    "replacement": "apex-sdk-webmvc/README.md",
+    "sha256": "14a306eb04bd86bd16665294976c6ee4a4ea2d0ea460b61a78b15658b6b85ef7"
+  },
+  {
+    "path": "apex-starter-webmvc/pom.xml",
+    "replacement": "apex-sdk-webmvc/pom.xml",
+    "sha256": "a99d088606af1894fe67a6c543fa7b65b6aa02202f28defcc397fa5dee22ae80"
+  },
+  {
+    "path": "apex-starter-webmvc/src/main/java/com/apex/platform/webmvc/ApexHttpExecutionContextFilter.java",
+    "replacement": "apex-sdk-webmvc/src/main/java/com/apex/platform/webmvc/ApexHttpExecutionContextFilter.java",
+    "sha256": "875bfec4ea2491f1f9f038b3e5f0181ed484cb0670507d046761edf93db06c73"
+  },
+  {
+    "path": "apex-starter-webmvc/src/main/java/com/apex/platform/webmvc/ApexWebMvcAutoConfiguration.java",
+    "replacement": "apex-sdk-webmvc/src/main/java/com/apex/platform/webmvc/ApexWebMvcAutoConfiguration.java",
+    "sha256": "7a794c5b326e7a219d87f0df7e74a47b02c44337c4e9c327561066e5409ed3d7"
+  },
+  {
+    "path": "apex-starter-webmvc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "replacement": "apex-sdk-webmvc/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports",
+    "sha256": "d8a76f16063be848c046c2ee2ca6ce71737d398ad7b959a57c9f80a14ebe28aa"
+  },
+  {
+    "path": "apex-starter-webmvc/src/test/java/com/apex/platform/webmvc/integration/ApexWebMvcAutoConfigurationTest.java",
+    "replacement": "apex-sdk-webmvc/src/test/java/com/apex/platform/webmvc/integration/ApexWebMvcAutoConfigurationTest.java",
+    "sha256": "eeb844c329a2f012d1a73a74c68b1a4f67d494dd39d5f743ae9ef4ea9f1689a1"
+  },
+  {
+    "path": "apex-starter-webmvc/src/test/java/com/apex/starter/webmvc/architecture/WebMvcStarterBoundaryTest.java",
+    "replacement": "apex-sdk-webmvc/src/test/java/com/apex/starter/webmvc/architecture/WebMvcStarterBoundaryTest.java",
+    "sha256": "c330526f15e877adb02c774d801920a222446bd10e20e43e85342466367730e2"
+  },
+  {
+    "path": "apex-starter-webmvc/src/test/java/com/apex/starter/webmvc/integration/WebMvcStarterTest.java",
+    "replacement": "apex-sdk-webmvc/src/test/java/com/apex/starter/webmvc/integration/WebMvcStarterTest.java",
+    "sha256": "b40535c393bcacb41d3eeb820317e5c995add97a688fd550712591fefac5ea24"
+  }
+]

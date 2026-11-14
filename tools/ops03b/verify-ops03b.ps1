@@ -31,8 +31,8 @@ try {
  Push-Location $source
  try {
   New-Item -ItemType Directory -Force out/ops03b|Out-Null
-  Maven @('-pl','apex-starter-webmvc,apex-operations-console,apex-operations-owner-jdbc,apex-starter-observability,apex-starter-grpc-server,apex-starter-cell-messaging,apex-order-contracts','-am','install','-DskipTests') 'install.log'
-  Maven @('-pl','apex-operations-console,apex-operations-owner-jdbc','test') 'focused.log'
+  Maven @('-pl','apex-sdk-webmvc,apex-operations-console,apex-sdk-operations,apex-sdk-observability,apex-sdk-grpc-server,apex-sdk-messaging,apex-order-contracts','-am','install','-DskipTests') 'install.log'
+  Maven @('-pl','apex-operations-console,apex-sdk-operations','test') 'focused.log'
   foreach($cell in @('order-cell','inventory-cell','payment-cell')){Maven @('-f',"$cell/pom.xml",'package','-DskipTests') "$cell-package.log"}
   Maven @('-f','inventory-cell/pom.xml','test','-Dtest=InventoryEvidenceTest') 'inventory-owner.log'
   Maven @('-f','payment-cell/pom.xml','test','-Dtest=PaymentEvidenceTest') 'payment-owner.log'

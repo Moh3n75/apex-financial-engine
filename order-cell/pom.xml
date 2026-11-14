@@ -15,7 +15,7 @@
     <description>M24 independent reference Cell using the existing M23 Starters.</description>
     <properties>
         <java.version>21</java.version>
-        <apex.platform.version>1.0-SNAPSHOT</apex.platform.version>
+        <apex.sdk.version>1.0-SNAPSHOT</apex.sdk.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -31,44 +31,40 @@
     <dependencies>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-platform-contract-discovery</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-operations</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <!-- Runtime Eureka support; no Maven or Spring discovery profile required. -->
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-discovery-eureka</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-discovery-eureka</artifactId>
+            <version>${apex.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.apex</groupId>
+            <artifactId>apex-sdk-observability</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-operations-owner-jdbc</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-starter-observability</artifactId>
-            <version>${apex.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.apex</groupId>
-            <artifactId>apex-starter-grpc-server</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-grpc-server</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-order-contracts</artifactId>
-            <version>${apex.platform.version}</version>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-webmvc</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-webmvc</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.apex</groupId>
-            <artifactId>apex-starter-cell-messaging</artifactId>
-            <version>${apex.platform.version}</version>
+            <artifactId>apex-sdk-messaging</artifactId>
+            <version>${apex.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

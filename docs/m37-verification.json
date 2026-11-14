@@ -1,0 +1,289 @@
+{
+  "sdk": {
+    "apex-sdk-api": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-discovery": {
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-discovery-eureka": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-discovery-grpc": {
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-discovery-kubernetes": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-grpc": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-grpc-client": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-grpc-server": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-messaging": {
+      "tests": 126,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-observability": {
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-operations": {
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-spring-boot": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-sdk-webmvc": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    }
+  },
+  "baselineChecks": {
+    "order": "out/m37/order-baseline.log",
+    "inventory": "out/m37/inventory-baseline.log",
+    "payment": "out/m37/payment-baseline.log"
+  },
+  "fullAcceptance": {
+    "passed": false,
+    "log": "out/m37/platform-retry.log",
+    "stoppedAt": "Order Cell regression after successful SDK, Identity and discovery/RPC stages"
+  },
+  "external": {
+    "outsideRepository": "C:\\Users\\dev3.FARDUP\\AppData\\Local\\Temp\\apex-sdk-consumer-82b4fd4488b1462481870ccf75b20cbd",
+    "artifactReceipts": [
+      {
+        "mode": "default",
+        "jarSha256": "2B35A50A55966A858DFA05388542495A684A323E1A14AAE7F7F2325798A7BAB1",
+        "bootExit": 0,
+        "testExit": 0
+      },
+      {
+        "mode": "http",
+        "jarSha256": "B6EC514C5D95A8FBD41987F8022E9C2481FF5DC3A91F9B342B47835FB1776779",
+        "bootExit": 0,
+        "testExit": 0
+      },
+      {
+        "mode": "capabilities",
+        "jarSha256": "C4D8E32B93A87EAE657F86C7EDC306DA2435A75D6662E0E39AC18EE5D3EE5F5D",
+        "bootExit": "In JUnit: owned PostgreSQL/Kafka and real gRPC",
+        "testExit": 0
+      },
+      {
+        "mode": "observability",
+        "jarSha256": "68E3947A4B8B29C47EE1534E48AE190F3BE6F68240DEEF6FE3FF8B2428066E56",
+        "bootExit": 0,
+        "testExit": 0
+      },
+      {
+        "mode": "rpc-client",
+        "jarSha256": "E29959C38C32D76D0C6E314267C4C9CF7501C3D7AF596937F238BA9DE8EE0329",
+        "bootExit": 0,
+        "testExit": 0
+      },
+      {
+        "mode": "rpc-server",
+        "jarSha256": "94668B9A3678E7B98AE70EB12E89C34CF30FADAABC480A488DDADEA43BD17F32",
+        "bootExit": 0,
+        "testExit": 0
+      },
+      {
+        "mode": "operations",
+        "jarSha256": "E4BC14DB1E34B1E2BACF6DAAB2054FE380A0CBFB975E87AA0478064B3A615BDE",
+        "bootExit": 0,
+        "testExit": 0
+      }
+    ],
+    "completedUtc": "2026-11-12T09:55:55.6428395+00:00"
+  },
+  "customerReportingChain": {
+    "exit": 0
+  },
+  "retainedTransientFailure": "out/m37/topic-provisioning-retry-failure.xml",
+  "packagedClassOwnership": {
+    "uniqueApexClasses": 266,
+    "duplicates": [],
+    "cleanBuildLog": "out/m37/final-clean-rpc-console.log"
+  },
+  "sdkTotals": {
+    "tests": 246,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "standaloneJUnitSnapshotsMayIncludePriorRuns": {
+    "order-cell": {
+      "tests": 42,
+      "failures": 6,
+      "errors": 8,
+      "skipped": 0,
+      "failedCases": [
+        "com.apex.order.integration.InventoryOutcomeIntegrationTest#lateReservedOutcomeDoesNotOverwriteConflictingStateOrAck(String)[1]",
+        "com.apex.order.integration.InventoryOutcomeIntegrationTest#lateReservedOutcomeDoesNotOverwriteConflictingStateOrAck(String)[2]",
+        "com.apex.order.integration.InventoryOutcomeIntegrationTest#lateReservedOutcomeDoesNotOverwriteConflictingStateOrAck(String)[3]",
+        "com.apex.order.integration.InventoryOutcomeIntegrationTest#lateReservedOutcomeDoesNotOverwriteConflictingStateOrAck(String)[4]",
+        "com.apex.order.integration.InventoryOutcomeIntegrationTest#missingOrderRollsBackInboxAndDoesNotAckThenRetriesWhenOrderArrives",
+        "com.apex.order.integration.OrderCellIntegrationTest#",
+        "com.apex.order.integration.OrderGrpcLocalTest#legacyProfileHasNoGrpcEndpointOrReceiptMutation",
+        "com.apex.order.integration.OrderGrpcLocalTest#localQueryUsesOwningRepositoryAndIdempotencySpiFailsClosedOnConflicts",
+        "com.apex.order.integration.OrderOperationsIntegrationTest#transitionTimeChangesOnlyForCommittedNewStateAndTerminalOrdersDisappear",
+        "com.apex.order.integration.OrderOperationsIntegrationTest#localOutboxDiagnosticsNeverInventQuarantineOrChangeBusinessState",
+        "com.apex.order.integration.OrderOperationsIntegrationTest#authenticatedBoundedReadDistinguishesUnknownHistoryFromPotentialStall",
+        "com.apex.order.integration.OrderOperationsIntegrationTest#operatorProfileWithoutExplicitTokenFailsStartup",
+        "com.apex.order.integration.OrderOperationsIntegrationTest#operatorFeatureIsAbsentWithoutExplicitProfile",
+        "com.apex.order.integration.OrderReceiptVersionTest#retainedOperationCannotBeReusedByANewContractVersionOrPrincipal"
+      ]
+    },
+    "inventory-cell": {
+      "tests": 43,
+      "failures": 2,
+      "errors": 2,
+      "skipped": 0,
+      "failedCases": [
+        "com.apex.inventory.InventoryCellSmokeTest#bootsWithBothApexRolesButKeepsBaseListenerPaused",
+        "com.apex.inventory.OperationalRecoverySagaIT#packagedOperatorsRecoverEveryNewStreamWithoutTimingOutBusinessState",
+        "com.apex.inventory.OrderInventorySagaIT#twoPackagedProcessesReserveRejectDeduplicateRollbackRetryAndRecoverAfterRestart",
+        "com.apex.inventory.SagaPerformanceIT#measuresPackagedThreeCellLoadAndBoundedRestartRecovery"
+      ]
+    },
+    "payment-cell": {
+      "tests": 19,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": [
+        "com.apex.payment.PaymentIntegrationTest#approvalAndDeclineAreDurableBusinessDecisions",
+        "com.apex.payment.PaymentIntegrationTest#noPolicyRollsBackInboxClaimAndOutboxThenCanRetry",
+        "com.apex.payment.PaymentIntegrationTest#outsideSimulationProfileHasNoImplicitPolicy"
+      ]
+    },
+    "customer-cell": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "reporting-cell": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "sample-grpc-client": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-api-gateway": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failedCases": []
+    },
+    "apex-operations-console": {
+      "tests": 70,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "failedCases": []
+    }
+  },
+  "standaloneCommandResults": [
+    {
+      "module": "order-cell",
+      "exit": 1
+    },
+    {
+      "module": "inventory-cell",
+      "exit": 1
+    },
+    {
+      "module": "payment-cell",
+      "exit": 1
+    },
+    {
+      "module": "customer-cell",
+      "exit": 0
+    },
+    {
+      "module": "reporting-cell",
+      "exit": 1
+    },
+    {
+      "module": "sample-grpc-client",
+      "exit": 0
+    },
+    {
+      "module": "apex-api-gateway",
+      "exit": 0
+    },
+    {
+      "module": "apex-operations-console",
+      "exit": 0
+    },
+    {
+      "module": "reporting-cell",
+      "exit": 0,
+      "qualification": "out/m37/customer-reporting-isolated.log"
+    }
+  ]
+}

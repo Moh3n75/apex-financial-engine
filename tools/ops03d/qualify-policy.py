@@ -30,7 +30,7 @@ for n in (1, 5):
     locks = sum(b['lock_waits'] for b in after)
     checks.append(dict(window=n, metric='sampledUngrantedLocks', value=locks, limit=0, passed=locks == 0))
 
-cost_path = run / 'native-evidence/apex-operations-owner-jdbc-ops03d-native-cost.csv'
+cost_path = run / 'native-evidence/apex-sdk-operations-ops03d-native-cost.csv'
 cost = list(csv.DictReader(cost_path.open()))
 for row in cost:
     for p in ('95', '99'):

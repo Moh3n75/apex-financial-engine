@@ -67,7 +67,7 @@ try {
 }
 finally { Pop-Location }
 
-Invoke-Maven @('-pl','apex-starter-webmvc,apex-operations-console,apex-operations-owner-jdbc,apex-starter-observability,apex-starter-grpc-server,apex-starter-cell-messaging,apex-order-contracts','-am','install','-DskipTests') 'install-prereq.log'
+Invoke-Maven @('-pl','apex-sdk-webmvc,apex-operations-console,apex-sdk-operations,apex-sdk-observability,apex-sdk-grpc-server,apex-sdk-messaging,apex-order-contracts','-am','install','-DskipTests') 'install-prereq.log'
 # Identity is outside the aggregator reactor — install module + test-jar directly.
 Invoke-Maven @('-f','apex-identity-server/pom.xml','install','-DskipTests') 'identity-install.log'
 

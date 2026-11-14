@@ -7,8 +7,8 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$modules = @('apex-platform-core','apex-platform-events','apex-spring-boot-starter','apex-platform-grpc-api',
-    'apex-platform-messaging','apex-starter-webmvc','apex-starter-cell-messaging','order-cell')
+$modules = @('apex-sdk-api','apex-sdk-api','apex-sdk-spring-boot','apex-sdk-api',
+    'apex-sdk-messaging','apex-sdk-webmvc','apex-sdk-messaging','order-cell')
 function Get-SourceFingerprint {
     $paths = [System.Collections.Generic.List[string]]::new()
     $paths.Add('pom.xml')
@@ -51,7 +51,7 @@ Push-Location $repositoryRoot
 $failure = $null
 try {
     $before = Get-SourceFingerprint
-    $platform = 'apex-starter-webmvc,apex-starter-cell-messaging,apex-starter-grpc-server,apex-discovery-eureka,apex-operations-owner-jdbc,apex-starter-observability,apex-order-contracts'
+    $platform = 'apex-sdk-webmvc,apex-sdk-messaging,apex-sdk-grpc-server,apex-sdk-discovery-eureka,apex-sdk-operations,apex-sdk-observability,apex-order-contracts'
     if ((Invoke-ChaosMaven 'platform-build' @('-pl',$platform,'-am','clean','install','-DskipTests')) -ne 0) { throw 'Platform build failed' }
     foreach ($cell in @('order-cell','payment-cell','apex-replay-tool','inventory-cell')) {
         $skip = if($cell -eq 'inventory-cell'){'-DskipTests'}else{'-Dmaven.test.skip=true'}

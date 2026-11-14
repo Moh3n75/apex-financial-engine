@@ -4,7 +4,7 @@ Independent Reporting Cell (M22). Consumes `CUSTOMER_CREATED` v1 from Kafka via 
 
 ## M23 dependencies
 
-Reporting uses `apex-starter-cell-messaging` at the configured `apex.platform.version`.
+Reporting uses `apex-sdk-messaging` at the configured `apex.sdk.version`.
 Its existing Boot WebMVC dependency remains for reporting HTTP endpoints; the Messaging
 Starter supplies no WebMVC dependency or HTTP filter. JDBC, Flyway/PostgreSQL, validation
 and Actuator remain explicit application choices. No APEX infrastructure Beans are duplicated.

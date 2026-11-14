@@ -63,7 +63,7 @@ try {
 finally { Pop-Location }
 
 # Install reactor deps into local .m2 from the working tree (does not repackage locked Boot jars).
-Invoke-Maven @('-pl','apex-starter-webmvc,apex-operations-console,apex-operations-owner-jdbc,apex-starter-observability,apex-starter-grpc-server,apex-starter-cell-messaging,apex-order-contracts','-am','install','-DskipTests') 'install-prereq.log'
+Invoke-Maven @('-pl','apex-sdk-webmvc,apex-operations-console,apex-sdk-operations,apex-sdk-observability,apex-sdk-grpc-server,apex-sdk-messaging,apex-order-contracts','-am','install','-DskipTests') 'install-prereq.log'
 
 # Isolated worktree avoids renaming workspace order-cell/target/*.jar held by foreign JVMs.
 $wt = Join-Path $env:TEMP ("ops04b-wt-" + [guid]::NewGuid().ToString('N').Substring(0, 8))

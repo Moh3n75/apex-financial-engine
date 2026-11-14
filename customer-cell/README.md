@@ -4,8 +4,8 @@ Independent Customer Cell. M21 REST + M22 Outbox publication of `CUSTOMER_CREATE
 
 ## M23 dependencies
 
-Customer uses `apex-starter-webmvc` and `apex-starter-cell-messaging` at the configured
-`apex.platform.version`. The Starters expose the existing Core/Events APIs and runtime
+Customer uses `apex-sdk-webmvc` and `apex-sdk-messaging` at the configured
+`apex.sdk.version`. The Starters expose the existing Core/Events APIs and runtime
 auto-configurations transitively. No application-specific APEX infrastructure Beans are needed.
 JDBC, Flyway/PostgreSQL, validation and Actuator remain explicit application persistence/API choices.
 

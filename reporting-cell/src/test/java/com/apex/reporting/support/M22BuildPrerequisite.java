@@ -14,9 +14,9 @@ import java.util.Properties;
 /** Content-based build receipt, written only by the ordered clean-build script. */
 public final class M22BuildPrerequisite {
     private static final List<String> MODULES = List.of(
-            "apex-platform-core", "apex-platform-events", "apex-spring-boot-starter", "apex-platform-grpc-api",
-             "apex-platform-messaging", "apex-starter-webmvc",
-            "apex-starter-cell-messaging", "customer-cell");
+            "apex-sdk-api", "apex-sdk-api", "apex-sdk-spring-boot", "apex-sdk-api",
+             "apex-sdk-messaging", "apex-sdk-webmvc",
+            "apex-sdk-messaging", "customer-cell");
 
     private M22BuildPrerequisite() {}
 
@@ -43,10 +43,10 @@ public final class M22BuildPrerequisite {
                 com.apex.platform.context.autoconfigure.ApexExecutionContextAutoConfiguration.class,
                 com.apex.platform.messaging.outbox.OutboxAppender.class)) {
             Path loaded = Path.of(type.getProtectionDomain().getCodeSource().getLocation().toURI());
-            String module = type.getPackageName().startsWith("com.apex.platform.core") ? "apex-platform-core"
-                    : type.getPackageName().startsWith("com.apex.platform.events") ? "apex-platform-events"
-                    : type.getPackageName().startsWith("com.apex.platform.context") ? "apex-spring-boot-starter"
-                    : "apex-platform-messaging";
+            String module = type.getPackageName().startsWith("com.apex.platform.core") ? "apex-sdk-api"
+                    : type.getPackageName().startsWith("com.apex.platform.events") ? "apex-sdk-api"
+                    : type.getPackageName().startsWith("com.apex.platform.context") ? "apex-sdk-spring-boot"
+                    : "apex-sdk-messaging";
             require(Files.isRegularFile(loaded) && sha256(loaded).equals(evidence.getProperty(module + ".sha256")),
                     "Reporting loaded a different Platform artifact: " + module);
         }

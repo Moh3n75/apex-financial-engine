@@ -13,7 +13,7 @@ function Invoke-ContractMaven([string[]]$MavenArgs) {
 }
 Push-Location $taskRoot
 try {
-  Invoke-ContractMaven -MavenArgs @('-q','-pl','apex-platform-contract-discovery,apex-starter-grpc-server,apex-starter-cell-messaging,apex-operations-owner-jdbc','-am','install','-DskipTests')
+  Invoke-ContractMaven -MavenArgs @('-q','-pl','apex-sdk-operations,apex-sdk-grpc-server,apex-sdk-messaging,apex-sdk-operations','-am','install','-DskipTests')
   foreach ($taskCell in @('order-cell','inventory-cell','payment-cell','customer-cell','reporting-cell')) {
     $taskPom = Join-Path $taskRoot "$taskCell/pom.xml"
     if ($taskCell -eq 'order-cell') {
@@ -30,6 +30,6 @@ try {
     }
     Copy-Item -LiteralPath (Join-Path $taskRoot "$taskCell/target/contract-manifest.json") -Destination (Join-Path $taskRoot "apex-operations-console/src/test/resources/contracts/$taskCell.json")
   }
-  Invoke-ContractMaven -MavenArgs @('-q','-pl','apex-platform-contract-discovery,apex-operations-console','-am','test','-Dtest=ContractDiscoveryProviderTest,ContractTopologyTest,RepositoryTopologyIntegrationTest,TopologyApiTest,OpsM36aHttpSecurityIT','-Dsurefire.failIfNoSpecifiedTests=false','-Dapex.verifyRepositoryManifests=true')
+  Invoke-ContractMaven -MavenArgs @('-q','-pl','apex-sdk-operations,apex-operations-console','-am','test','-Dtest=ContractDiscoveryProviderTest,ContractTopologyTest,RepositoryTopologyIntegrationTest,TopologyApiTest,OpsM36aHttpSecurityIT','-Dsurefire.failIfNoSpecifiedTests=false','-Dapex.verifyRepositoryManifests=true')
   Copy-Item -LiteralPath (Join-Path $taskRoot 'apex-operations-console/target/repository-topology-example.json') -Destination (Join-Path $taskRoot 'docs/examples/control-center-topology-v2.json')
 } finally { Pop-Location }

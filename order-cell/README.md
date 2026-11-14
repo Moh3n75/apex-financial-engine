@@ -17,7 +17,7 @@ There is no new handler API, CommandBus, routing abstraction or application-spec
 From the repository root, with Java 21 and Maven available:
 
 ```powershell
-mvn -B -ntp -pl apex-starter-webmvc,apex-starter-cell-messaging -am install
+mvn -B -ntp -pl apex-sdk-webmvc,apex-sdk-messaging -am install
 mvn -B -ntp -f order-cell/pom.xml clean verify
 # Add -o to each Maven command when dependencies are already cached.
 ```
@@ -134,6 +134,6 @@ with at least the source partition count before startup. Unsupported/malformed r
 exhausted business failures are quarantined with the original key/raw value; source offsets
 commit only after broker-confirmed DLT publication. Unavailable DLT blocks recovery. Legacy
 mode without the reliability flag retains the pre-existing risks. See
-[Platform reliability configuration](../apex-platform-messaging/README.md) for retry knobs,
+[Platform reliability configuration](../apex-sdk-messaging/README.md) for retry knobs,
 ACL/retention requirements, duplicate-DLT boundaries and explicit M26.9 operator replay.
 There is no automatic replay or exactly-once Kafka claim; Inbox/business idempotency remains required.

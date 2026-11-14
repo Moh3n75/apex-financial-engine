@@ -20,8 +20,8 @@ try{
         packaged='M30 unchanged default traffic and durability assertions; three owner DBs; four modes disabled/healthy/failing/disabled';startedUtc=[DateTimeOffset]::UtcNow.ToString('o')}|
         ConvertTo-Json -Depth 4|Set-Content (Join-Path $evidence 'predeclared-experiment.json')
     if($Phase -in @('Foundation','Full')){
-        Maven @('-pl','apex-starter-observability,apex-platform-messaging,apex-platform-grpc','-am','clean','install') 'foundation.log'
-        Copy-Item apex-starter-observability/target/ops02-admission.csv (Join-Path $evidence 'admission.csv')
+        Maven @('-pl','apex-sdk-observability,apex-sdk-messaging,apex-sdk-grpc','-am','clean','install') 'foundation.log'
+        Copy-Item apex-sdk-observability/target/ops02-admission.csv (Join-Path $evidence 'admission.csv')
     }
     if($Phase -in @('PackagedMeasurements','Full')){
         # Only this wrapper selects the disposable test-JAR profile. No default deployment changes.
@@ -51,7 +51,7 @@ try{
         & powershell.exe @arguments *> (Join-Path $evidence 'full-regression.log')
         $code=$LASTEXITCODE;$ErrorActionPreference='Stop'
         if($code -ne 0){throw 'Full supported product regression failed.'}
-        Copy-Item apex-starter-observability/target/ops02-admission.csv (Join-Path $evidence 'admission-final.csv')
+        Copy-Item apex-sdk-observability/target/ops02-admission.csv (Join-Path $evidence 'admission-final.csv')
     }
     [ordered]@{phase=$Phase;exit=0;finishedUtc=[DateTimeOffset]::UtcNow.ToString('o')}|ConvertTo-Json|Set-Content (Join-Path $evidence 'result.json')
     Write-Host "OPS-02 $Phase completed: $evidence"

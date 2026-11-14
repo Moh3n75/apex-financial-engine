@@ -5,9 +5,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$modules = @('apex-platform-core', 'apex-platform-events', 'apex-spring-boot-starter', 'apex-platform-grpc-api',
-     'apex-platform-messaging', 'apex-starter-webmvc',
-    'apex-starter-cell-messaging', 'order-cell')
+$modules = @('apex-sdk-api', 'apex-sdk-api', 'apex-sdk-spring-boot', 'apex-sdk-api',
+     'apex-sdk-messaging', 'apex-sdk-webmvc',
+    'apex-sdk-messaging', 'order-cell')
 
 function Get-SourceFingerprint {
     $paths = [System.Collections.Generic.List[string]]::new()
@@ -45,7 +45,7 @@ Push-Location $repositoryRoot
 try {
     New-Item -ItemType Directory -Path out -Force | Out-Null
     $before = Get-SourceFingerprint
-    Invoke-Maven @('-pl', 'apex-starter-webmvc,apex-starter-cell-messaging', '-am', 'clean', 'install')
+    Invoke-Maven @('-pl', 'apex-sdk-webmvc,apex-sdk-messaging', '-am', 'clean', 'install')
     Invoke-Maven @('-f', 'order-cell/pom.xml', 'clean', 'verify')
     if ((Get-SourceFingerprint) -ne $before) { throw 'Order/Platform source changed during build' }
     $receipt = @('schemaVersion=1', "sourceSha256=$before")

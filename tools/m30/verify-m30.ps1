@@ -17,7 +17,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "M30 Maven failed (exit $LASTEXITCODE)" }
     }
     if ($Phase -in @('All','Financial')) {
-        Invoke-M30Maven @('-pl','apex-starter-webmvc,apex-starter-cell-messaging','-am','clean','install')
+        Invoke-M30Maven @('-pl','apex-sdk-webmvc,apex-sdk-messaging','-am','clean','install')
         $resolvedMaven = (Get-Command $MavenCommand -ErrorAction Stop).Source
         # The test owns native PostgreSQL, applies Financial V1..V16, and launches
         # bounded nested reactor test-compile/focused tests with only its DB URL.

@@ -5,7 +5,7 @@ and publishes `PAYMENT_AUTHORIZED` or `PAYMENT_DECLINED` V1. Each payload is
 `{"orderId":"<uuid>"}`. There is no HTTP endpoint, money amount, pricing, currency,
 charge, PSP call, capture, settlement, transfer, ledger posting or refund.
 
-Its only APEX dependency is `apex-starter-cell-messaging:1.0-SNAPSHOT`. JDBC, Kafka,
+Its only APEX dependency is `apex-sdk-messaging:1.0-SNAPSHOT`. JDBC, Kafka,
 Context, Core and Events arrive transitively. Flyway and its PostgreSQL support are
 application dependencies; embedded Kafka/PostgreSQL are test dependencies only.
 It is outside the root Maven reactor and builds an executable `target/payment-cell.jar`.
