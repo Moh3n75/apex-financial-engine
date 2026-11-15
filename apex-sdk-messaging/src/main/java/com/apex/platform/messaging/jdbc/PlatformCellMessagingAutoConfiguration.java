@@ -36,6 +36,18 @@ import java.util.UUID;
 )
 public class PlatformCellMessagingAutoConfiguration {
     @Bean
+    static org.springframework.beans.factory.config.BeanFactoryPostProcessor apexMessagingPolicyPreflight(
+            org.springframework.core.env.Environment environment) {
+        return beans -> {
+            if (environment.getProperty("apex.messaging.outbox.publisher.enabled", Boolean.class, true)
+                    && environment.getProperty("apex.messaging.outbox.publisher.interval-ms", Long.class, 1000L) < 1)
+                throw new IllegalArgumentException("apex.messaging.outbox.publisher.interval-ms must be positive");
+            if (environment.getProperty("apex.messaging.consumer.enabled", Boolean.class, false)
+                    && environment.getProperty("apex.messaging.consumer.concurrency", Integer.class, 1) < 1)
+                throw new IllegalArgumentException("apex.messaging.consumer.concurrency must be positive");
+        };
+    }
+    @Bean
     com.apex.platform.messaging.observation.MessagingObservation apexMessagingObservation(
             org.springframework.beans.factory.ObjectProvider<io.micrometer.observation.ObservationRegistry> registries,
             org.springframework.core.env.Environment environment) {

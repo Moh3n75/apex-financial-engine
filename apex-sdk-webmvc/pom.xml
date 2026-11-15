@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-sdk-spring-boot</artifactId>
-            <version>${project.version}</version>
+
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -29,4 +29,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-</project>
+<build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><annotationProcessorPaths><path><groupId>org.springframework.boot</groupId><artifactId>spring-boot-configuration-processor</artifactId><version>${apex.spring-boot.version}</version></path></annotationProcessorPaths></configuration></plugin></plugins></build></project>

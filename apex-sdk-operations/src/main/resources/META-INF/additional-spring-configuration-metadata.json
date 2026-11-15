@@ -1,0 +1,34 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.contract-discovery.instance",
+                           "type":  "java.lang.String",
+                           "description":  "Instance label; explicit value required for membership.",
+                           "defaultValue":  "unknown"
+                       },
+                       {
+                           "name":  "apex.contract-discovery.cluster",
+                           "type":  "java.lang.String",
+                           "description":  "Declared cluster label; no inferred authoritative cluster membership.",
+                           "defaultValue":  "unknown"
+                       },
+                       {
+                           "name":  "apex.contract-discovery.environment",
+                           "type":  "java.lang.String",
+                           "description":  "Environment label; explicit value required for membership/local HTTP.",
+                           "defaultValue":  "unknown"
+                       },
+                       {
+                           "name":  "apex.contract-discovery.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Effective declarations only; currently requires both messaging and RPC classes. No traffic/commit proof.",
+                           "defaultValue":  false
+                       },
+                       {
+                           "name":  "apex.contract-discovery.local-http.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Also requires local-ops profile, explicit loopback bind and local/local-dev environment.",
+                           "defaultValue":  false
+                       }
+                   ]
+}

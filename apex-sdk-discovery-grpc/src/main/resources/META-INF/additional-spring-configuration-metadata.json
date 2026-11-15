@@ -1,0 +1,10 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.discovery.grpc.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Select bridge only with installed directory and enabled gRPC client.",
+                           "defaultValue":  true
+                       }
+                   ]
+}

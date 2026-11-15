@@ -1,0 +1,1 @@
+{"schemaVersion":1,"environment":"test","service":"fixture","cell":"fixture","instance":"one","epoch":"00000000-0000-0000-0000-000000000001","collectedAt":"2026-01-02T03:04:05Z","sourceMode":"FIXTURE","cluster":"unknown","publications":[],"subscriptions":[],"consumerGroup":"","eventHandlers":[],"grpcHandlers":[],"gaps":[]}

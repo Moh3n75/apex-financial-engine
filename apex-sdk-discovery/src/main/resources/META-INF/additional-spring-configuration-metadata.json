@@ -1,0 +1,28 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.discovery.authority",
+                           "type":  "java.lang.String",
+                           "description":  "Eureka defaults to logical cell when registering; trusted TLS authority remains local policy."
+                       },
+                       {
+                           "name":  "apex.discovery.targets",
+                           "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.discovery.DiscoveryProperties$Target\u003e",
+                           "description":  "At most 32 canonical lowercase service names with pinned TLS authorities.",
+                           "defaultValue":  {
+
+                                            }
+                       },
+                       {
+                           "name":  "apex.discovery.refresh-interval",
+                           "type":  "java.time.Duration",
+                           "description":  "250ms..30s. Provider none/eureka/kubernetes selected explicitly.",
+                           "defaultValue":  "1s"
+                       },
+                       {
+                           "name":  "apex.discovery.instance-id",
+                           "type":  "java.lang.String",
+                           "description":  "Eureka defaults to generated replica UUID if absent when registering."
+                       }
+                   ]
+}

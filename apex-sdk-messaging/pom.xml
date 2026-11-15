@@ -14,13 +14,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apex-sdk-api</artifactId>
-            <version>${project.version}</version>
+
         </dependency>
 
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-sdk-spring-boot</artifactId>
-            <version>${project.version}</version>
+
         </dependency>
 
         <dependency>
@@ -28,7 +28,7 @@
             <artifactId>spring-boot-starter-kafka</artifactId>
         </dependency>
 
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -50,7 +50,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        
+
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
@@ -69,4 +69,4 @@
         </dependency>
     </dependencies>
 
-</project>
+<build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><annotationProcessorPaths><path><groupId>org.springframework.boot</groupId><artifactId>spring-boot-configuration-processor</artifactId><version>${apex.spring-boot.version}</version></path></annotationProcessorPaths></configuration></plugin></plugins></build></project>

@@ -11,7 +11,7 @@
         <dependency>
             <groupId>com.apex</groupId>
             <artifactId>apex-sdk-grpc</artifactId>
-            <version>${project.version}</version>
+
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

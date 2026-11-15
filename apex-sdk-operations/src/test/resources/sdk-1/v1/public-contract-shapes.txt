@@ -1,0 +1,381 @@
+com.apex.operations.contracts.ContractDiscoveryQuery
+annotation com.apex.platform.grpc.api.CellQuery response=com.apex.operations.contracts.ContractManifest type=OPS_CONTRACT_DISCOVERY version=1
+com.apex.operations.contracts.ContractDiscoveryQueryV2
+annotation com.apex.platform.grpc.api.CellQuery response=com.apex.operations.contracts.ContractManifest type=OPS_CONTRACT_DISCOVERY version=2
+com.apex.operations.contracts.ContractManifest
+component schemaVersion int
+component environment java.lang.String
+component service java.lang.String
+component cell java.lang.String
+component instance java.lang.String
+component epoch java.util.UUID
+component collectedAt java.time.Instant
+component sourceMode java.lang.String
+component cluster java.lang.String
+component publications java.util.List<com.apex.operations.contracts.ContractManifest$Publication>
+component subscriptions java.util.List<java.lang.String>
+component consumerGroup java.lang.String
+component eventHandlers java.util.List<com.apex.operations.contracts.ContractManifest$Contract>
+component grpcHandlers java.util.List<com.apex.operations.contracts.ContractManifest$Rpc>
+component gaps java.util.List<java.lang.String>
+component grpcDependencies java.util.List<com.apex.operations.contracts.ContractManifest$GrpcDependency>
+annotation com.fasterxml.jackson.annotation.JsonInclude content=ALWAYS contentFilter=java.lang.Void value=NON_EMPTY valueFilter=java.lang.Void
+annotation com.fasterxml.jackson.annotation.JsonInclude content=ALWAYS contentFilter=java.lang.Void value=NON_EMPTY valueFilter=java.lang.Void
+com.apex.operations.contracts.ContractManifest$Contract
+component type java.lang.String
+component version int
+com.apex.operations.contracts.ContractManifest$GrpcDependency
+component kind java.lang.String
+component contract com.apex.operations.contracts.ContractManifest$Contract
+component target java.lang.String
+component discoveryTarget java.lang.String
+component behavior java.lang.String
+component availability java.lang.String
+com.apex.operations.contracts.ContractManifest$Publication
+component contract com.apex.operations.contracts.ContractManifest$Contract
+component topic java.lang.String
+component provenance java.lang.String
+com.apex.operations.contracts.ContractManifest$Rpc
+component kind java.lang.String
+component contract com.apex.operations.contracts.ContractManifest$Contract
+com.apex.operations.contracts.EvidenceQuery
+annotation com.apex.platform.grpc.api.CellQuery response=com.apex.operations.contracts.OwnerSnapshot type=OPS_OWNER_SNAPSHOT version=1
+component events java.util.List<java.util.UUID>
+component workflows java.util.List<java.util.UUID>
+com.apex.operations.contracts.OwnerRecentSearch$Certainty
+enum [VERIFIED_WITHIN_SCOPE, UNKNOWN]
+com.apex.operations.contracts.OwnerRecentSearch$Evidence
+enum [OWNER_COMMITTED_ROW]
+com.apex.operations.contracts.OwnerRecentSearch$Gap
+enum [PARTIAL_CURRENT_STATE, RETENTION_UNQUALIFIED, RECONCILE_FROM_START, CANDIDATE_PAGE_LIMIT, WALK_LIMIT, CLOCK_UNCERTAIN, INDEXED_RECENT_RANGE, STATE_POST_FILTERED, LATE_COMMIT_GAP, RESTART_WALK_REQUIRED]
+com.apex.operations.contracts.OwnerRecentSearch$Item
+component ref java.util.UUID
+component state java.lang.String
+component sourceAssignedAt java.time.Instant
+component evidenceKey java.lang.String
+component evidenceClass com.apex.operations.contracts.OwnerRecentSearch$Evidence
+component certainty com.apex.operations.contracts.OwnerRecentSearch$Certainty
+com.apex.operations.contracts.OwnerRecentSearch$Kind
+enum [OUTBOX_EVENT, KNOWN_GROUP_INBOX, REQUEST_RECEIPT, WORKFLOW]
+com.apex.operations.contracts.OwnerRecentSearch$Page
+component schemaVersion int
+component environment java.lang.String
+component owner java.lang.String
+component instance java.lang.String
+component epoch java.util.UUID
+component kind com.apex.operations.contracts.OwnerRecentSearch$Kind
+component scope java.lang.String
+component fromInclusive java.time.Instant
+component toExclusive java.time.Instant
+component scanStartedAt java.time.Instant
+component scanCompletedAt java.time.Instant
+component asOf java.time.Instant
+component maxAgeMillis long
+component candidatesExamined int
+component coverage java.util.List<com.apex.operations.contracts.OwnerRecentSearch$Gap>
+component items java.util.List<com.apex.operations.contracts.OwnerRecentSearch$Item>
+component nextCursor java.lang.String
+component relation java.lang.String
+com.apex.operations.contracts.OwnerRecentSearch$Query
+annotation com.apex.platform.grpc.api.CellQuery response=com.apex.operations.contracts.OwnerRecentSearch$Page type=OPS_OWNER_RECENT_SEARCH version=1
+component environment java.lang.String
+component owner java.lang.String
+component kind com.apex.operations.contracts.OwnerRecentSearch$Kind
+component scope java.lang.String
+component fromInclusive java.time.Instant
+component toExclusive java.time.Instant
+component state java.lang.String
+component limit int
+component cursor java.lang.String
+com.apex.operations.contracts.OwnerSearch$Certainty
+enum [VERIFIED_WITHIN_SCOPE, UNKNOWN]
+com.apex.operations.contracts.OwnerSearch$Evidence
+enum [OWNER_COMMITTED_ROW]
+com.apex.operations.contracts.OwnerSearch$Gap
+enum [PARTIAL_CURRENT_STATE, RETENTION_UNQUALIFIED, RECONCILE_FROM_START, CANDIDATE_PAGE_LIMIT, WALK_LIMIT, CLOCK_UNCERTAIN]
+com.apex.operations.contracts.OwnerSearch$Item
+component ref java.util.UUID
+component state java.lang.String
+component sourceAssignedAt java.time.Instant
+component evidenceKey java.lang.String
+component evidenceClass com.apex.operations.contracts.OwnerSearch$Evidence
+component certainty com.apex.operations.contracts.OwnerSearch$Certainty
+com.apex.operations.contracts.OwnerSearch$Kind
+enum [OUTBOX_EVENT, KNOWN_GROUP_INBOX, REQUEST_RECEIPT, WORKFLOW]
+com.apex.operations.contracts.OwnerSearch$Page
+component schemaVersion int
+component environment java.lang.String
+component owner java.lang.String
+component instance java.lang.String
+component epoch java.util.UUID
+component kind com.apex.operations.contracts.OwnerSearch$Kind
+component scope java.lang.String
+component fromInclusive java.time.Instant
+component toExclusive java.time.Instant
+component scanStartedAt java.time.Instant
+component scanCompletedAt java.time.Instant
+component asOf java.time.Instant
+component maxAgeMillis long
+component candidatesExamined int
+component coverage java.util.List<com.apex.operations.contracts.OwnerSearch$Gap>
+component items java.util.List<com.apex.operations.contracts.OwnerSearch$Item>
+component nextCursor java.lang.String
+component relation java.lang.String
+com.apex.operations.contracts.OwnerSearch$Query
+annotation com.apex.platform.grpc.api.CellQuery response=com.apex.operations.contracts.OwnerSearch$Page type=OPS_OWNER_SEARCH version=1
+component environment java.lang.String
+component owner java.lang.String
+component kind com.apex.operations.contracts.OwnerSearch$Kind
+component scope java.lang.String
+component fromInclusive java.time.Instant
+component toExclusive java.time.Instant
+component state java.lang.String
+component limit int
+component cursor java.lang.String
+com.apex.operations.contracts.OwnerSnapshot
+component schemaVersion int
+component environment java.lang.String
+component owner java.lang.String
+component instance java.lang.String
+component epoch java.util.UUID
+component observedAt java.time.Instant
+component maxAgeMillis long
+component coverage java.lang.String
+component facts java.util.List<com.apex.operations.contracts.OwnerSnapshot$Fact>
+component attempts java.util.List<com.apex.operations.contracts.OwnerSnapshot$Attempt>
+component activeAvailable boolean
+component expiredAttempts long
+component rejectedAttempts long
+com.apex.operations.contracts.OwnerSnapshot$Attempt
+component operationId java.util.UUID
+component epoch java.util.UUID
+component stage java.lang.String
+component elapsedNanos long
+com.apex.operations.contracts.OwnerSnapshot$Certainty
+enum [VERIFIED_WITHIN_SCOPE, OBSERVED_ONLY, UNKNOWN]
+com.apex.operations.contracts.OwnerSnapshot$EvidenceClass
+enum [OWNER_COMMITTED_ROW, ATTEMPT_OBSERVATION]
+com.apex.operations.contracts.OwnerSnapshot$Fact
+component kind com.apex.operations.contracts.OwnerSnapshot$Kind
+component ref java.util.UUID
+component scope java.lang.String
+component state java.lang.String
+component evidenceClass com.apex.operations.contracts.OwnerSnapshot$EvidenceClass
+component certainty com.apex.operations.contracts.OwnerSnapshot$Certainty
+component sourceAssignedAt java.time.Instant
+component factKey java.lang.String
+com.apex.operations.contracts.OwnerSnapshot$Kind
+enum [OUTBOX, INBOX, WORKFLOW, RECEIPT, HEALTH]
+com.apex.operations.contracts.TopologySnapshot
+component schemaVersion int
+component asOf java.time.Instant
+component coverage java.lang.String
+component capabilities com.apex.operations.contracts.TopologySnapshot$Capabilities
+component nodes java.util.List<com.apex.operations.contracts.TopologySnapshot$Node>
+component connections java.util.List<com.apex.operations.contracts.TopologySnapshot$Connection>
+component providers java.util.List<com.apex.operations.contracts.TopologySnapshot$Provider>
+component unresolved java.util.List<com.apex.operations.contracts.TopologySnapshot$Unresolved>
+component descriptors java.util.List<com.apex.operations.contracts.TopologySnapshot$Descriptor>
+component memberships java.util.List<com.apex.operations.contracts.TopologySnapshot$RuntimeMember>
+com.apex.operations.contracts.TopologySnapshot$Capabilities
+component declared java.lang.String
+component instances java.lang.String
+component observedInteractions java.lang.String
+component messaging java.lang.String
+component traces java.lang.String
+component runtimeHealth java.lang.String
+com.apex.operations.contracts.TopologySnapshot$Communication
+component http com.apex.operations.contracts.TopologySnapshot$HttpRoute
+component kafka java.util.List<com.apex.operations.contracts.TopologySnapshot$KafkaMatch>
+component grpc com.apex.operations.contracts.TopologySnapshot$GrpcCall
+com.apex.operations.contracts.TopologySnapshot$Connection
+component id java.lang.String
+component source java.lang.String
+component target java.lang.String
+component environment java.lang.String
+component protocol java.lang.String
+component scope java.lang.String
+component contract java.lang.String
+component health java.lang.String
+component lastSeen java.time.Instant
+component evidence java.util.List<com.apex.operations.contracts.TopologySnapshot$Evidence>
+component details com.apex.operations.contracts.TopologySnapshot$Communication
+com.apex.operations.contracts.TopologySnapshot$Descriptor
+component serviceId java.lang.String
+component protocol java.lang.String
+component kind java.lang.String
+component contract java.lang.String
+component evidence java.util.List<com.apex.operations.contracts.TopologySnapshot$Evidence>
+com.apex.operations.contracts.TopologySnapshot$Evidence
+component kind java.lang.String
+component source java.lang.String
+component reference java.lang.String
+component collectedAt java.time.Instant
+component lastSeen java.time.Instant
+component scope java.lang.String
+com.apex.operations.contracts.TopologySnapshot$EvidenceKind
+enum [DECLARED, OBSERVED]
+com.apex.operations.contracts.TopologySnapshot$GrpcCall
+component kind java.lang.String
+component callerServiceId java.lang.String
+component targetServiceId java.lang.String
+component discoveryTarget java.lang.String
+component behavior java.lang.String
+component availability java.lang.String
+com.apex.operations.contracts.TopologySnapshot$HttpRoute
+component routeId java.lang.String
+component destinationService java.lang.String
+component predicates java.util.List<java.lang.String>
+component filters java.util.List<java.lang.String>
+com.apex.operations.contracts.TopologySnapshot$KafkaMatch
+component cluster java.lang.String
+component eventType java.lang.String
+component eventVersion int
+component publisherServiceId java.lang.String
+component topicId java.lang.String
+component consumerGroupId java.lang.String
+component consumerServiceId java.lang.String
+component handlerContract java.lang.String
+component matchStatus java.lang.String
+com.apex.operations.contracts.TopologySnapshot$Node
+component id java.lang.String
+component kind java.lang.String
+component name java.lang.String
+component environment java.lang.String
+component serviceId java.lang.String
+component instanceId java.lang.String
+component epoch java.util.UUID
+component scope java.lang.String
+component health java.lang.String
+component freshness java.lang.String
+component uncertainty java.lang.String
+component lastSeen java.time.Instant
+component evidence java.util.List<com.apex.operations.contracts.TopologySnapshot$Evidence>
+com.apex.operations.contracts.TopologySnapshot$NodeKind
+enum [CELL, SERVICE, INSTANCE, KAFKA_TOPIC, CONSUMER_GROUP]
+com.apex.operations.contracts.TopologySnapshot$Protocol
+enum [HTTP, GRPC, KAFKA]
+com.apex.operations.contracts.TopologySnapshot$Provider
+component name java.lang.String
+component status java.lang.String
+component coverage java.lang.String
+component sourceMode java.lang.String
+component collectedAt java.time.Instant
+com.apex.operations.contracts.TopologySnapshot$RuntimeMember
+component id java.lang.String
+component environment java.lang.String
+component cell java.lang.String
+component service java.lang.String
+component instanceId java.lang.String
+component epoch java.util.UUID
+component registryId java.lang.String
+component registryIdentity java.lang.String
+component discoverySource java.lang.String
+component lastSeen java.time.Instant
+component freshness java.lang.String
+component membershipState java.lang.String
+component coverage java.lang.String
+component transportStatus java.lang.String
+com.apex.operations.contracts.TopologySnapshot$Unresolved
+component serviceId java.lang.String
+component contract java.lang.String
+component reason java.lang.String
+com.apex.platform.core.context.ExecutionContext
+component correlationId java.util.UUID
+component causationId java.util.UUID
+component sourceService java.lang.String
+component cellId java.lang.String
+com.apex.platform.events.EventEnvelope
+component metadata com.apex.platform.events.EventMetadata
+component payload T
+com.apex.platform.events.EventMetadata
+component eventId java.util.UUID
+component eventType java.lang.String
+component eventVersion int
+component correlationId java.util.UUID
+component causationId java.util.UUID
+component aggregateId java.lang.String
+component aggregateType java.lang.String
+component sourceService java.lang.String
+component cellId java.lang.String
+component occurredAt java.time.Instant
+com.apex.platform.events.api.EventContract
+component eventType java.lang.String
+component eventVersion int
+component aggregateType java.lang.String
+component payloadType java.lang.Class<T>
+component schemaId java.lang.String
+com.apex.platform.events.saga.SagaTimeoutDetectedEvent
+component eventId java.util.UUID
+component sagaId java.util.UUID
+component sagaType java.lang.String
+component correlationId java.util.UUID
+component occurredAt java.time.Instant
+component reason java.lang.String
+com.apex.platform.grpc.api.CellQuery
+annotation java.lang.annotation.Retention value=RUNTIME
+annotation java.lang.annotation.Target value=[TYPE]
+default response=<required>
+default type=<required>
+default version=<required>
+com.apex.platform.grpc.api.CellQueryHandler
+annotation java.lang.annotation.Retention value=RUNTIME
+annotation java.lang.annotation.Target value=[METHOD]
+default type=<required>
+default version=<required>
+com.apex.platform.grpc.api.CellRequest
+annotation java.lang.annotation.Retention value=RUNTIME
+annotation java.lang.annotation.Target value=[TYPE]
+default response=<required>
+default type=<required>
+default version=<required>
+com.apex.platform.grpc.api.CellRequestHandler
+annotation java.lang.annotation.Retention value=RUNTIME
+annotation java.lang.annotation.Target value=[METHOD]
+default type=<required>
+default version=<required>
+com.apex.platform.grpc.api.CollectionOptions
+component expectedResponders java.util.List<java.lang.String>
+component totalDeadline java.time.Duration
+component allowPartial boolean
+com.apex.platform.grpc.api.CollectionResult
+component responders java.util.List<com.apex.platform.grpc.api.ResponderResult<T>>
+com.apex.platform.grpc.api.GatewayException$Code
+enum [INVALID_ARGUMENT, UNIMPLEMENTED, ALREADY_EXISTS, NOT_FOUND, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, DEADLINE_EXCEEDED, CANCELLED, FAILED_PRECONDITION, RESOURCE_EXHAUSTED, INTERNAL]
+com.apex.platform.grpc.api.GrpcCallerDeclarations
+component dependencies java.util.List<com.apex.platform.grpc.api.GrpcCallerDeclarations$Dependency>
+com.apex.platform.grpc.api.GrpcCallerDeclarations$Dependency
+component destination java.lang.String
+component contract java.lang.Class<?>
+component behavior java.lang.String
+com.apex.platform.grpc.api.GrpcServerEndpoint
+component cellId java.lang.String
+component port int
+com.apex.platform.grpc.api.QueryOptions
+component requestId java.util.UUID
+component deadline java.time.Duration
+com.apex.platform.grpc.api.RequestContext
+component requestId java.util.UUID
+component idempotencyKey java.lang.String
+component type java.lang.String
+component version int
+component correlationId java.util.UUID
+component causationId java.util.UUID
+component originCell java.lang.String
+component targetCell java.lang.String
+component tenant java.lang.String
+component principal java.lang.String
+component deadline java.time.Instant
+com.apex.platform.grpc.api.RequestOptions
+component requestId java.util.UUID
+component idempotencyKey java.lang.String
+component deadline java.time.Duration
+com.apex.platform.grpc.api.ResponderResult
+component responder java.lang.String
+component invocationId java.util.UUID
+component status com.apex.platform.grpc.api.ResponderResult$Status
+component response T
+component errorCode com.apex.platform.grpc.api.GatewayException$Code
+component answerUnknown boolean
+com.apex.platform.grpc.api.ResponderResult$Status
+enum [SUCCESS, NOT_FOUND, FAILED, TIMED_OUT, UNAVAILABLE, CANCELLED]

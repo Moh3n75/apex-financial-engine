@@ -5,11 +5,11 @@
   <artifactId>apex-sdk-observability</artifactId>
   <description>Optional bounded operational diagnostics; no Console or network exporter by default.</description>
   <dependencies>
-    <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-spring-boot</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-spring-boot</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-micrometer-metrics</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
   </dependencies>
-  <build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>
+  <build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><annotationProcessorPaths><path><groupId>org.springframework.boot</groupId><artifactId>spring-boot-configuration-processor</artifactId><version>${apex.spring-boot.version}</version></path></annotationProcessorPaths></configuration></plugin><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>
     <executions><execution><id>isolated-acceptance-fixture</id><goals><goal>test-jar</goal></goals></execution></executions>
   </plugin></plugins></build>
 </project>

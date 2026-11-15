@@ -1,0 +1,60 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.messaging.consumer.concurrency",
+                           "type":  "java.lang.Integer",
+                           "description":  "Positive listener concurrency when consumer selected.",
+                           "defaultValue":  1
+                       },
+                       {
+                           "name":  "apex.messaging.consumer.topics",
+                           "type":  "java.lang.String",
+                           "description":  "Comma-delimited distinct exact Kafka names; required for selected consumer. No wildcard/regex."
+                       },
+                       {
+                           "name":  "apex.messaging.publisher.routing.required-contracts",
+                           "type":  "java.util.List\u003cjava.lang.String\u003e",
+                           "description":  "Contract keys required to appear in explicit route list.",
+                           "defaultValue":  [
+
+                                            ]
+                       },
+                       {
+                           "name":  "apex.messaging.publisher.routing.routes",
+                           "type":  "java.util.List\u003ccom.apex.platform.messaging.jdbc.PublisherRouting$Route\u003e",
+                           "description":  "Explicit event-type/event-version/topic route list; required when routing selected.",
+                           "defaultValue":  [
+
+                                            ]
+                       },
+                       {
+                           "name":  "apex.messaging.consumer.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Select annotated consumer and Inbox. Requires topics and native Kafka group-id.",
+                           "defaultValue":  false
+                       },
+                       {
+                           "name":  "apex.messaging.outbox.publisher.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Publisher selected only inside enabled messaging. Requires publisher.topic.",
+                           "defaultValue":  true
+                       },
+                       {
+                           "name":  "apex.messaging.cell.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Select JDBC/Kafka messaging; owner provides datasource, serializers and migrations under db/platform.",
+                           "defaultValue":  false
+                       },
+                       {
+                           "name":  "apex.messaging.publisher.topic",
+                           "type":  "java.lang.String",
+                           "description":  "One exact Kafka destination required when publisher selected; never inferred from event type."
+                       },
+                       {
+                           "name":  "apex.messaging.outbox.publisher.interval-ms",
+                           "type":  "java.lang.Long",
+                           "description":  "Fixed delay in milliseconds; must be positive when the publisher is selected.",
+                           "defaultValue":  1000
+                       }
+                   ]
+}

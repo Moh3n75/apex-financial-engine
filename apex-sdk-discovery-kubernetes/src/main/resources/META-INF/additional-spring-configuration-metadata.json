@@ -1,0 +1,32 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.discovery.max-stale-ms",
+                           "type":  "java.lang.Long",
+                           "description":  "Kubernetes freshness limit at least two refresh intervals and at most 120000ms.",
+                           "defaultValue":  15000
+                       },
+                       {
+                           "name":  "apex.discovery.registry-id",
+                           "type":  "java.lang.String",
+                           "description":  "Owner-selected registry identity; unknown does not establish authoritative membership.",
+                           "defaultValue":  "unknown"
+                       },
+                       {
+                           "name":  "apex.discovery.kubernetes.token-file",
+                           "type":  "java.lang.String",
+                           "description":  "Required bounded nonempty service-account token file outside test mode; rotation qualification remains deferred."
+                       },
+                       {
+                           "name":  "apex.discovery.insecure-loopback-test-only",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Test-only loopback HTTP API; production requires HTTPS/CA/token. No authentication redesign.",
+                           "defaultValue":  false
+                       },
+                       {
+                           "name":  "apex.discovery.kubernetes.ca-file",
+                           "type":  "java.lang.String",
+                           "description":  "Required CA file outside explicit loopback test mode."
+                       }
+                   ]
+}

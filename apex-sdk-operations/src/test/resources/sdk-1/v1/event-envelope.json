@@ -1,0 +1,1 @@
+{"metadata":{"eventId":"00000000-0000-0000-0000-000000000001","eventType":"SDK_CHANGED","eventVersion":1,"correlationId":"00000000-0000-0000-0000-000000000002","causationId":null,"aggregateId":"00000000-0000-0000-0000-000000000003","aggregateType":"SDK","sourceService":"fixture","cellId":"fixture","occurredAt":"2026-01-02T03:04:05Z"},"payload":{"id":"one"}}

@@ -1,0 +1,10 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.webmvc.context.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Servlet context filter. Also requires servlet classes/application, provider, spring.application.name and apex.cell.id. Backs off by bean name.",
+                           "defaultValue":  true
+                       }
+                   ]
+}

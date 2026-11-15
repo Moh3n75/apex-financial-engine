@@ -1,0 +1,33 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.discovery.max-stale-ms",
+                           "type":  "java.lang.Long",
+                           "description":  "Eureka freshness limit 1000..120000ms; Kubernetes default/bounds differ by provider.",
+                           "defaultValue":  60000
+                       },
+                       {
+                           "name":  "apex.discovery.registry-id",
+                           "type":  "java.lang.String",
+                           "description":  "Owner-selected registry identity; unknown does not establish authoritative membership.",
+                           "defaultValue":  "unknown"
+                       },
+                       {
+                           "name":  "apex.discovery.grpc-advertised-port",
+                           "type":  "java.lang.Integer",
+                           "description":  "Optional explicit gRPC port override; otherwise actual bound server port. 1..65535."
+                       },
+                       {
+                           "name":  "apex.discovery.membership.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Eureka membership identity requires contract-discovery environment/instance and cell.id.",
+                           "defaultValue":  false
+                       },
+                       {
+                           "name":  "apex.discovery.registration.enabled",
+                           "type":  "java.lang.Boolean",
+                           "description":  "Apex registration opt-in, separate from native eureka.client.register-with-eureka.",
+                           "defaultValue":  false
+                       }
+                   ]
+}

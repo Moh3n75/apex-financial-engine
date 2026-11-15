@@ -1,0 +1,28 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.observability.export-timeout",
+                           "type":  "java.time.Duration",
+                           "description":  "Finite best-effort exporter timeout; 1ms..5m.",
+                           "defaultValue":  "1s"
+                       },
+                       {
+                           "name":  "apex.observability.shutdown-timeout",
+                           "type":  "java.time.Duration",
+                           "description":  "Finite diagnostic shutdown budget; 1ms..5m.",
+                           "defaultValue":  "1s"
+                       },
+                       {
+                           "name":  "apex.observability.active-ttl",
+                           "type":  "java.time.Duration",
+                           "description":  "Finite diagnostic expiry; 1ms..5m.",
+                           "defaultValue":  "30s"
+                       },
+                       {
+                           "name":  "apex.observability.export-interval",
+                           "type":  "java.time.Duration",
+                           "description":  "Finite exporter poll interval; 1ms..5m.",
+                           "defaultValue":  "100ms"
+                       }
+                   ]
+}

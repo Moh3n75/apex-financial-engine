@@ -1,0 +1,513 @@
+[
+    {
+        "module":  "apex-sdk-discovery",
+        "name":  "apex.discovery.authority",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Eureka defaults to logical cell when registering; trusted TLS authority remains local policy."
+    },
+    {
+        "module":  "apex-sdk-discovery",
+        "name":  "apex.discovery.instance-id",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Eureka defaults to generated replica UUID if absent when registering."
+    },
+    {
+        "module":  "apex-sdk-discovery",
+        "name":  "apex.discovery.provider",
+        "type":  "java.lang.String",
+        "default":  "\"none\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-discovery",
+        "name":  "apex.discovery.refresh-interval",
+        "type":  "java.time.Duration",
+        "default":  "\"1s\"",
+        "description":  "250ms..30s. Provider none/eureka/kubernetes selected explicitly."
+    },
+    {
+        "module":  "apex-sdk-discovery",
+        "name":  "apex.discovery.targets",
+        "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.discovery.DiscoveryProperties$Target\u003e",
+        "default":  "{}",
+        "description":  "At most 32 canonical lowercase service names with pinned TLS authorities."
+    },
+    {
+        "module":  "apex-sdk-discovery-eureka",
+        "name":  "apex.discovery.grpc-advertised-port",
+        "type":  "java.lang.Integer",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Optional explicit gRPC port override; otherwise actual bound server port. 1..65535."
+    },
+    {
+        "module":  "apex-sdk-discovery-eureka",
+        "name":  "apex.discovery.max-stale-ms",
+        "type":  "java.lang.Long",
+        "default":  "60000",
+        "description":  "Eureka freshness limit 1000..120000ms; Kubernetes default/bounds differ by provider."
+    },
+    {
+        "module":  "apex-sdk-discovery-eureka",
+        "name":  "apex.discovery.membership.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Eureka membership identity requires contract-discovery environment/instance and cell.id."
+    },
+    {
+        "module":  "apex-sdk-discovery-eureka",
+        "name":  "apex.discovery.registration.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Apex registration opt-in, separate from native eureka.client.register-with-eureka."
+    },
+    {
+        "module":  "apex-sdk-discovery-eureka",
+        "name":  "apex.discovery.registry-id",
+        "type":  "java.lang.String",
+        "default":  "\"unknown\"",
+        "description":  "Owner-selected registry identity; unknown does not establish authoritative membership."
+    },
+    {
+        "module":  "apex-sdk-discovery-grpc",
+        "name":  "apex.discovery.grpc.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "true",
+        "description":  "Select bridge only with installed directory and enabled gRPC client."
+    },
+    {
+        "module":  "apex-sdk-discovery-kubernetes",
+        "name":  "apex.discovery.insecure-loopback-test-only",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Test-only loopback HTTP API; production requires HTTPS/CA/token. No authentication redesign."
+    },
+    {
+        "module":  "apex-sdk-discovery-kubernetes",
+        "name":  "apex.discovery.kubernetes.ca-file",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Required CA file outside explicit loopback test mode."
+    },
+    {
+        "module":  "apex-sdk-discovery-kubernetes",
+        "name":  "apex.discovery.kubernetes.token-file",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Required bounded nonempty service-account token file outside test mode; rotation qualification remains deferred."
+    },
+    {
+        "module":  "apex-sdk-discovery-kubernetes",
+        "name":  "apex.discovery.max-stale-ms",
+        "type":  "java.lang.Long",
+        "default":  "15000",
+        "description":  "Kubernetes freshness limit at least two refresh intervals and at most 120000ms."
+    },
+    {
+        "module":  "apex-sdk-discovery-kubernetes",
+        "name":  "apex.discovery.registry-id",
+        "type":  "java.lang.String",
+        "default":  "\"unknown\"",
+        "description":  "Owner-selected registry identity; unknown does not establish authoritative membership."
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.cell-id",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.client.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.collector.allowed-responders",
+        "type":  "java.util.List\u003cjava.lang.String\u003e",
+        "default":  "[]",
+        "description":  "Explicit nonempty unique allowlist with routes when collection selected."
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.collector.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.collector.max-collections",
+        "type":  "java.lang.Integer",
+        "default":  "16",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.collector.max-in-flight",
+        "type":  "java.lang.Integer",
+        "default":  "64",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.collector.max-responders",
+        "type":  "java.lang.Integer",
+        "default":  "16",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.destinations",
+        "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.grpc.internal.GrpcProperties$Destination\u003e",
+        "default":  "{}",
+        "description":  "At most 32 static routes; local or explicit Boot channel; discovery may supply routes."
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.insecure-loopback-test-only",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.max-deadline",
+        "type":  "java.time.Duration",
+        "default":  "\"30s\"",
+        "description":  "Maximum per-call deadline 1ms..30s; does not establish inherited parent budget propagation."
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.max-payload-bytes",
+        "type":  "java.lang.Integer",
+        "default":  "65536",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.security.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.security.peers",
+        "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.grpc.internal.PeerSecurityProperties$Grant\u003e",
+        "default":  "{}",
+        "description":  "Existing certificate policy grants; no OAuth/SSO SDK functionality added."
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.security.tenant",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.server.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-grpc",
+        "name":  "apex.grpc.test-clients",
+        "type":  "java.util.List\u003cjava.lang.String\u003e",
+        "default":  "[]",
+        "description":  "Explicit loopback test caller allowlist; never a production authorization fallback."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.cell.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Select JDBC/Kafka messaging; owner provides datasource, serializers and migrations under db/platform."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.concurrency",
+        "type":  "java.lang.Integer",
+        "default":  "1",
+        "description":  "Positive listener concurrency when consumer selected."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Select annotated consumer and Inbox. Requires topics and native Kafka group-id."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.dlt-suffix",
+        "type":  "java.lang.String",
+        "default":  "\"-dlt\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.max-attempts",
+        "type":  "java.lang.Integer",
+        "default":  "3",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.preflight-enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "true",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.preflight-timeout",
+        "type":  "java.time.Duration",
+        "default":  "\"10s\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.retry-delay",
+        "type":  "java.time.Duration",
+        "default":  "\"1s\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.reliability.send-timeout",
+        "type":  "java.time.Duration",
+        "default":  "\"10s\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.consumer.topics",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Comma-delimited distinct exact Kafka names; required for selected consumer. No wildcard/regex."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.outbox.publisher.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "true",
+        "description":  "Publisher selected only inside enabled messaging. Requires publisher.topic."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.outbox.publisher.interval-ms",
+        "type":  "java.lang.Long",
+        "default":  "1000",
+        "description":  "Fixed delay in milliseconds; must be positive when the publisher is selected."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.provisioning.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.provisioning.partitions",
+        "type":  "java.lang.Integer",
+        "default":  "1",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.provisioning.replication-factor",
+        "type":  "java.lang.Short",
+        "default":  "-1",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.provisioning.timeout",
+        "type":  "java.time.Duration",
+        "default":  "\"10s\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.publisher.routing.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.publisher.routing.required-contracts",
+        "type":  "java.util.List\u003cjava.lang.String\u003e",
+        "default":  "[]",
+        "description":  "Contract keys required to appear in explicit route list."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.publisher.routing.routes",
+        "type":  "java.util.List\u003ccom.apex.platform.messaging.jdbc.PublisherRouting$Route\u003e",
+        "default":  "[]",
+        "description":  "Explicit event-type/event-version/topic route list; required when routing selected."
+    },
+    {
+        "module":  "apex-sdk-messaging",
+        "name":  "apex.messaging.publisher.topic",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "One exact Kafka destination required when publisher selected; never inferred from event type."
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.active-enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.active-ttl",
+        "type":  "java.time.Duration",
+        "default":  "\"30s\"",
+        "description":  "Finite diagnostic expiry; 1ms..5m."
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.batch-size",
+        "type":  "java.lang.Integer",
+        "default":  "64",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.export-enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.export-interval",
+        "type":  "java.time.Duration",
+        "default":  "\"100ms\"",
+        "description":  "Finite exporter poll interval; 1ms..5m."
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.export-timeout",
+        "type":  "java.time.Duration",
+        "default":  "\"1s\"",
+        "description":  "Finite best-effort exporter timeout; 1ms..5m."
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.instance-id",
+        "type":  "java.lang.String",
+        "default":  "\"local\"",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.max-active",
+        "type":  "java.lang.Integer",
+        "default":  "256",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.max-bytes",
+        "type":  "java.lang.Integer",
+        "default":  "1048576",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.max-record-bytes",
+        "type":  "java.lang.Integer",
+        "default":  "2048",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.max-records",
+        "type":  "java.lang.Integer",
+        "default":  "1024",
+        "description":  null
+    },
+    {
+        "module":  "apex-sdk-observability",
+        "name":  "apex.observability.shutdown-timeout",
+        "type":  "java.time.Duration",
+        "default":  "\"1s\"",
+        "description":  "Finite diagnostic shutdown budget; 1ms..5m."
+    },
+    {
+        "module":  "apex-sdk-operations",
+        "name":  "apex.contract-discovery.cluster",
+        "type":  "java.lang.String",
+        "default":  "\"unknown\"",
+        "description":  "Declared cluster label; no inferred authoritative cluster membership."
+    },
+    {
+        "module":  "apex-sdk-operations",
+        "name":  "apex.contract-discovery.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Effective declarations only; currently requires both messaging and RPC classes. No traffic/commit proof."
+    },
+    {
+        "module":  "apex-sdk-operations",
+        "name":  "apex.contract-discovery.environment",
+        "type":  "java.lang.String",
+        "default":  "\"unknown\"",
+        "description":  "Environment label; explicit value required for membership/local HTTP."
+    },
+    {
+        "module":  "apex-sdk-operations",
+        "name":  "apex.contract-discovery.instance",
+        "type":  "java.lang.String",
+        "default":  "\"unknown\"",
+        "description":  "Instance label; explicit value required for membership."
+    },
+    {
+        "module":  "apex-sdk-operations",
+        "name":  "apex.contract-discovery.local-http.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "false",
+        "description":  "Also requires local-ops profile, explicit loopback bind and local/local-dev environment."
+    },
+    {
+        "module":  "apex-sdk-spring-boot",
+        "name":  "apex.cell.id",
+        "type":  "java.lang.String",
+        "default":  "\u003cnot-declared\u003e",
+        "description":  "Cell identity. Required by selected HTTP/messaging; gRPC fallback before spring.application.name. Not a registry metadata alias."
+    },
+    {
+        "module":  "apex-sdk-webmvc",
+        "name":  "apex.webmvc.context.enabled",
+        "type":  "java.lang.Boolean",
+        "default":  "true",
+        "description":  "Servlet context filter. Also requires servlet classes/application, provider, spring.application.name and apex.cell.id. Backs off by bean name."
+    }
+]

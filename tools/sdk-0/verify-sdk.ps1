@@ -1,4 +1,4 @@
-param([string]$MavenCommand='mvn.cmd', [int]$Runs=3, [string]$EvidenceRoot='out/sdk-0')
+param([string]$MavenCommand='mvn.cmd', [int]$Runs=3, [string]$EvidenceRoot='out/sdk-0', [switch]$Sdk1)
 $ErrorActionPreference='Stop'
 $root=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 Set-Location $root
@@ -11,6 +11,11 @@ function Fingerprint {
     $files+=Get-Item $PSCommandPath
     $files+=Get-Item (Join-Path $root 'tools/m35-6/external-consumer/pom.xml'),(Join-Path $root 'tools/sdk-0/verify-installed-messaging.ps1')
     $files+=Get-ChildItem (Join-Path $root 'tools/m35-6/external-consumer/src') -Recurse -File
+    if($Sdk1){
+        $files+=Get-ChildItem (Join-Path $root 'tools/sdk-1') -Recurse -File
+        $files+=Get-Item (Join-Path $root 'tools/m35-6/verify-external-consumer.ps1'),(Join-Path $root 'apex-discovery-server/pom.xml')
+        $files+=Get-ChildItem (Join-Path $root 'apex-discovery-server/src') -Recurse -File
+    }
     @($files | Sort-Object FullName | ForEach-Object { [ordered]@{path=$_.FullName.Substring($root.Length+1);sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash} }) | ConvertTo-Json -Depth 4
 }
 $fingerprint=Fingerprint
@@ -28,6 +33,20 @@ for($run=1;$run -le $Runs;$run++) {
     & $MavenCommand @arguments *> (Join-Path $runDir 'build.log')
     $code=$LASTEXITCODE
     $ErrorActionPreference='Stop'
+    $compatibilityExit=if($Sdk1){-1}else{0}
+    if($Sdk1 -and $code -eq 0){
+        $compatibilityExit=0
+        $ErrorActionPreference='Continue'
+        & (Join-Path $env:JAVA_HOME 'bin/java') tools/sdk-1/SdkApiBaseline.java check $root *> (Join-Path $runDir 'api.log')
+        if($LASTEXITCODE -ne 0){$compatibilityExit=1}
+        & (Join-Path $env:JAVA_HOME 'bin/java') tools/sdk-1/SdkApiBaseline.java self-test $root *> (Join-Path $runDir 'api-negative-controls.log')
+        if($LASTEXITCODE -ne 0){$compatibilityExit=1}
+        & powershell -NoProfile -ExecutionPolicy Bypass -File tools/sdk-1/verify-configuration.ps1 *> (Join-Path $runDir 'configuration.log')
+        if($LASTEXITCODE -ne 0){$compatibilityExit=1}
+        & powershell -NoProfile -ExecutionPolicy Bypass -File tools/sdk-1/verify-contract-files.ps1 *> (Join-Path $runDir 'protocol-sql.log')
+        if($LASTEXITCODE -ne 0){$compatibilityExit=1}
+        $ErrorActionPreference='Stop'
+    }
     $tests=0;$failures=0;$errors=0;$skipped=0
     foreach($module in $modules) {
         # Preserve supplemental failure dumps and measurements before the next clean.
@@ -50,10 +69,10 @@ for($run=1;$run -le $Runs;$run++) {
             }
         }
     }
-    $ledger += [ordered]@{run=$run;startedUtc=$started;completedUtc=[DateTimeOffset]::UtcNow.ToString('o');exit=$code;tests=$tests;failures=$failures;errors=$errors;skipped=$skipped}
+    $ledger += [ordered]@{run=$run;startedUtc=$started;completedUtc=[DateTimeOffset]::UtcNow.ToString('o');exit=$code;compatibilityExit=$compatibilityExit;tests=$tests;failures=$failures;errors=$errors;skipped=$skipped}
     $ledger | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $evidence 'ledger.json')
     Write-Host "Run $run exit=$code tests=$tests failures=$failures errors=$errors skipped=$skipped"
 }
 Write-Host "Evidence: $evidence"
-if(@($ledger | Where-Object { $_.exit -ne 0 -or $_.failures -ne 0 -or $_.errors -ne 0 -or $_.skipped -ne 0 }).Count){exit 1}
+if(@($ledger | Where-Object { $_.exit -ne 0 -or $_.compatibilityExit -ne 0 -or $_.failures -ne 0 -or $_.errors -ne 0 -or $_.skipped -ne 0 }).Count){exit 1}
 exit 0

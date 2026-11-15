@@ -81,9 +81,9 @@ public final class ContractDiscoveryProvider {
       boolean local=env.getProperty(prefix+".local",Boolean.class,false);
       if(local)continue; // An in-process call is not a distributed gRPC dependency.
       boolean client=env.getProperty("apex.grpc.client.enabled",Boolean.class,false);
-      boolean discovery=env.getProperty("apex.discovery.provider","static").equals("eureka")
-          || env.getProperty("apex.discovery.provider","static").equals("kubernetes")
-          || env.getProperty("apex.discovery.provider","static").equals("grpc");
+        boolean discovery=env.getProperty("apex.discovery.provider","none").equals("eureka")
+          || env.getProperty("apex.discovery.provider","none").equals("kubernetes")
+          || env.getProperty("apex.discovery.provider","none").equals("grpc");
       String availability=client?(discovery?"DISCOVERY_CONFIGURED":env.containsProperty(prefix+".channel")?"CONFIGURED":"TRANSPORT_NOT_CONFIGURED"):"TRANSPORT_NOT_CONFIGURED";
       declarations.add(new GrpcDependency(query?"QUERY":"REQUEST",new Contract(contract.type(),contract.version()),
           dependency.destination(),dependency.destination(),dependency.behavior(),availability));

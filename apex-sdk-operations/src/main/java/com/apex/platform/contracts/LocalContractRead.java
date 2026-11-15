@@ -17,7 +17,7 @@ final class LocalContractRead {
   private final ContractDiscoveryProvider provider;
   LocalContractRead(ContractDiscoveryProvider provider,Environment env) {
     if(!java.util.Set.of("127.0.0.1","::1").contains(env.getProperty("server.address",""))
-        ||!java.util.Set.of("local","local-dev").contains(env.getProperty("apex.contract-discovery.environment","")))
+        ||!java.util.Set.of("local","local-dev").contains(env.getProperty("apex.contract-discovery.environment","unknown")))
       throw new IllegalStateException("LOCAL_CONTRACT_READ_REQUIRES_EXPLICIT_LOOPBACK_AND_LOCAL_ENVIRONMENT");
     this.provider=provider;
   }

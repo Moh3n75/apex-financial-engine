@@ -1,0 +1,1 @@
+{"environment":"test","owner":"fixture","kind":"OUTBOX_EVENT","scope":"fixture","fromInclusive":"2026-01-02T03:00:00Z","toExclusive":"2026-01-02T03:05:00Z","state":"ANY","limit":16,"cursor":""}

@@ -1,0 +1,42 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.grpc.collector.allowed-responders",
+                           "type":  "java.util.List\u003cjava.lang.String\u003e",
+                           "description":  "Explicit nonempty unique allowlist with routes when collection selected.",
+                           "defaultValue":  [
+
+                                            ]
+                       },
+                       {
+                           "name":  "apex.grpc.security.peers",
+                           "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.grpc.internal.PeerSecurityProperties$Grant\u003e",
+                           "description":  "Existing certificate policy grants; no OAuth/SSO SDK functionality added.",
+                           "defaultValue":  {
+
+                                            }
+                       },
+                       {
+                           "name":  "apex.grpc.destinations",
+                           "type":  "java.util.Map\u003cjava.lang.String,com.apex.platform.grpc.internal.GrpcProperties$Destination\u003e",
+                           "description":  "At most 32 static routes; local or explicit Boot channel; discovery may supply routes.",
+                           "defaultValue":  {
+
+                                            }
+                       },
+                       {
+                           "name":  "apex.grpc.max-deadline",
+                           "type":  "java.time.Duration",
+                           "description":  "Maximum per-call deadline 1ms..30s; does not establish inherited parent budget propagation.",
+                           "defaultValue":  "30s"
+                       },
+                       {
+                           "name":  "apex.grpc.test-clients",
+                           "type":  "java.util.List\u003cjava.lang.String\u003e",
+                           "description":  "Explicit loopback test caller allowlist; never a production authorization fallback.",
+                           "defaultValue":  [
+
+                                            ]
+                       }
+                   ]
+}

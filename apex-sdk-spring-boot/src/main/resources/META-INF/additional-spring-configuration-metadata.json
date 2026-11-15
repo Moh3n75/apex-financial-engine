@@ -1,0 +1,9 @@
+{
+    "properties":  [
+                       {
+                           "name":  "apex.cell.id",
+                           "type":  "java.lang.String",
+                           "description":  "Cell identity. Required by selected HTTP/messaging; gRPC fallback before spring.application.name. Not a registry metadata alias."
+                       }
+                   ]
+}
