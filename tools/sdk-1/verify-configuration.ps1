@@ -21,7 +21,19 @@ foreach($module in Get-ChildItem $root -Directory -Filter 'apex-sdk-*' | Sort-Ob
     }
 }
 if($catalog.Count -lt 70){throw 'Incomplete generated configuration metadata; clean compile SDK first.'}
-$json=ConvertTo-Json -InputObject @($catalog) -Depth 8
+# Compare explicit additive v2 entries separately; never rewrite or weaken the exact v1 catalogue.
+$extension=Get-Content (Join-Path $PSScriptRoot 'baseline/configuration-aor-01-v2.json') -Raw | ConvertFrom-Json
+$extensionKeys=@($extension | ForEach-Object {$_.module+'/'+$_.name})
+$actualExtension=@($catalog | Where-Object {($_.module+'/'+$_.name) -in $extensionKeys})
+if($actualExtension.Count -ne @($extension).Count){throw 'AOR-01 v2 configuration extension count changed.'}
+foreach($entry in $actualExtension) {
+    $expected=@($extension | Where-Object {$_.module -eq $entry.module -and $_.name -eq $entry.name})[0]
+    foreach($field in @('module','name','type','default','description')) {
+        if([string]$entry.$field -cne [string]$expected.$field){throw "AOR-01 v2 configuration extension changed: $field"}
+    }
+}
+$v1Catalog=@($catalog | Where-Object {($_.module+'/'+$_.name) -notin $extensionKeys})
+$json=ConvertTo-Json -InputObject $v1Catalog -Depth 8
 New-Item -ItemType Directory -Force (Join-Path $root 'out/sdk-1') | Out-Null
 $json | Set-Content (Join-Path $root 'out/sdk-1/configuration-current.json')
 if($Capture){

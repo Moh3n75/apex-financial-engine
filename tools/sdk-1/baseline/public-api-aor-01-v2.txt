@@ -1,0 +1,9 @@
+# AOR-01 v2 additive internal declarations; v1 remains exact
+
+MODULE apex-sdk-messaging
+class com.apex.platform.messaging.jdbc.MessagingStorageSelection extends org.springframework.boot.autoconfigure.condition.SpringBootCondition {
+  public org.springframework.boot.autoconfigure.condition.ConditionOutcome getMatchOutcome(org.springframework.context.annotation.ConditionContext, org.springframework.core.type.AnnotatedTypeMetadata);
+    descriptor: (Lorg/springframework/context/annotation/ConditionContext;Lorg/springframework/core/type/AnnotatedTypeMetadata;)Lorg/springframework/boot/autoconfigure/condition/ConditionOutcome;
+}
+class com.apex.platform.messaging.jdbc.PostgresqlStorageConfiguration {
+}

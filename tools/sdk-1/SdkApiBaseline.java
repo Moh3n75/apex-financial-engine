@@ -15,7 +15,20 @@ public class SdkApiBaseline {
         var inventory = new StringBuilder("module\tbinaryName\tclassification\tjvmPublic\n");
         var modules = Files.list(root).filter(p -> p.getFileName().toString().startsWith("apex-sdk-")
                 && Files.exists(p.resolve("pom.xml"))).sorted().toList();
-        if (modules.size()!=13) throw new IllegalStateException("Expected all 13 SDK modules");
+        var frozenNames = new TreeMap<String, Set<String>>();
+        for (String line : Files.readAllLines(root.resolve("tools/sdk-1/baseline/api-inventory-v1.tsv")).subList(1,
+                Files.readAllLines(root.resolve("tools/sdk-1/baseline/api-inventory-v1.tsv")).size())) {
+            String[] fields = line.split("\\t");
+            frozenNames.computeIfAbsent(fields[0], key -> new TreeSet<>()).add(fields[1]);
+        }
+        // Dependency-only v1 role artifacts have no inventory rows.
+        frozenNames.putIfAbsent("apex-sdk-grpc-client", Set.of());
+        frozenNames.putIfAbsent("apex-sdk-grpc-server", Set.of());
+        var expectedModules = new TreeSet<>(frozenNames.keySet());
+        expectedModules.add("apex-sdk-messaging-core");
+        if (!new TreeSet<>(modules.stream().map(p -> p.getFileName().toString()).toList()).equals(expectedModules))
+            throw new IllegalStateException("Unexpected SDK module set; explicit extension review required");
+        var extension = new StringBuilder("# AOR-01 v2 additive internal declarations; v1 remains exact\n");
         for (Path module: modules) {
             String name=module.getFileName().toString(); Path classes=module.resolve("target/classes");
             var names=new ArrayList<String>();
@@ -32,9 +45,24 @@ public class SdkApiBaseline {
             }
             if(names.isEmpty() && Files.exists(module.resolve("src/main/java")))
                 throw new IllegalStateException("Compile module before checking API: "+name);
-            snapshot.append("\nMODULE ").append(name).append('\n');
-            if (!names.isEmpty()) snapshot.append(declarations(classes,names));
+            Set<String> oldNames = frozenNames.getOrDefault(name, Set.of());
+            if (!names.containsAll(oldNames)) throw new IllegalStateException("Missing frozen classes in " + name);
+            if (frozenNames.containsKey(name)) {
+                snapshot.append("\nMODULE ").append(name).append('\n');
+                if (!oldNames.isEmpty()) snapshot.append(declarations(classes, names.stream().filter(oldNames::contains).toList()));
+            }
+            var added = names.stream().filter(n -> !oldNames.contains(n)).toList();
+            if (!added.isEmpty()) {
+                extension.append("\nMODULE ").append(name).append('\n');
+                extension.append(declarations(classes, added));
+            }
         }
+        Path extensionOutput = root.resolve("out/sdk-1/api-extension-current.txt");
+        Files.createDirectories(extensionOutput.getParent());
+        Files.writeString(extensionOutput, extension.toString());
+        Path extensionBaseline = root.resolve("tools/sdk-1/baseline/public-api-aor-01-v2.txt");
+        if (!Files.exists(extensionBaseline) || !Files.readString(extensionBaseline).replace("\r\n", "\n").equals(extension.toString()))
+            throw new IllegalStateException("Additive declaration extension changed; review " + extensionOutput);
         String actual=snapshot.toString();
         Path output=root.resolve("out/sdk-1/api-current.txt"); Files.createDirectories(output.getParent());
         Files.writeString(output,actual); Files.writeString(root.resolve("out/sdk-1/api-inventory-current.tsv"),inventory);

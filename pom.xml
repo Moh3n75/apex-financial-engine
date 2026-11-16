@@ -26,6 +26,7 @@
         <module>apex-bootstrap</module>
         <module>apex-sdk-api</module>
         <module>apex-sdk-messaging</module>
+        <module>apex-sdk-messaging-core</module>
         <module>apex-sdk-spring-boot</module>
         <module>apex-sdk-webmvc</module>
         <module>apex-sdk-grpc</module>
@@ -55,6 +56,7 @@
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-spring-boot</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-webmvc</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-messaging</artifactId><version>${apex.sdk.version}</version></dependency>
+        <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-messaging-core</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-grpc</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-grpc-client</artifactId><version>${apex.sdk.version}</version></dependency>
         <dependency><groupId>com.apex</groupId><artifactId>apex-sdk-grpc-server</artifactId><version>${apex.sdk.version}</version></dependency>

@@ -55,6 +55,7 @@
                            "type":  "java.lang.Long",
                            "description":  "Fixed delay in milliseconds; must be positive when the publisher is selected.",
                            "defaultValue":  1000
-                       }
+                       },
+                       {"name": "apex.messaging.storage.provider", "type": "java.lang.String", "description": "Storage selection: postgresql for legacy composition, custom for driver-free core. Custom requires owner storage beans; no fallback.", "defaultValue": "postgresql"}
                    ]
 }

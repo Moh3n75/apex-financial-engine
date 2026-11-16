@@ -30,6 +30,7 @@ public class JdbcOutboxAppender implements OutboxAppender {
 
     @Override
     public void append(EventEnvelope<? extends IntegrationEvent> event) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         observations.point("outbox.intent","OBSERVED");
         var metadata = event.metadata();
         UUID aggregateId = UUID.fromString(metadata.aggregateId());

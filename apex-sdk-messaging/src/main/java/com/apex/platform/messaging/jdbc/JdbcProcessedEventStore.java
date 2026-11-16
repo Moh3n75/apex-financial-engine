@@ -21,6 +21,7 @@ public class JdbcProcessedEventStore implements ProcessedEventStore {
 
     @Override
     public boolean registerIfAbsent(EventMetadata metadata, ConsumerContext context) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         int inserted = jdbcTemplate.update(
                 """
                 INSERT INTO processed_event (

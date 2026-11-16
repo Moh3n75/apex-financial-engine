@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import tools.jackson.databind.json.JsonMapper;
@@ -27,6 +26,7 @@ import java.util.UUID;
 @AutoConfiguration(
         after = ApexExecutionContextAutoConfiguration.class
 )
+@org.springframework.context.annotation.Import(PostgresqlStorageConfiguration.class)
 @EnableScheduling
 @org.springframework.boot.context.properties.EnableConfigurationProperties(PublisherRouting.class)
 @ConditionalOnProperty(
@@ -39,12 +39,26 @@ public class PlatformCellMessagingAutoConfiguration {
     static org.springframework.beans.factory.config.BeanFactoryPostProcessor apexMessagingPolicyPreflight(
             org.springframework.core.env.Environment environment) {
         return beans -> {
+            String provider = MessagingStorageSelection.provider(environment,
+                    beans.getBeanClassLoader());
             if (environment.getProperty("apex.messaging.outbox.publisher.enabled", Boolean.class, true)
                     && environment.getProperty("apex.messaging.outbox.publisher.interval-ms", Long.class, 1000L) < 1)
                 throw new IllegalArgumentException("apex.messaging.outbox.publisher.interval-ms must be positive");
             if (environment.getProperty("apex.messaging.consumer.enabled", Boolean.class, false)
                     && environment.getProperty("apex.messaging.consumer.concurrency", Integer.class, 1) < 1)
                 throw new IllegalArgumentException("apex.messaging.consumer.concurrency must be positive");
+            for (Class<?> type : java.util.List.of(OutboxAppender.class, OutboxStore.class, ProcessedEventStore.class)) {
+                String[] names = beans.getBeanNamesForType(type, true, false);
+                long primaryCount = java.util.Arrays.stream(names)
+                        .filter(name -> beans.containsBeanDefinition(name) && beans.getBeanDefinition(name).isPrimary()).count();
+                if (names.length > 1 && primaryCount != 1)
+                    throw new IllegalStateException("Multiple messaging storage beans for " + type.getSimpleName());
+                boolean needed = type == OutboxAppender.class
+                        || type == OutboxStore.class && environment.getProperty("apex.messaging.outbox.publisher.enabled", Boolean.class, true)
+                        || type == ProcessedEventStore.class && environment.getProperty("apex.messaging.consumer.enabled", Boolean.class, false);
+                if (provider.equals("custom") && needed && names.length == 0)
+                    throw new IllegalStateException("apex.messaging.storage.provider=custom requires owner bean " + type.getSimpleName());
+            }
         };
     }
     @Bean
@@ -92,19 +106,7 @@ public class PlatformCellMessagingAutoConfiguration {
     }
 
 
-    @Bean
-    @ConditionalOnMissingBean
-    OutboxAppender outboxAppender(JdbcTemplate jdbcTemplate, JsonMapper jsonMapper,
-            com.apex.platform.messaging.observation.MessagingObservation observations) {
-        return new JdbcOutboxAppender(jdbcTemplate, jsonMapper,observations);
-    }
 
-    @Bean
-    @ConditionalOnMissingBean
-    OutboxStore outboxStore(JdbcTemplate jdbcTemplate, Clock clock,
-            com.apex.platform.messaging.observation.MessagingObservation observations) {
-        return new JdbcOutboxStore(jdbcTemplate, clock,observations);
-    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -166,12 +168,6 @@ public class PlatformCellMessagingAutoConfiguration {
         return new OutboxPublisherScheduler(outboxPublisher);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "apex.messaging.consumer", name = "enabled", havingValue = "true")
-    ProcessedEventStore processedEventStore(JdbcTemplate jdbcTemplate, Clock clock) {
-        return new JdbcProcessedEventStore(jdbcTemplate, clock);
-    }
 
 
     @Bean

@@ -1,0 +1,9 @@
+[
+    {
+        "module": "apex-sdk-messaging",
+        "name": "apex.messaging.storage.provider",
+        "type": "java.lang.String",
+        "default": "\"postgresql\"",
+        "description": "Storage selection: postgresql for legacy composition, custom for driver-free core. Custom requires owner storage beans; no fallback."
+    }
+]

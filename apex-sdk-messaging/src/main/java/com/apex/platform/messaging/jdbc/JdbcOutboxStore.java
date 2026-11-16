@@ -36,6 +36,7 @@ public class JdbcOutboxStore implements OutboxStore {
 
     @Override
     public List<OutboxRecord> findBatch(int size) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         OffsetDateTime now = OffsetDateTime.now(clock);
         return jdbcTemplate.query(
                 """
@@ -58,6 +59,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public List<OutboxRecord> claimBatch(int size, String publisherInstanceId, Duration leaseDuration) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         observations.afterTransaction("outbox.claim","COMMITTED");
         OffsetDateTime now = OffsetDateTime.now(clock);
         OffsetDateTime claimedUntil = now.plus(leaseDuration);
@@ -109,6 +111,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public boolean markPublished(Long id, UUID claimToken) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
@@ -131,6 +134,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public boolean markFailed(Long id, UUID claimToken, String error, Instant nextRetryAt) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
@@ -154,6 +158,7 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     @Transactional
     public boolean moveToDeadLetter(Long id, UUID claimToken, String error) {
+        MessagingStorageSelection.requirePostgresql(jdbcTemplate);
         boolean updated = jdbcTemplate.update(
                 """
                 UPDATE outbox_event
